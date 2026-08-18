@@ -1,1 +1,18 @@
-<!doctype html><html lang="sr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Cache-Control" content="no-store"><meta name="theme-color" content="#102b46"><title>Evidencija radova</title><style>body{margin:0;font-family:Arial,sans-serif;background:#f3f5f7;color:#102b46}#status{padding:16px}</style></head><body><div id="status">Učitavanje aplikacije…</div><script>(async()=>{const fail=e=>{document.body.innerHTML='<div id="status"><b>Greška pri pokretanju aplikacije</b><br>'+String(e&&e.message?e.message:e)+'</div>'};window.addEventListener('error',ev=>fail(ev.error||ev.message));try{const v=Date.now();const get=async p=>{const r=await fetch(p+'?v='+v,{cache:'no-store'});if(!r.ok)throw new Error(p+' HTTP '+r.status);return r.text()};const [a,b]=await Promise.all([get('./gz/0.txt'),get('./gz/1.txt')]);const bin=atob(a.trim()+b.trim());const bytes=Uint8Array.from(bin,c=>c.charCodeAt(0));if(typeof DecompressionStream==='undefined')throw new Error('Browser ne podržava gzip raspakivanje');const html=await new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'))).text();const doc=new DOMParser().parseFromString(html,'text/html');const scripts=[...doc.querySelectorAll('script')].map(s=>({src:s.getAttribute('src')||'',code:s.textContent||''}));doc.querySelectorAll('script').forEach(s=>s.remove());document.head.innerHTML=doc.head.innerHTML;document.body.innerHTML=doc.body.innerHTML;for(const s of scripts){if(s.src){await new Promise((resolve,reject)=>{const el=document.createElement('script');el.src=s.src;el.onload=resolve;el.onerror=()=>reject(new Error('Ne mogu da učitam Supabase biblioteku'));document.head.appendChild(el)})}else{const el=document.createElement('script');el.textContent=s.code;document.body.appendChild(el)}}}catch(e){fail(e)}})();</script></body></html>
+<!doctype html>
+<html lang="sr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#102b46">
+<meta http-equiv="Cache-Control" content="no-store">
+<title>Evidencija radova na pruzi</title>
+<link rel="stylesheet" href="style.css?v=20260818-2">
+<script src="js/core.js?v=20260818-2" defer></script>
+<script src="js/home.js?v=20260818-2" defer></script>
+<script src="js/corridor1.js?v=20260818-2" defer></script>
+<script src="js/corridor2.js?v=20260818-2" defer></script>
+<script src="js/rlc.js?v=20260818-2" defer></script>
+<script src="js/boot.js?v=20260818-2" defer></script>
+</head>
+<body><div id="app"><div style="padding:16px;font-family:Arial,sans-serif">Pokretanje aplikacije…</div></div></body>
+</html>
