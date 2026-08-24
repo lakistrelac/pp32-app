@@ -1,0 +1,28 @@
+name: Master Backup Source
+
+on:
+  push:
+    paths:
+      - '.github/workflows/master-backup-source.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  archive:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout application snapshot
+        uses: actions/checkout@v4
+        with:
+          ref: bdce3707f384ac16b485a8b3cba8841dd008cc04
+      - name: Create source archive
+        run: |
+          tar --exclude='.git' -czf /tmp/pp32-app-bdce3707.tar.gz .
+      - name: Upload source archive
+        uses: actions/upload-artifact@v4
+        with:
+          name: pp32-app-source-bdce3707
+          path: /tmp/pp32-app-bdce3707.tar.gz
+          if-no-files-found: error
+          retention-days: 1
