@@ -131,17 +131,18 @@ C.perRlc=async function(id){
  const body='<button class="cw-back" id="cwBack" type="button">← Nazad na RLC</button>'+
  '<section class="cw-detail-hero">'+
  '<div>'+caption+'<h1>'+E(r.code)+' <span>· '+E(r.design_name||'Putni prelaz')+'</span></h1>'+
- '<p>'+E(r.chainage||'')+' · Projektna specifikacija kablova</p></div>'+
+ '<p>'+E(r.railway_line||'Pruga nije određena')+' · '+E(r.chainage||'stacionaža nije uneta')+' · Projektna specifikacija kablova</p></div>'+
  '<div class="cw-detail-symbol" aria-hidden="true">Cu<span> / L</span></div></section>'+
  '<div class="cw-metrics cw-detail-metrics">'+metric('Tipova i konstrukcija',items.length)+
- metric('Zbir dužina L',total(items,'length_m'),'m')+metric('Zbir kolone br.',total(items,'cable_count'))+'</div>'+
+ metric('Zbir dužina L',total(items,'length_m'),'m')+metric('Zbir kolone br.',total(items,'cable_count'))+'</div>'+ 
+ (items.some(x=>x.length_m===null||x.cable_count===null)?'<p class="cw-missing-notice">Ovaj RLC ima '+items.filter(x=>x.length_m===null||x.cable_count===null).length+' stavke na proveru. Prikazani zbirovi su delimični.</p>':'')+
  '<div class="cw-heading"><div><span class="cw-eyebrow">SPISAK KABLOVA</span><h2>Specifikacija</h2></div>'+
  (isAdmin()?'<button type="button" class="cw-btn" id="cwNewRow">＋ Dodaj kabl</button>':'')+'</div>'+
  '<div class="cw-table-card"><div class="cw-table-scroll"><table><thead><tr><th>TIP KABLA</th><th>KONSTRUKCIJA</th><th>MATERIJAL</th><th>L (m)</th><th>br.</th>'+
  (isAdmin()?'<th>AKCIJE</th>':'')+'</tr></thead><tbody>'+
  (items.length?items.map(x=>'<tr><td><span class="cw-type-marker"></span><b>'+E(x.cable_type)+'</b></td>'+
  '<td>'+E(x.construction)+'</td><td>'+E(x.material||'—')+'</td>'+
- '<td class="cw-num">'+fmt(x.length_m)+'</td><td class="cw-num">'+fmt(x.cable_count)+'</td>'+
+ '<td class="cw-num">'+(x.length_m===null?'<span class="cw-to-check">Na proveru</span>':fmt(x.length_m))+'</td><td class="cw-num">'+(x.cable_count===null?'<span class="cw-to-check">Na proveru</span>':fmt(x.cable_count))+'</td>'+
  (isAdmin()?'<td class="cw-row-actions"><button type="button" data-cwedit="'+E(x.id)+'">Izmeni</button><button type="button" class="cw-row-danger" data-cwdelete="'+E(x.id)+'">Obriši</button></td>':'')+'</tr>').join(''):
  '<tr><td colspan="'+(isAdmin()?6:5)+'" class="cw-table-empty">Nema unetih kablova za ovaj RLC.</td></tr>')+
  '</tbody></table></div></div>'+info()+
@@ -172,7 +173,7 @@ C.editor=async function(rlcId,itemId){
  const rec=itemId?d.items.find(x=>x.id===itemId&&x.rlc_id===rlcId):null;
  if(itemId&&!rec)return reportError(Error('Stavka ne postoji.'));
  const mode=rec?'Izmena kabla':'Novi kabl';
- const f=(id,label,value,type='text')=>'<label class="cw-field"><span>'+E(label)+'</span><input id="'+id+'" type="'+type+'" value="'+E(value??'')+'" required></label>';
+ const f=(id,label,value,type='text')=>'<label class="cw-field"><span>'+E(label)+'</span><input id="'+id+'" type="'+type+'" value="'+E(value??'')+'"></label>';
  const form='<button class="cw-back" id="cwBack" type="button">← '+E(r.code)+' · Kablovi</button>'+
  '<section class="cw-detail-hero"><div>'+caption+'<h1>'+mode+'</h1><p>'+E(r.code)+' · '+E(r.design_name||'')+'</p></div><div class="cw-detail-symbol">＋</div></section>'+
  '<form class="cw-edit-form" id="cwForm"><div class="cw-edit-intro"><h2>Podaci o kablu</h2><p>Izmene se čuvaju u bazi i automatski ulaze u zajednički obračun.</p></div>'+
@@ -182,7 +183,7 @@ C.editor=async function(rlcId,itemId){
  f('cwLength','L (m)',rec?.length_m??'','text')+
  f('cwCount','br.',rec?.cable_count??'','number')+'</div>'+
  '<label class="cw-field"><span>Napomena (opciono)</span><textarea id="cwNote" rows="3">'+E(rec?.note||'')+'</textarea></label>'+
- '<p id="cwFormMsg" class="cw-form-message" role="status"></p>'+
+ '<p class="cw-null-hint">Ako L (m) ili br. nije poznat, polje ostavi prazno. Stavka će biti označena kao „Na proveru“ i neće biti uračunata kao nula.</p><p id="cwFormMsg" class="cw-form-message" role="status"></p>'+
  '<div class="cw-form-actions"><button type="button" class="cw-btn cw-btn-outline" id="cwCancel">Odustani</button>'+
  '<button type="submit" class="cw-btn" id="cwSave">Sačuvaj '+(rec?'izmenu':'kabl')+'</button></div></form>';
  screen(form);
@@ -193,11 +194,12 @@ C.editor=async function(rlcId,itemId){
   const type=document.getElementById('cwType').value.trim();
   const construction=document.getElementById('cwConstruction').value.trim();
   const material=document.getElementById('cwMaterial').value.trim();
-  const length=Number(document.getElementById('cwLength').value.trim().replace(',','.'));
-  const count=Number(document.getElementById('cwCount').value);
+  const rawLength=document.getElementById('cwLength').value.trim(),rawCount=document.getElementById('cwCount').value.trim();
+  const length=rawLength===''?null:Number(rawLength.replace(',','.'));
+  const count=rawCount===''?null:Number(rawCount);
   const notice=document.getElementById('cwFormMsg');
-  if(type.length<2||!construction||!material||!Number.isFinite(length)||length<0||!Number.isInteger(count)||count<0){
-   notice.textContent='Unesi tip, konstrukciju, materijal, nenegativnu dužinu i ceo broj u koloni br.';return;
+  if(type.length<2||!construction||!material||(length!==null&&(!Number.isFinite(length)||length<0))||(count!==null&&(!Number.isInteger(count)||count<0))){
+   notice.textContent='Unesi tip, konstrukciju, materijal i ispravne brojeve ili ostavi nepoznate vrednosti prazne.';return;
   }
   const payload={cable_type:type,construction,material,length_m:length,cable_count:count,note:document.getElementById('cwNote').value.trim()||null,updated_at:new Date().toISOString()};
   const btn=document.getElementById('cwSave');btn.disabled=true;notice.textContent='Čuvanje...';
@@ -220,8 +222,9 @@ C.addRlc=async function(){
  '<section class="cw-detail-hero"><div>'+caption+'<h1>Dodaj putni prelaz</h1><p>Novi RLC će odmah biti dostupan u PP32 projektu i zajedničkom pregledu kablova.</p></div><div class="cw-detail-symbol">＋</div></section>'+
  '<form class="cw-edit-form" id="cwRlcForm"><div class="cw-form-grid">'+
  '<label class="cw-field"><span>RLC broj</span><input id="cwRlcNumber" type="number" min="1" max="999" required placeholder="npr. 10"></label>'+
- '<label class="cw-field"><span>Naziv / oznaka prelaza</span><input id="cwRlcName" type="text" placeholder="npr. Putni prelaz ..." required></label>'+
- '<label class="cw-field"><span>Stacionaža (opciono)</span><input id="cwRlcKm" type="text" placeholder="km 0+000"></label></div>'+
+ '<label class="cw-field"><span>Naziv / oznaka prelaza (opciono)</span><input id="cwRlcName" type="text" placeholder="Možeš dodati naknadno"></label>'+
+ '<label class="cw-field"><span>Stacionaža (opciono)</span><input id="cwRlcKm" type="text" placeholder="km 0+000"></label>'+ 
+ '<label class="cw-field"><span>Pruga (opciono)</span><input id="cwRlcLine" list="cwRlcLines" type="text" placeholder="Unesi prugu ili ostavi prazno"><datalist id="cwRlcLines">'+[...new Set(d.rlcs.map(r=>r.railway_line).filter(Boolean))].map(l=>'<option value="'+E(l)+'"></option>').join('')+'</datalist></label></div>'+
  '<p id="cwFormMsg" class="cw-form-message" role="status"></p><div class="cw-form-actions">'+
  '<button type="button" class="cw-btn cw-btn-outline" id="cwCancel">Odustani</button>'+
  '<button type="submit" class="cw-btn" id="cwSave">Kreiraj RLC</button></div></form>');
@@ -230,12 +233,12 @@ C.addRlc=async function(){
   e.preventDefault();
   const n=Number(document.getElementById('cwRlcNumber').value),name=document.getElementById('cwRlcName').value.trim();
   const msg=document.getElementById('cwFormMsg');
-  if(!Number.isInteger(n)||n<1||n>999||!name){msg.textContent='Unesi ispravan RLC broj i naziv.';return;}
+  if(!Number.isInteger(n)||n<1||n>999){msg.textContent='Unesi ispravan broj RLC-a.';return;}
   const code='RLC'+n;
   if(d.rlcs.some(x=>x.code.toUpperCase()===code)){msg.textContent='RLC sa ovim brojem već postoji.';return;}
   const b=document.getElementById('cwSave');b.disabled=true;
   try{
-   const ps=await api('/rest/v1/rlcs',{method:'POST',headers:{Prefer:'return=representation'},body:JSON.stringify({project_id:d.p.id,code,design_name:name,chainage:document.getElementById('cwRlcKm').value.trim()||null,configured:false})});
+   const ps=await api('/rest/v1/rlcs',{method:'POST',headers:{Prefer:'return=representation'},body:JSON.stringify({project_id:d.p.id,code,design_name:name||null,chainage:document.getElementById('cwRlcKm').value.trim()||null,railway_line:document.getElementById('cwRlcLine').value.trim()||null,configured:false})});
    if(!ps?.[0]?.id)throw Error('RLC nije sačuvan.');
    await C.perRlc(ps[0].id);
   }catch(error){msg.textContent=error?.message||String(error);b.disabled=false;}
