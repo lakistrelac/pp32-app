@@ -31,18 +31,11 @@ function getStats(pt){
 }
 async function getData(){
  if(data)return data;
- if(window.CABLE_PLAN_SOURCE_DATA){
-  data=window.CABLE_PLAN_SOURCE_DATA;
-  if(!data.sheets?.length)throw Error('Podaci plana nisu ispravno učitani.');
-  state.selected=Math.max(0,data.sheets[0][1].reduce((o,p,i,a)=>Math.abs(stationNumber(p[1])-6500)<Math.abs(stationNumber(a[o][1])-6500)?i:o,0));
-  return data;
- }
- if(!window.CABLE_PLAN_PAYLOAD)throw Error('Nedostaju podaci Plana kablova.');
- if(typeof DecompressionStream==='undefined')throw Error('Ovaj pregledač ne podržava učitavanje plana. Otvori aplikaciju u novijem Safari/Chrome pregledaču.');
- const bytes=Uint8Array.from(atob(window.CABLE_PLAN_PAYLOAD),v=>v.charCodeAt(0));
- const unzipped=new Blob([bytes]).stream().pipeThrough(new DecompressionStream('deflate'));
- data=JSON.parse(await new Response(unzipped).text());
- if(!data.sheets?.length)throw Error('Podaci plana nisu ispravno učitani.');
+ if(!currentProject?.id)throw Error('Projekat nije izabran.');
+ const rows=await api('/rest/v1/project_cable_plans?project_id=eq.'+encodeURIComponent(currentProject.id)+'&select=plan_json');
+ if(!rows?.length)throw Error('Plan kablova nije dostupan ovom nalogu ili još nije unet.');
+ data=rows[0].plan_json;
+ if(!data?.sheets?.length)throw Error('Podaci plana nisu ispravno učitani.');
  state.selected=Math.max(0,data.sheets[0][1].reduce((o,p,i,a)=>Math.abs(stationNumber(p[1])-6500)<Math.abs(stationNumber(a[o][1])-6500)?i:o,0));
  return data;
 }
