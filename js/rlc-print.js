@@ -118,19 +118,24 @@ function xCell(v,r,c,style=0){
  if(typeof v==='number'&&Number.isFinite(v))return '<c r="'+ref+'" s="'+style+'"><v>'+v+'</v></c>';
  return '<c r="'+ref+'" s="'+style+'" t="inlineStr"><is><t xml:space="preserve">'+xml(v)+'</t></is></c>';
 }
-function sheetXml(rows){
+function sheetXml(rows,hasHeaders){
  const maxCols=Math.max(1,...rows.map(x=>x.length));
- const width=Math.min(42,Math.max(18,Math.round(160/maxCols)));
- const cols='<cols>'+Array.from({length:maxCols},(_,c)=>'<col min="'+(c+1)+'" max="'+(c+1)+'" width="'+width+'" customWidth="1"/>').join('')+'</cols>';
+ const cols='<cols>'+Array.from({length:maxCols},(_,c)=>{
+  const lengths=rows.slice(0,200).map(row=>String(row[c]??'').length);
+  const longest=Math.max(...lengths,9);
+  const width=Math.min(47,Math.max(c===0?14:17,longest+3));
+  return '<col min="'+(c+1)+'" max="'+(c+1)+'" width="'+width+'" customWidth="1"/>';
+ }).join('')+'</cols>';
  let table='';
  rows.forEach((data,i)=>{
   if(!data||!data.length)return;
-  const row=i+1,style=i===0?1:(i===2&&data.some(x=>typeof x==='string'&&x.toLowerCase().includes('vrsta'))?2:0);
-  table+='<row r="'+row+'">'+data.map((v,j)=>xCell(v,row,j,style)).join('')+'</row>';
+  const row=i+1,style=i===0?1:(hasHeaders&&i===2?2:0);
+  table+='<row r="'+row+'"'+(hasHeaders&&i===2?' ht="25" customHeight="1"':'')+'>'+data.map((v,j)=>xCell(v,row,j,style)).join('')+'</row>';
  });
+ const views=hasHeaders?'<sheetViews><sheetView workbookViewId="0"><pane ySplit="3" topLeftCell="A4" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews>':'<sheetViews><sheetView workbookViewId="0"/></sheetViews>';
  return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'+
  '<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">'+
- '<sheetViews><sheetView workbookViewId="0"/></sheetViews><sheetFormatPr defaultRowHeight="16"/>'+
+ views+'<sheetFormatPr defaultRowHeight="18"/>'+
  cols+'<sheetData>'+table+'</sheetData>'+
  '<pageMargins left="0.25" right="0.25" top="0.5" bottom="0.5" header="0.2" footer="0.2"/></worksheet>';
 }
@@ -202,7 +207,7 @@ R.makeWorkbook=d=>{
  '<cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs>'+
  '<cellXfs count="3"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/><xf numFmtId="0" fontId="1" fillId="0" borderId="0" xfId="0" applyFont="1"/><xf numFmtId="0" fontId="2" fillId="2" borderId="0" xfId="0" applyFont="1" applyFill="1"/></cellXfs></styleSheet>';
  const files={'[Content_Types].xml':ct,'_rels/.rels':rels,'xl/workbook.xml':book,'xl/_rels/workbook.xml.rels':bookRels,'xl/styles.xml':styles};
- sheets.forEach((s,i)=>files['xl/worksheets/sheet'+(i+1)+'.xml']=sheetXml(s.rows));
+ sheets.forEach((s,i)=>files['xl/worksheets/sheet'+(i+1)+'.xml']=sheetXml(s.rows,i>0));
  return zip(files);
 };
 R.excel=d=>{
