@@ -6,7 +6,7 @@
 const C=window.PP32Cables={};
 const E=s=>typeof esc==='function'?esc(s):String(s??'');
 const q=s=>encodeURIComponent(String(s));
-const fmt=n=>new Intl.NumberFormat('sr-RS',{maximumFractionDigits:2}).format(Number(n)||0);
+const fmt=n=>n===null||n===undefined?'—':new Intl.NumberFormat('sr-RS',{maximumFractionDigits:2}).format(Number(n)||0);
 const total=(a,key)=>a.reduce((sum,x)=>sum+Number(x[key]||0),0);
 const sortRlc=(a,b)=>(Number(String(a.code).replace(/\D/g,''))||0)-(Number(String(b.code).replace(/\D/g,''))||0);
 const note='<span class="cw-info-mark">i</span> Kolona <b>L (m)</b> preuzeta je iz projektne specifikacije. Zbir dužina i zbir kolone <b>br.</b> prikazuju se odvojeno; L se ne množi sa br.';
@@ -29,8 +29,9 @@ function group(rows){
  const map=new Map();
  rows.forEach(x=>{
   const key=[x.cable_type,x.construction,x.material].join('\u241f');
-  if(!map.has(key))map.set(key,{cable_type:x.cable_type,construction:x.construction,material:x.material,length_m:0,cable_count:0,rlcs:new Set()});
-  const g=map.get(key);g.length_m+=Number(x.length_m);g.cable_count+=Number(x.cable_count);g.rlcs.add(x.rlc_id);
+  if(!map.has(key))map.set(key,{cable_type:x.cable_type,construction:x.construction,material:x.material,length_m:0,cable_count:0,missing_lengths:0,missing_counts:0,rlcs:new Set()});
+  const g=map.get(key);if(x.length_m===null)g.missing_lengths++;else g.length_m+=Number(x.length_m);
+  if(x.cable_count===null)g.missing_counts++;else g.cable_count+=Number(x.cable_count);g.rlcs.add(x.rlc_id);
  });
  return [...map.values()].sort((a,b)=>a.cable_type.localeCompare(b.cable_type,'sr')||a.construction.localeCompare(b.construction,'sr',{numeric:true}));
 }
@@ -41,8 +42,8 @@ C.csv=function(rows){
   if(/^[\s]*[=+\-@]/.test(t))t="'"+t;
   return '"'+t.replace(/"/g,'""')+'"';
  };
- const header=['Tip kabla','Konstrukcija','Materijal','Zbir L (m)','Zbir br.','Broj RLC-ova'];
- const output=[header,...group(rows).map(g=>[g.cable_type,g.construction,g.material,g.length_m,g.cable_count,g.rlcs.size])];
+ const header=['Tip kabla','Konstrukcija','Materijal','Zbir poznatih L (m)','Zbir poznatih br.','Broj RLC-ova','Nepotpuno'];
+ const output=[header,...group(rows).map(g=>[g.cable_type,g.construction,g.material,g.length_m,g.cable_count,g.rlcs.size,Math.max(g.missing_lengths,g.missing_counts)?'NA PROVERU':''])];
  const csv='\ufeff'+output.map(r=>r.map(csvSafe).join(';')).join('\r\n');
  const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
  const url=window.URL.createObjectURL(blob);
@@ -67,8 +68,9 @@ C.overview=async function(){
  '<section class="cw-overview-content">'+
  '<div class="cw-heading"><div><span class="cw-eyebrow">SVE NA JEDNOM MESTU</span><h2>Ukupne potrebe</h2></div>'+
  (isAdmin()?'<button class="cw-btn cw-btn-outline" type="button" id="cwAddRlc">＋ Dodaj RLC</button>':'')+'</div>'+
- '<div class="cw-metrics" id="cwMetrics"></div>'+
+ '<div class="cw-metrics" id="cwMetrics"></div><p class="cw-missing-notice" id="cwMissingNotice" hidden></p>'+
  '<div class="cw-toolbar"><label class="cw-search"><span aria-hidden="true">⌕</span><input type="search" id="cwSearch" placeholder="Pretraga tipa i konstrukcije kabla…" aria-label="Pretraži specifikacije"></label>'+
+ '<select id="cwLineSelect" aria-label="Filtriraj po pruzi"><option value="all">Sve pruge</option>'+[...new Set(d.rlcs.map(r=>r.railway_line).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'sr')).map(l=>'<option value="'+E(l)+'">'+E(l)+'</option>').join('')+'<option value="unknown">Pruga nije određena</option></select>'+ 
  '<select id="cwSelect" aria-label="Filter po RLC-u"><option value="">Svi RLC-ovi</option>'+
  d.rlcs.map(r=>'<option value="'+E(r.id)+'">'+E(r.code)+' · '+E(r.design_name||'')+'</option>').join('')+'</select>'+
  '<button type="button" class="cw-btn cw-btn-outline" id="cwCsv">↓ CSV</button></div>'+
@@ -78,13 +80,17 @@ C.overview=async function(){
  '<div class="cw-rlc-grid" id="cwRlcCards"></div></section>';
  screen(header);
  actionsBack(()=>project(d.p.id));
- const input=document.getElementById('cwSearch'),select=document.getElementById('cwSelect');
+ const input=document.getElementById('cwSearch'),select=document.getElementById('cwSelect'),lineSelect=document.getElementById('cwLineSelect');
  let filtered=[];
  function render(){
-  const filterId=select.value,query=input.value.toLocaleLowerCase('sr').trim();
-  filtered=d.items.filter(x=>(!filterId||x.rlc_id===filterId)&&
+  const filterId=select.value,filterLine=lineSelect.value,query=input.value.toLocaleLowerCase('sr').trim();
+  const isVisibleRlc=r=>(!filterId||r.id===filterId)&&(filterLine==='all'||(filterLine==='unknown'&&!r.railway_line)||r.railway_line===filterLine);
+  filtered=d.items.filter(x=>isVisibleRlc(x.rlc)&&
    (!query||[x.cable_type,x.construction,x.material,x.rlc?.code,x.rlc?.design_name].join(' ').toLocaleLowerCase('sr').includes(query)));
   const groups=group(filtered);
+  const incomplete=filtered.filter(x=>x.length_m===null||x.cable_count===null).length;
+  const missing=document.getElementById('cwMissingNotice');missing.hidden=!incomplete;
+  missing.textContent=incomplete?'Na proveru: '+incomplete+' stavke nemaju podatke L (m) i/ili br. Zbirovi prikazuju samo poznate količine.':'';
   document.getElementById('cwMetrics').innerHTML=
    metric('Evidentirano dužina',total(filtered,'length_m'),'m')+
    metric('Zbir kolone br.',total(filtered,'cable_count'))+
@@ -94,17 +100,18 @@ C.overview=async function(){
   document.getElementById('cwSummaryRows').innerHTML=groups.length?groups.map(g=>
    '<tr><td><span class="cw-type-marker"></span><b>'+E(g.cable_type)+'</b></td>'+
    '<td>'+E(g.construction)+'</td><td>'+E(g.material||'—')+'</td>'+
-   '<td class="cw-num">'+fmt(g.length_m)+'</td><td class="cw-num">'+fmt(g.cable_count)+'</td>'+
+   '<td class="cw-num">'+fmt(g.length_m)+(g.missing_lengths?'<span class="cw-missing-dot" title="Nepotpuna dužina"> *</span>':'')+'</td><td class="cw-num">'+fmt(g.cable_count)+(g.missing_counts?'<span class="cw-missing-dot" title="Nepotpun broj"> *</span>':'')+'</td>'+
    '<td><span class="cw-soft-badge">'+g.rlcs.size+'</span></td></tr>').join(''):
    '<tr><td colspan="6" class="cw-table-empty">Nema kablova za zadatu pretragu.</td></tr>';
-  const listing=d.rlcs.filter(r=>!filterId||r.id===filterId);
+  const listing=d.rlcs.filter(isVisibleRlc);
   document.getElementById('cwRlcCount').textContent=listing.length+' RLC-ova';
   document.getElementById('cwRlcCards').innerHTML=listing.map((r,i)=>{
    const items=d.items.filter(x=>x.rlc_id===r.id);
    const matching=filtered.filter(x=>x.rlc_id===r.id);
+   const incompleteRlc=items.filter(x=>x.length_m===null||x.cable_count===null).length;
    return '<button type="button" class="cw-rlc-card" data-openrlc="'+E(r.id)+'">'+
-    '<span class="cw-rlc-card-head"><span class="cw-rlc-code">'+E(r.code)+'</span><span class="cw-card-status '+(items.length?'':'cw-card-blank')+'">'+(items.length?'SPECIFIKOVANO':'ČEKA UNOS')+'</span></span>'+
-    '<strong>'+E(r.design_name||'Putni prelaz')+'</strong><small>'+E(r.chainage||'Stacionaža nije uneta')+'</small>'+
+    '<span class="cw-rlc-card-head"><span class="cw-rlc-code">'+E(r.code)+'</span><span class="cw-card-status '+(incompleteRlc?'cw-card-warning':items.length?'':'cw-card-blank')+'">'+(incompleteRlc?'NA PROVERU':items.length?'SPECIFIKOVANO':'ČEKA UNOS')+'</span></span>'+
+    '<strong>'+E(r.design_name||'Naziv prelaza nije unet')+'</strong><small>'+E(r.railway_line||'Pruga nije određena')+' · '+E(r.chainage||'stacionaža nije uneta')+'</small>'+
     '<span class="cw-rlc-card-stat"><span><b>'+fmt(total(items,'length_m'))+'</b> m L</span><span><b>'+fmt(total(items,'cable_count'))+'</b> br.</span></span>'+
     '<span class="cw-rlc-card-foot">'+(matching.length===items.length?'Otvori specifikaciju':'Otvori · '+matching.length+' od '+items.length+' stavki')+' <b>↗</b></span></button>';
   }).join('');
@@ -112,6 +119,7 @@ C.overview=async function(){
  }
  input.addEventListener('input',render);
  select.addEventListener('change',render);
+ lineSelect.addEventListener('change',render);
  document.getElementById('cwCsv').onclick=()=>C.csv(filtered);
  if(isAdmin())document.getElementById('cwAddRlc').onclick=()=>C.addRlc();
  render();
