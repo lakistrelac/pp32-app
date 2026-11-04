@@ -61,3 +61,16 @@
 @media(max-width:950px){.rlcgrid.rg-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:650px){.rg-project-hero{min-height:0;border-radius:17px;padding:22px}.rg-heading{align-items:flex-start}.rg-heading h2{font-size:22px}.rg-heading p{font-size:11px}.rg-count{font-size:10px}.rg-toolbar{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px}.rg-search{grid-column:1/-1}.rg-toolbar select{max-width:none;width:100%;min-width:0}.rlcgrid.rg-grid{grid-template-columns:1fr;gap:11px}.rlcgrid.rg-grid .rg-card{min-height:247px;padding:18px}.rg-name{min-height:0}.rg-editor-form{grid-template-columns:1fr;padding:18px}.rg-editor-hero{padding:23px 20px}}
 @media(prefers-reduced-motion:reduce){.rlcgrid.rg-grid .rg-card{transition:none!important}.rlcgrid.rg-grid .rg-card:hover{transform:none!important}}
+
+
+/* Cable quantities: missing source data are never silently displayed as zero. */
+.cw-missing-notice{border:1px solid #efd19b;background:#fff8ea;border-left:4px solid #d5a14e;color:#8f682b;padding:13px 15px;border-radius:11px;font-size:12px;font-weight:750;line-height:1.6;margin:12px 0 18px}
+.cw-missing-notice[hidden]{display:none!important}
+.cw-to-check{display:inline-flex;align-items:center;white-space:nowrap;padding:5px 8px;background:#fff4df;border:1px solid #eed9b6;border-radius:8px;color:#936a2e;font-size:10px;font-weight:900}
+.cw-missing-dot{color:#bd8b39;font-size:15px;font-weight:900;vertical-align:middle}
+.cw-card-status.cw-card-warning{color:#a46b28;background:#fff3dd;border:1px solid #f3d7ac;border-radius:99px;padding:6px 8px}
+.cw-null-hint{grid-column:1/-1;border:1px solid #ead7b4;border-radius:11px;background:#fff9ed;color:#8b6a3e;font-size:11px;line-height:1.6;padding:10px 13px;margin:0 0 12px}
+.cw-toolbar{align-items:stretch}
+.cw-toolbar select{min-width:170px;max-width:235px;flex:0 1 200px}
+@media(max-width:900px){.cw-toolbar select{flex:1 1 180px;max-width:none}}
+@media(max-width:660px){.cw-toolbar{grid-template-columns:repeat(2,minmax(0,1fr))}.cw-toolbar .cw-search{grid-column:1/-1}.cw-toolbar select{width:100%;min-width:0;max-width:none;flex:auto}.cw-toolbar .cw-btn{grid-column:1/-1}}
