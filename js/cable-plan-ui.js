@@ -55,35 +55,47 @@ window.corridorHome=async function(){
  holder.appendChild(b);b.onclick=window.corridorCablePlan;
 };
 function searchItems(){
- const points=data.sheets[state.sheet][1],q=state.query.trim().toLowerCase();
- let indices=points.map((_,i)=>i).filter(i=>{
-  const s=getStats(points[i]);
-  if(state.filter==='pipes'&&!s.pipes.length)return false;
-  if(state.filter==='marked'&&!s.groups.length)return false;
-  if(!q)return true;
-  const p=points[i],text=(p[0]+' '+p[1]+' '+station(p[1])+' '+s.all.map(x=>x.text).join(' ')).toLowerCase();
-  return text.includes(q);
+ const q=state.query.trim().toLowerCase();
+ const sources=q?data.sheets.map((_,i)=>i):[state.sheet];
+ let matches=[];
+ sources.forEach(sheet=>{
+  data.sheets[sheet][1].forEach((point,index)=>{
+   const st=getStats(point);
+   if(state.filter==='pipes'&&!st.pipes.length)return;
+   if(state.filter==='marked'&&!st.groups.length)return;
+   const name=String(point[0]||'');
+   const tokens=name.toLowerCase().match(/[a-z0-9čćžšđ-]+/gi)||[];
+   const exact=!!q&&tokens.includes(q);
+   const content=(name+' '+point[1]+' '+station(point[1])+' '+st.all.map(x=>x.text).join(' ')).toLowerCase();
+   if(!q||exact||content.includes(q))matches.push({sheet,index,exact});
+  });
  });
- let near=false;
- if(!indices.length&&q&&/^\d+(?:\+\d+(?:[.,]\d+)?)?$/.test(q)){
+ state.near=false;
+ if(q&&matches.some(m=>m.exact))matches=matches.filter(m=>m.exact);
+ if(!matches.length&&q&&/^\d+(?:\+\d+(?:[.,]\d+)?)?$/.test(q)){
   const n=q.includes('+')?Number(q.split('+')[0])*1000+Number(q.split('+')[1].replace(',','.')):Number(q);
-  indices=points.map((p,i)=>i).filter(i=>Number.isFinite(stationNumber(points[i][1]))&&(
-   state.filter!=='pipes'||getStats(points[i]).pipes.length
-  )).sort((a,b)=>Math.abs(stationNumber(points[a][1])-n)-Math.abs(stationNumber(points[b][1])-n)).slice(0,8);
-  near=true;
+  data.sheets.forEach((sh,sheet)=>sh[1].forEach((point,index)=>{
+   const st=getStats(point);
+   if(state.filter==='pipes'&&!st.pipes.length)return;
+   if(state.filter==='marked'&&!st.groups.length)return;
+   if(Number.isFinite(stationNumber(point[1])))matches.push({sheet,index,exact:false});
+  }));
+  matches.sort((a,b)=>Math.abs(stationNumber(data.sheets[a.sheet][1][a.index][1])-n)-Math.abs(stationNumber(data.sheets[b.sheet][1][b.index][1])-n));
+  matches=matches.slice(0,8);
+  state.near=true;
  }
- if(state.filter==='many')indices.sort((a,b)=>getStats(points[b]).cables.length-getStats(points[a]).cables.length);
- state.near=near;
- return indices;
+ if(state.filter==='many')matches.sort((a,b)=>getStats(data.sheets[b.sheet][1][b.index]).cables.length-getStats(data.sheets[a.sheet][1][a.index]).cables.length);
+ return matches;
 }
-function pointItems(indices){
- const points=data.sheets[state.sheet][1];
- return indices.map(i=>{
-  const p=points[i],st=getStats(p),active=i===state.selected;
-  const done=(()=>{try{return JSON.parse(localStorage.getItem('pp32_cable_check_'+state.sheet+'_'+i)||'null')}catch(e){return null}})();
-  return '<button class="cb-location '+(active?'is-active':'')+'" data-cb-point="'+i+'">'+
-   '<span class="cb-location-top"><strong>'+E(station(p[1]))+'</strong><span class="cb-location-n">'+(done?'●':'')+st.cables.length+' kabl.</span></span>'+
+function pointItems(matches){
+ return matches.map(m=>{
+  const p=data.sheets[m.sheet][1][m.index],st=getStats(p);
+  const active=m.sheet===state.sheet&&m.index===state.selected;
+  const done=(()=>{try{return JSON.parse(localStorage.getItem('pp32_cable_check_'+m.sheet+'_'+m.index)||'null')}catch(e){return null}})();
+  return '<button class="cb-location '+(active?'is-active':'')+'" data-cb-sheet-ref="'+m.sheet+'" data-cb-point="'+m.index+'">'+
+   '<span class="cb-location-top"><strong>'+E(station(p[1]))+'</strong><span class="cb-location-n">'+(done?'● ':'')+st.cables.length+' kabl.</span></span>'+
    '<span class="cb-location-name">'+E(p[0]||'Neimenovana tačka')+'</span>'+
+   (state.query.trim()?'<span class="cb-location-segment">'+E(data.sheets[m.sheet][0])+(m.exact?' · Tačno poklapanje':'')+'</span>':'')+
    '<span class="cb-location-footer">'+(st.pipes.length?'<span>◈ '+st.pipes.length+' cev. ozn.</span>':'<span>· Bez lokalne oznake cevi</span>')+(st.groups.length?'<i>CRVENE GRUPE</i>':'')+'</span>'+
    '</button>';
  }).join('');
@@ -167,8 +179,8 @@ function render(){
  '<div class="cb-segment-head"><div><small>01 / ODABERITE DEONICU</small><h2>Kablovski koridori</h2></div><span>Preuzeto iz sva tri lista izvorne tabele</span></div>'+
  '<div class="cb-segment-tabs">'+data.sheets.map((s,i)=>'<button data-cb-sheet="'+i+'" class="'+(i===state.sheet?'active':'')+'"><span>0'+(i+1)+'</span><strong>'+E(s[0])+'</strong><small>'+s[1].length+' referentnih tačaka</small></button>').join('')+'</div>'+
  '<div class="cb-explore-head"><div><small>02 / ISTRAŽITE PLAN</small><h2>Pregled po stacionažama</h2></div></div>'+
- '<div class="cb-toolbar"><div class="cb-search-wrap"><span>⌕</span><input id="cbQuery" autocomplete="off" placeholder="Pretraži km 6+500, ST8, KO-101, ITU-T..." value="'+E(state.query)+'"></div><select id="cbFilter"><option value="all" '+(state.filter==='all'?'selected':'')+'>Sve tačke</option><option value="pipes" '+(state.filter==='pipes'?'selected':'')+'>Sa cevnim oznakama</option><option value="marked" '+(state.filter==='marked'?'selected':'')+'>Sa crvenim grupama</option><option value="many" '+(state.filter==='many'?'selected':'')+'>Najviše kablova prvo</option></select></div>'+
- '<div class="cb-workspace"><aside class="cb-sidebar"><div class="cb-sidebar-title"><b>STACIONAŽE</b><span id="cbCounter">'+list.length+' / '+data.sheets[state.sheet][1].length+'</span></div><div id="cbLocationList" class="cb-list">'+(state.near?'<div class="cb-nearest">Nema tačnog pogotka — najbliže stacionaže</div>':'')+pointItems(list)+'</div></aside>'+
+ '<div class="cb-toolbar"><div class="cb-search-wrap"><span>⌕</span><input id="cbQuery" autocomplete="off" placeholder="Traži element ST2, KO-101, km 6+500 ili tip kabla..." value="'+E(state.query)+'"></div><select id="cbFilter"><option value="all" '+(state.filter==='all'?'selected':'')+'>Sve tačke</option><option value="pipes" '+(state.filter==='pipes'?'selected':'')+'>Sa cevnim oznakama</option><option value="marked" '+(state.filter==='marked'?'selected':'')+'>Sa crvenim grupama</option><option value="many" '+(state.filter==='many'?'selected':'')+'>Najviše kablova prvo</option></select></div>'+
+ '<div class="cb-workspace"><aside class="cb-sidebar"><div class="cb-sidebar-title"><b id="cbListTitle">'+(state.query.trim()?'REZULTATI · SVE DEONICE':'STACIONAŽE')+'</b><span id="cbCounter">'+list.length+' / '+(state.query.trim()?total:data.sheets[state.sheet][1].length)+'</span></div><div id="cbLocationList" class="cb-list">'+(state.near?'<div class="cb-nearest">Nema tačnog pogotka — najbliže stacionaže</div>':'')+pointItems(list)+'</div></aside>'+
  detail()+'</div><footer class="cb-footer"><b>PLAN KABLOVA / RADNA VERZIJA</b><span>Podaci su očitani iz priložene Excel tabele. Crvene grupe su rekonstrukcija isprekidanih okvira; fizičko stanje mora se proveriti na terenu. Izvorni podaci nisu menjani.</span></footer></div>';
  shell(h);
  document.getElementById('cbBack').onclick=corridorHome;
@@ -182,11 +194,12 @@ function render(){
 function updateList(){
  const list=searchItems(),el=document.getElementById('cbLocationList');
  el.innerHTML=(state.near?'<div class="cb-nearest">Nema tačnog pogotka — najbliže stacionaže</div>':'')+(list.length?pointItems(list):'<div class="cb-no-results">Nema rezultata. Pokušaj naziv elementa, tip kabla ili stacionažu.</div>');
- document.getElementById('cbCounter').textContent=list.length+' / '+data.sheets[state.sheet][1].length;
+ document.getElementById('cbCounter').textContent=list.length+' / '+(state.query.trim()?data.sheets.reduce((n,s)=>n+s[1].length,0):data.sheets[state.sheet][1].length);
+ document.getElementById('cbListTitle').textContent=state.query.trim()?'REZULTATI · SVE DEONICE':'STACIONAŽE';
  bindPoints();
 }
 function bindPoints(){
- document.querySelectorAll('[data-cb-point]').forEach(b=>b.onclick=()=>{state.selected=+b.dataset.cbPoint;state.tab='rov';render()});
+ document.querySelectorAll('[data-cb-point]').forEach(b=>b.onclick=()=>{state.sheet=+b.dataset.cbSheetRef;state.selected=+b.dataset.cbPoint;state.tab='rov';render()});
 }
 function bindDetail(){
  document.querySelectorAll('[data-cb-step]').forEach(b=>b.onclick=()=>{state.selected=Math.max(0,Math.min(data.sheets[state.sheet][1].length-1,state.selected+Number(b.dataset.cbStep)));render()});
