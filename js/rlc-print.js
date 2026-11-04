@@ -207,9 +207,9 @@ R.makeWorkbook=d=>{
 };
 R.excel=d=>{
  const blob=R.makeWorkbook(d);
- const href=URL.createObjectURL(blob),a=document.createElement('a');a.href=href;a.download='PP32_'+d.r.code+'_specifikacija_kolicina.xlsx';
+ const href=window.URL.createObjectURL(blob),a=document.createElement('a');a.href=href;a.download='PP32_'+d.r.code+'_specifikacija_kolicina.xlsx';
  document.body.appendChild(a);a.click();a.remove();
- window.setTimeout(()=>URL.revokeObjectURL(href),1000);
+ window.setTimeout(()=>window.URL.revokeObjectURL(href),1000);
 };
 const previousRlc=window.rlc;
 if(typeof previousRlc==='function'){
