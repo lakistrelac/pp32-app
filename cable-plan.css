@@ -172,3 +172,5 @@
  .cb-detail-top small{font-size:10px}
  .cb-block-head{flex-direction:column}
 }
+
+.cb-location-segment{display:block;margin:6px 0 8px;padding:5px 7px;border-radius:6px;background:#edf7f8;color:#237e8d;font-size:10px;font-weight:800;line-height:1.35}
