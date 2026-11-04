@@ -240,6 +240,11 @@ if(typeof oldProject==='function'){
   if(currentProject?.code!=='pp32')return;
   const grid=document.querySelector('.rlcgrid');
   if(!grid||document.querySelector('.cw-project-cta'))return;
+  // New RLCs retain natural numeric order (RLC9 before RLC10).
+  [...grid.querySelectorAll('[data-r]')].sort((a,b)=>{
+   const num=node=>Number((node.querySelector('h3')?.textContent||'').replace(/\D/g,''))||0;
+   return num(a)-num(b);
+  }).forEach(node=>grid.appendChild(node));
   grid.insertAdjacentHTML('beforebegin','<button class="cw-project-cta" type="button" id="cwProjectCta">'+
    '<span class="cw-cta-icon">⌁</span><span class="cw-cta-copy"><small>PP32 / MATERIJALNA SPECIFIKACIJA</small>'+
    '<strong>Kablovi · Ukupna rekapitulacija</strong><span>Pregled dužina i količina svih putnih prelaza, sa mogućnošću izmene.</span></span>'+
