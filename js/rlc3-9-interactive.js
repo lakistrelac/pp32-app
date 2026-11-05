@@ -155,7 +155,7 @@ A.open=async function(id){
  '<p class="il-caution">'+E(cfg.caution)+'</p><p>Napojni kabl: '+E(cfg.feed)+'. Projektne dužine kablova ne predstavljaju automatski dužinu iskopanog rova.</p></section>'+
  '<div id="ilmModalRoot"></div></main>';
  shell(screen);
- document.getElementById('ilmBack').onclick=()=>rlc(id);
+ document.getElementById('ilmBack').onclick=()=>window.rlc(id).catch(error);
  const box=document.getElementById('ilmMap'),zoomLabel=document.getElementById('ilmZoomText');
  function zoom(delta){page.zoom=Math.min(1.65,Math.max(.55,Math.round((page.zoom+delta)*100)/100));const s=box.querySelector('svg');if(s){s.style.width=Math.round(1240*page.zoom)+'px';s.style.height=Math.round(770*page.zoom)+'px'}zoomLabel.textContent=Math.round(page.zoom*100)+'%'}
  function refresh(){
