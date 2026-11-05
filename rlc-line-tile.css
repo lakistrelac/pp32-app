@@ -1,0 +1,61 @@
+/* RLC2–RLC9: polished interactive line tile matching upgraded PP32 module cards. */
+.tiles .il-feature-tile{
+ position:relative;display:flex;flex-direction:column;align-items:stretch;
+ min-height:184px;text-align:left;gap:0;padding:18px 19px 15px;
+ background:radial-gradient(ellipse at 94% 0%,rgba(118,236,214,.20),transparent 53%),linear-gradient(135deg,#123047 0%,#1b4b5d 65%,#1e5d65 100%);
+ border:1px solid #397c88;border-radius:17px;color:#f0fbfc;
+ box-shadow:0 11px 28px rgba(18,60,76,.16);
+ overflow:hidden;cursor:pointer;
+ transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease;
+}
+.tiles .il-feature-tile:before{
+ content:"";position:absolute;left:0;top:0;width:100%;height:3px;
+ background:linear-gradient(90deg,#81e6d2,#7acbdc 65%,transparent);
+}
+.tiles .il-feature-tile:after{
+ content:"";position:absolute;right:-30px;top:20px;height:140px;width:140px;
+ border:1px solid rgba(185,238,232,.10);border-radius:24px;transform:rotate(-20deg);pointer-events:none;
+}
+.tiles .il-feature-tile:hover{
+ border-color:#8accd0;transform:translateY(-3px);box-shadow:0 19px 33px rgba(14,55,74,.24);
+}
+.tiles .il-feature-tile:focus-visible{outline:3px solid #4dc4b9;outline-offset:3px}
+.il-feature-top{display:flex;align-items:flex-start;justify-content:space-between;gap:9px;margin-bottom:12px;position:relative;z-index:1}
+.il-feature-icon{
+ display:grid;place-items:center;height:43px;width:43px;border-radius:12px;
+ background:rgba(183,237,230,.12);border:1px solid rgba(172,232,227,.25);
+ color:#b0f1ec;font-size:31px;line-height:1;font-weight:700;
+}
+.il-feature-badge{
+ display:inline-flex;align-items:center;gap:7px;white-space:nowrap;
+ padding:7px 8px;border:1px solid rgba(162,233,210,.22);border-radius:99px;
+ background:rgba(32,95,84,.47);font-size:9px;letter-spacing:.075em;
+ color:#b6eee1;font-weight:900;
+}
+.il-feature-dot{width:7px;height:7px;background:#76e7bd;box-shadow:0 0 0 3px rgba(118,231,189,.12);border-radius:50%}
+.tiles .il-feature-tile .il-feature-name{
+ margin:0 0 5px;color:#fff;font-size:clamp(17px,2vw,20px);font-weight:900;letter-spacing:-.025em;
+ position:relative;z-index:1;
+}
+.tiles .il-feature-tile .il-feature-desc{display:block;font-size:11px;line-height:1.5;color:#bbd9df;max-width:250px;position:relative;z-index:1}
+.il-feature-footer{
+ position:relative;z-index:1;margin-top:auto;padding-top:14px;display:flex;
+ align-items:center;justify-content:space-between;gap:12px;
+ font-size:9px;letter-spacing:.06em;color:#a6cdd4;font-weight:750;
+}
+.il-feature-footer>span:first-child{white-space:normal}
+.il-feature-footer b{font-size:11px;font-weight:950;color:#e9fafa}
+.il-feature-footer i{color:#73b5b7;font-style:normal;padding:0 5px}
+.il-feature-arrow{
+ display:grid;flex:none;place-items:center;width:32px;height:32px;border-radius:50%;
+ color:#acf3e8;border:1px solid rgba(150,238,220,.27);background:rgba(122,217,209,.08);font-size:20px;
+}
+.il-page .il-back{
+ display:inline-flex;align-items:center;min-height:37px;padding:8px 12px;
+ border:1px solid #cce2e8;border-radius:10px;background:#fff;color:#2b7186;
+ font-size:12px;font-weight:850;box-shadow:0 4px 12px rgba(15,58,73,.05);
+}
+.il-page .il-back:hover{background:#ecf8f9;border-color:#93c5ce}
+.il-page .il-back:focus-visible{outline:3px solid #6cc4c5;outline-offset:2px}
+@media(max-width:700px){.tiles .il-feature-tile{min-height:175px;padding:16px}.tiles .il-feature-tile .il-feature-name{font-size:19px}}
+@media(prefers-reduced-motion:reduce){.tiles .il-feature-tile{transition:none}.tiles .il-feature-tile:hover{transform:none}}
