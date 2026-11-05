@@ -1,0 +1,136 @@
+/* RLC2 interactive SVG pilot — vector schematic, live status editing and weighted progress */
+.il-page{padding:24px 12px 45px;color:#1c4155}
+.il-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
+.il-back{border:none;background:transparent;padding:7px 0;color:#32748a;font-size:12px;font-weight:850;cursor:pointer}
+.il-pilot-badge{display:inline-flex;align-items:center;gap:9px;padding:8px 12px;border:1px solid #cbe3e5;background:#f0f9f8;border-radius:99px;font-size:10px;font-weight:900;color:#3c8590;letter-spacing:.06em}
+.il-pilot-badge i{width:7px;height:7px;background:#3fbe93;border-radius:50%;box-shadow:0 0 0 4px #40be9324}
+.il-hero{position:relative;display:flex;align-items:center;justify-content:space-between;gap:20px;overflow:hidden;background:radial-gradient(ellipse at 90% 10%,#53b5b52f,transparent 60%),linear-gradient(115deg,#102b43,#174559 66%,#1b5566);border:1px solid #3b7985;border-radius:22px;box-shadow:0 17px 36px #0f32411d;color:#fff;padding:31px 35px}
+.il-hero:before{position:absolute;inset:0;content:"";pointer-events:none;background:repeating-linear-gradient(90deg,transparent 0,transparent 67px,#bce7e405 68px,transparent 69px)}
+.il-hero>div{position:relative;z-index:1}
+.il-overline{color:#9ad3d9;font-size:10px;font-weight:900;letter-spacing:.15em}
+.il-hero h1{margin:12px 0 8px;color:#fff;line-height:1.1;font-size:clamp(31px,4vw,49px);font-weight:950;letter-spacing:-.045em}
+.il-hero h1 em{font-style:normal;color:#83d3d4}
+.il-hero h1 span{font-size:.55em;font-weight:650;color:#b5d9df;letter-spacing:-.025em}
+.il-hero p{margin:0;color:#b5d9e2;font-size:13px;line-height:1.6}
+.il-hero-progress{border-left:1px solid #ffffff32;padding:10px 0 10px 27px;text-align:right;display:grid;gap:4px;min-width:180px}
+.il-hero-progress strong{font-size:clamp(37px,4vw,56px);letter-spacing:-.06em;font-weight:950;line-height:1.1;color:#c9f7ee}
+.il-hero-progress span{font-size:10px;letter-spacing:.14em;font-weight:900;color:#b9d5e0}
+.il-progress-panel{background:#fff;border:1px solid #d9e5eb;border-radius:17px;padding:19px 21px;margin:16px 0 20px;box-shadow:0 8px 24px #18465c08}
+.il-progress-summary{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.il-progress-summary>div:first-child{display:flex;align-items:center;gap:16px}
+.il-progress-summary>div:first-child>span{font-size:10px;font-weight:900;letter-spacing:.09em;color:#688895}
+.il-progress-summary strong{color:#1e687c;font-size:27px;font-weight:950;letter-spacing:-.045em}
+.il-progress-description{font-size:11px;color:#92a4af}
+.il-progress-bar{background:#e5eff1;border-radius:99px;height:12px;overflow:hidden}
+.il-progress-bar span{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#368fa4,#59c9a4);transition:width .28s}
+.il-progress-parts{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:14px}
+.il-progress-parts>div{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:5px 12px;background:#f5f9fa;border:1px solid #e5eef1;border-radius:11px;padding:12px 15px}
+.il-progress-parts span{color:#678996;font-size:10px;font-weight:900;letter-spacing:.04em}
+.il-progress-parts b{font-size:15px;color:#25697b;font-weight:900;font-variant-numeric:tabular-nums;text-align:right}
+.il-progress-parts small{grid-column:1/-1;font-size:11px;color:#839ca7}
+.il-workbench{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:13px;align-items:start}
+.il-diagram-panel,.il-sidebar{border:1px solid #dae7eb;border-radius:18px;background:#fff;box-shadow:0 10px 24px #1337480c;overflow:hidden;min-width:0}
+.il-diagram-toolbar{padding:17px 19px 12px;display:flex;justify-content:space-between;align-items:center;gap:16px}
+.il-diagram-toolbar b{font-size:15px;letter-spacing:-.02em;color:#204d62}
+.il-diagram-toolbar p{font-size:11px;margin:5px 0 0;color:#8097a1}
+.il-diagram-controls{display:flex;align-items:center;gap:6px;flex:none}
+.il-diagram-controls button{min-width:33px;min-height:32px;border:1px solid #d8e6ec;border-radius:8px;background:#f4f9fa;color:#357287;font-weight:900;padding:4px 8px}
+.il-diagram-controls button:hover{background:#e6f4f6}
+.il-diagram-controls span{font-size:11px;font-weight:900;color:#417c8e;min-width:38px;text-align:center}
+.il-legend{display:flex;align-items:center;gap:15px;padding:0 19px 13px;color:#738c99;font-size:10px;font-weight:700;flex-wrap:wrap}
+.il-legend span{display:flex;align-items:center;gap:6px}
+.il-legend i{width:9px;height:9px;border-radius:50%;display:inline-block}
+.il-legend-neutral{background:#a7b9c3}.il-legend-prepared{background:#d8a64e}.il-legend-done{background:#35ac82}
+.il-svg-scroll{overflow:auto;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;max-height:680px;border-top:1px solid #e5eff2;border-bottom:1px solid #e5eff2;background:#f7fbfc;position:relative}
+.il-svg{display:block;max-width:none;min-width:0;user-select:none;-webkit-user-select:none;transition:width .1s}
+.il-svg [data-il]{cursor:pointer;outline:none}
+.il-svg [data-il]:focus-visible .il-symbol,.il-svg [data-il]:focus-visible .il-trench-line{filter:drop-shadow(0 0 4px #2593ab)}
+.il-svg [data-il]:focus-visible .il-hotspot{fill:#62bac321}
+.il-svg .il-spot-label{font-family:Arial,sans-serif;font-size:12px;font-weight:750;letter-spacing:.15px;fill:#4a6474;pointer-events:none}
+.il-svg .il-unmarked .il-symbol{fill:#f9fbfc;stroke:#7d9aaa;stroke-width:2.4}
+.il-svg .il-unmarked .il-symbol-dot{fill:#668e9f}
+.il-svg .il-unmarked .il-line-symbol{fill:none;stroke:#597c91;stroke-width:2.2}
+.il-svg .il-prepared .il-symbol{fill:#ffedc7;stroke:#ce8b26;stroke-width:3}
+.il-svg .il-prepared .il-symbol-dot{fill:#ac741e}
+.il-svg .il-prepared .il-line-symbol{fill:none;stroke:#ce8b26;stroke-width:3}
+.il-svg .il-prepared .il-spot-label{fill:#a56c22}
+.il-svg .il-done .il-symbol{fill:#ccf7e3;stroke:#19946c;stroke-width:3}
+.il-svg .il-done .il-symbol-dot{fill:#147652}
+.il-svg .il-done .il-line-symbol{fill:none;stroke:#20956f;stroke-width:3}
+.il-svg .il-done .il-spot-label{fill:#167b5c}
+.il-svg .il-hotspot{fill:transparent}
+.il-svg .il-spot:hover .il-hotspot{fill:#73c7c82a}
+.il-svg .il-map-heading{font-family:Arial,sans-serif;font-size:15px;letter-spacing:1.2px;font-weight:900;fill:#24566c}
+.il-svg .il-km-mark{font-size:12px;font-weight:650;fill:#81a0aa}
+.il-svg .il-map-corner{font-family:Arial,sans-serif;font-size:9px;letter-spacing:.6px;font-weight:750;fill:#8eabb6}
+.il-svg .il-cross-label{font-family:Arial,sans-serif;font-size:10px;font-weight:900;fill:#4f7181}
+.il-svg .il-road-title{font-family:Arial,sans-serif;font-size:15px;font-weight:900;fill:#256678}
+.il-svg .il-road-sub{font-family:Arial,sans-serif;font-size:8px;font-weight:800;letter-spacing:1px;fill:#5e919b}
+.il-svg .il-side-label{font-family:Arial,sans-serif;font-size:11px;font-weight:850;letter-spacing:.6px;fill:#718f9c}
+.il-svg .il-station rect{fill:#e7f4f3;stroke:#57a9a5;stroke-width:1.5}
+.il-svg .il-station text{font-family:Arial,sans-serif;font-size:11px;font-weight:900;fill:#24697b}
+.il-svg .il-station text.il-station-small{font-size:8px;font-weight:750;fill:#608e95}
+.il-svg .il-station circle{fill:#45ac91}
+.il-svg .il-sensor-destination text{font-family:Arial,sans-serif;font-size:10px;fill:#6b99a8;font-weight:850}
+.il-svg .il-map-note{font-family:Arial,sans-serif;font-size:9px;fill:#819ca8;letter-spacing:.14px}
+.il-svg .il-trench-line{transition:stroke .18s;stroke:#4599ad}
+.il-svg .il-trench.il-unmarked .il-trench-line{stroke:#96abb7;stroke-dasharray:13 10}
+.il-svg .il-trench.il-prepared .il-trench-line{stroke:#e2ac47;stroke-dasharray:15 8}
+.il-svg .il-trench.il-done .il-trench-line{stroke:#229a6f;stroke-dasharray:none}
+.il-svg .il-trench-label-bg{fill:#d7e9ec;stroke:#8bb4bf}
+.il-svg .il-trench.il-prepared .il-trench-label-bg{fill:#fff1cf;stroke:#d9ad57}
+.il-svg .il-trench.il-done .il-trench-label-bg{fill:#d7f6e3;stroke:#5bb892}
+.il-svg .il-trench-label{fill:#24596c;font-size:11px;font-family:Arial,sans-serif;font-weight:900;letter-spacing:.3px}
+.il-svg .il-trench:hover .il-trench-line{stroke-width:13}
+.il-diagram-foot{display:flex;justify-content:space-between;gap:12px;padding:10px 15px;font-size:10px;color:#7a96a4}
+.il-sidebar{max-height:800px;display:flex;flex-direction:column}
+.il-list-header{padding:17px 15px 13px;border-bottom:1px solid #e5eef1}
+.il-list-header>div>span{font-size:9px;letter-spacing:.1em;font-weight:900;color:#80a1af}
+.il-list-header h2{margin:5px 0 0;color:#215368;font-size:18px;letter-spacing:-.035em}
+.il-list-header small{font-size:10px;color:#7a98a4}
+.il-list-items{overflow:auto;max-height:680px}
+.il-list-item{display:flex;width:100%;gap:9px;align-items:center;text-align:left;background:#fff;border:0;border-bottom:1px solid #eef3f5;padding:11px 12px;cursor:pointer;color:#1d4d61}
+.il-list-item:hover{background:#f4fafb}
+.il-list-symbol{flex:none;display:grid;place-items:center;width:32px;height:32px;background:#edf3f6;border-radius:10px;font-size:20px;font-weight:950;color:#6b8c9b}
+.il-list-copy{display:grid;gap:4px;min-width:0;flex:1}
+.il-list-copy strong{font-size:11px;font-weight:900;overflow-wrap:anywhere}
+.il-list-copy small{font-size:10px;color:#8da1aa;line-height:1.45;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.il-list-status{font-size:9px;font-weight:850;color:#7e93a0;white-space:nowrap}
+.il-list-item.il-prepared .il-list-symbol{background:#fff1d6;color:#b78129}
+.il-list-item.il-prepared .il-list-status{color:#ac802f}
+.il-list-item.il-done .il-list-symbol{background:#dff5e9;color:#21855d}
+.il-list-item.il-done .il-list-status{color:#238260}
+.il-method{margin-top:16px;padding:19px 21px;border:1px solid #d9e7eb;border-radius:15px;background:#fff;color:#547a8b}
+.il-method>b{font-size:10px;letter-spacing:.14em;color:#235f76}
+.il-method p{font-size:12px;line-height:1.65;margin:9px 0 0}
+.il-method .il-caution{margin-top:12px;border-top:1px solid #e8eff2;padding-top:12px;color:#8d6937}
+.il-rlc-progress-explain{font-size:10px;color:#7396a3;max-width:230px}
+.il-card-tag{font-size:9px;margin-left:5px;background:#e4f6ef;color:#258361;border:1px solid #c8e6d8;border-radius:99px;padding:3px 6px;white-space:nowrap}
+.il-report-info{margin:12px 0;background:#ebf7f3;border:1px solid #cbe8dd;border-radius:9px;padding:11px;color:#28735c;font-size:12px}
+.il-dialog[hidden]{display:none}
+.il-dialog{position:fixed;inset:0;z-index:500;display:flex;align-items:center;justify-content:center;padding:18px}
+.il-dialog-scrim{position:absolute;inset:0;background:#102c45a6;backdrop-filter:blur(4px)}
+.il-dialog-pane{position:relative;width:min(460px,100%);max-height:90vh;overflow:auto;background:#fff;border:1px solid #d3e3e8;border-radius:22px;box-shadow:0 25px 90px #091f30aa;padding:25px 25px 23px}
+.il-dialog-top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.il-dialog-top>span{font-size:10px;font-weight:900;letter-spacing:.14em;color:#5896a5}
+.il-dialog-top button{font-size:25px;color:#617e8d;background:#f0f5f7;border:1px solid #dfebef;border-radius:50%;width:36px;height:36px}
+.il-dialog-pane h2{font-size:25px;margin:17px 0 12px;color:#224c60;letter-spacing:-.045em}
+.il-dialog-pane>p{font-size:12px;line-height:1.6;color:#7e97a3}
+.il-current-status{padding:13px 0;margin:16px 0;border-top:1px solid #e8eef0;border-bottom:1px solid #e8eef0;display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#6d8792}
+.il-current-status b{font-size:12px;border-radius:99px;padding:7px 10px}
+.il-current-status .il-unmarked{color:#7d91a1;background:#e8eff3}
+.il-current-status .il-prepared{color:#ac771f;background:#fff0cf}
+.il-current-status .il-done{color:#178461;background:#e0f5e9}
+.il-status-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.il-set{padding:12px 9px;min-height:47px;font-size:12px;font-weight:900;border-radius:10px;border:1px solid}
+.il-set-prepared{background:#fff3da;border-color:#e7c790;color:#916a25}
+.il-set-done{background:#e2f7eb;border-color:#9bdcb9;color:#176c4e}
+.il-set:hover{filter:brightness(.96)}
+.il-set:disabled{opacity:.6;cursor:wait}
+.il-reset{margin-top:12px;border:0;background:transparent;color:#7a8c98;font-size:11px;font-weight:850;text-decoration:underline}
+.il-dialog-foot{font-size:11px;color:#8a9da7;margin:16px 0 0}
+.il-viewer-tip{padding:13px;background:#eef6f8;border-radius:10px}
+#ilMessage{font-size:11px;color:#a33f3f;line-height:1.5;margin:12px 0 0}
+@media(max-width:1050px){.il-workbench{grid-template-columns:1fr}.il-sidebar{max-height:none}.il-list-items{max-height:300px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.il-list-item:nth-child(2n){border-left:1px solid #eff3f5}}
+@media(max-width:680px){.il-page{padding:15px 10px 32px}.il-top{align-items:flex-start}.il-pilot-badge{font-size:9px;padding:7px 9px}.il-hero{border-radius:18px;padding:21px 18px;align-items:flex-start}.il-hero h1{font-size:31px}.il-hero h1 span{display:block;font-size:17px;margin-top:5px}.il-hero p{font-size:11px}.il-hero-progress{padding-left:10px;min-width:100px}.il-hero-progress strong{font-size:30px}.il-hero-progress span{font-size:8px}.il-progress-panel{padding:16px 14px}.il-progress-summary{align-items:flex-start;flex-direction:column}.il-progress-parts{grid-template-columns:1fr}.il-workbench{gap:11px}.il-diagram-toolbar{align-items:flex-start;flex-direction:column;padding:14px 13px 11px}.il-legend{padding:0 12px 10px}.il-list-items{display:block;max-height:350px}.il-diagram-foot{flex-direction:column}.il-svg-scroll{max-height:545px}.il-dialog-pane{padding:21px;border-radius:16px}}
+@media(prefers-reduced-motion:reduce){.il-progress-bar span,.il-svg,.il-set{transition:none!important}}
