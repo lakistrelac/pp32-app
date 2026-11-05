@@ -186,7 +186,7 @@ I.render=function(){
  '<section class="il-method"><b>METOD OBRAČUNA</b><p>Jedinstvena trasa rova i polaganja kablova nosi <strong>60%</strong> kada dobije status „Urađen“. Ostalih '+pr.totalOther+' elemenata zajedno nose <strong>40%</strong> (svaki '+fmt(40/pr.totalOther)+' procentnih poena). Status „Pripremljen“ služi za praćenje pripreme, ali ne povećava procenat izvedenih radova.</p>'+
  '<p class="il-caution">Napojni kabl od stanice Ruma označen je na projektnoj linijskoj situaciji kao PP41 4×6 mm², 3.500 m. To je dužina kabla u šemi, a ne potvrđena dužina iskopanog rova. Položaji na ovoj interaktivnoj šemi su orijentacioni, ne geodetski.</p></section>'+
  '<div id="ilModalRoot"></div></main>');
- document.getElementById('ilBack').onclick=()=>rlc(s.rlcId);
+ document.getElementById('ilBack').onclick=()=>window.rlc(s.rlcId).catch(reportError);
  const svgEl=document.querySelector('.il-svg');
  const setScale=scale=>{s.scale=Math.min(1.6,Math.max(.55,Math.round(scale*100)/100));svgEl.style.width=Math.round(1240*s.scale)+'px';svgEl.style.height=Math.round(708*s.scale)+'px';document.getElementById('ilZoomText').textContent=Math.round(s.scale*100)+'%';};
  setScale(s.scale);
