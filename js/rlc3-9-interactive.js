@@ -205,7 +205,16 @@ if(typeof oldRlc==='function')window.rlc=async function(id){
  await oldRlc(id);
  if(currentProject?.code!=='pp32'||!allowed.has(currentRlc?.code))return;
  const tile=document.querySelector('[data-mod="line"]');
- if(tile){tile.classList.add('il-launch-tile');const caption=tile.querySelector('.sub');if(caption)caption.textContent='Interaktivno · statusi 60/40%';tile.onclick=()=>A.open(id).catch(error)}
+ if(tile){
+  tile.classList.add('il-launch-tile','il-feature-tile');
+  tile.innerHTML='<div class="il-feature-top"><span class="il-feature-icon" aria-hidden="true">⌁</span><span class="il-feature-badge"><span class="il-feature-dot"></span> INTERAKTIVNO</span></div>'+
+   '<b class="il-feature-name">Linijska situacija</b>'+
+   '<span class="il-feature-desc">Klikni element i označi njegovu fazu radova</span>'+
+   '<div class="il-feature-footer"><span>TRASA <b>60%</b> <i>·</i> ELEMENTI <b>40%</b></span><span class="il-feature-arrow" aria-hidden="true">↗</span></div>';
+  tile.setAttribute('role','button');tile.tabIndex=0;
+  tile.onclick=()=>A.open(id).catch(error);
+  tile.onkeydown=event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();tile.click()}};
+ }
  try{
   const rows=await window.PP32InteractiveLine.load(id),p=progress(rows);
   const big=document.querySelector('.wrap > .hero .big');if(big)big.textContent=fmt(p.total)+'%';
