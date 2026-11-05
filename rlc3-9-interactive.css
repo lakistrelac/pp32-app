@@ -1,0 +1,15 @@
+/* RLC3–RLC9: additional reconstructed vector schematics. Existing RLC2 pilot styles remain. */
+.ilm-svg .ilm-route-band{fill:#e9f3f5;stroke:#cbdfe6;stroke-width:1.5}
+.ilm-svg .il-trench.il-prepared .ilm-route-band{fill:#fff7e6;stroke:#e8c88d}
+.ilm-svg .il-trench.il-done .ilm-route-band{fill:#e6f7ed;stroke:#97d9b9}
+.ilm-svg .ilm-end{fill:#3c8da1;stroke:#fff;stroke-width:3}
+.ilm-svg .il-trench.il-prepared .ilm-end{fill:#cf9b44}
+.ilm-svg .il-trench.il-done .ilm-end{fill:#2caa80}
+.ilm-svg .ilm-route-title{font:bold 14px Arial,sans-serif;fill:#24576c;paint-order:stroke;stroke:#eff7f8;stroke-width:2px;letter-spacing:.4px}
+.ilm-svg .ilm-route-subtitle{font:9px Arial,sans-serif;fill:#658b97;letter-spacing:.6px}
+.ilm-svg .ilm-route-start,.ilm-svg .ilm-route-end{font:bold 10px Arial,sans-serif;fill:#618494;letter-spacing:.1px}
+.ilm-svg .ilm-feed rect{fill:#edf7f6;stroke:#77b9b1;stroke-width:1.6}
+.ilm-svg .ilm-feed text{font:700 10px Arial,sans-serif;fill:#3c7889}
+.ilm-svg .ilm-feed .ilm-feed-name{font:bold 9px Arial,sans-serif;fill:#24566c}
+.ilm-svg .il-trench:hover .ilm-route-band{stroke:#6faab5;stroke-width:3}
+@media(max-width:800px){.ilm-svg .ilm-route-start,.ilm-svg .ilm-route-end{font-size:9px}}
