@@ -1,0 +1,36 @@
+/* PP32 — modern interactive line module card. Matches PRINT and cable cards. */
+.tiles .im-line-card{
+ position:relative;display:flex;flex-direction:column;align-items:stretch;gap:0;
+ padding:19px 20px 16px;min-height:241px;overflow:hidden;text-align:left;
+ border:1px solid #346b7d;border-radius:17px;
+ background:radial-gradient(ellipse at 92% 2%,rgba(111,218,213,.20),transparent 62%),linear-gradient(127deg,#102e46 2%,#1b4e62 100%);
+ color:#f7feff;box-shadow:0 12px 28px rgba(12,47,67,.16);
+ cursor:pointer;transition:transform .18s,border-color .18s,box-shadow .18s
+}
+.tiles .im-line-card:before{content:"";position:absolute;top:0;left:0;width:100%;height:3px;background:linear-gradient(90deg,#68dbcd,#9aece0 56%,transparent)}
+.tiles .im-line-card:after{content:"";position:absolute;top:-40px;right:-42px;width:155px;height:155px;transform:rotate(-28deg);border:1px solid rgba(171,236,231,.09);border-radius:30px;pointer-events:none}
+.tiles .im-line-card:hover{transform:translateY(-3px);border-color:#78c6c8;box-shadow:0 21px 37px rgba(12,47,67,.22)}
+.tiles .im-line-card:focus-visible,.il-page .il-back:focus-visible{outline:3px solid #74dacc;outline-offset:3px}
+.im-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:15px}
+.im-tile-icon{width:54px;height:54px;display:grid;place-items:center;border-radius:15px;background:rgba(140,233,230,.10);border:1px solid rgba(155,237,229,.24)}
+.im-active{display:inline-flex;align-items:center;gap:7px;border:1px solid rgba(113,222,177,.3);border-radius:99px;background:rgba(45,124,107,.28);padding:6px 9px;color:#a0edd1;font-size:9px;font-weight:900;letter-spacing:.08em;white-space:nowrap}
+.im-active i{width:7px;height:7px;border-radius:50%;background:#77ddae;box-shadow:0 0 0 3px rgba(119,221,174,.13)}
+.im-card-kicker{font-size:9px;letter-spacing:.13em;color:#91d9d9;font-weight:900;margin-bottom:7px}
+.im-card-title{color:#f6ffff;font-size:clamp(18px,2vw,22px);font-weight:900;letter-spacing:-.03em;line-height:1.2}
+.im-card-copy{color:#bfdce4;font-size:11px;line-height:1.55;margin-top:8px}
+.im-tags{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0}
+.im-tags span{font-size:10px;color:#c6e4e9;font-weight:800;border:1px solid rgba(151,217,222,.19);background:rgba(255,255,255,.045);padding:6px 8px;border-radius:7px}
+.im-card-bottom{display:flex;align-items:center;justify-content:space-between;gap:10px;color:#bce9e9;border-top:1px solid rgba(188,228,227,.17);margin-top:auto;padding-top:13px;font-size:11px;font-weight:850}
+.im-arrow{font-size:20px;font-weight:700;color:#98e6db}
+.il-page .il-back{display:inline-flex;align-items:center;gap:8px;padding:10px 13px;margin:0;border-radius:10px;background:#fff;border:1px solid #cbdfe7;color:#28677f;box-shadow:0 3px 12px rgba(25,69,91,.06);font-weight:850}
+.il-page .il-back:hover{background:#eef8f9;border-color:#9dcbd3}
+@media(max-width:680px){
+ .tiles .im-line-card{min-height:218px;padding:17px}
+ .im-top{margin-bottom:12px}
+ .im-card-title{font-size:20px}
+ .im-tags{margin:11px 0}
+}
+@media(prefers-reduced-motion:reduce){
+ .tiles .im-line-card{transition:none}
+ .tiles .im-line-card:hover{transform:none}
+}
