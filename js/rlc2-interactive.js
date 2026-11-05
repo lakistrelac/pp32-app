@@ -227,9 +227,14 @@ if(typeof oldRlc==='function'){
   if(currentProject?.code!=='pp32'||currentRlc?.code!==TARGET)return;
   const tile=document.querySelector('[data-mod="line"]');
   if(tile){
-   tile.classList.add('il-launch-tile');
-   const label=tile.querySelector('.sub');if(label)label.textContent='Interaktivno · statusi i 60/40%';
+   tile.classList.add('il-launch-tile','il-feature-tile');
+   tile.innerHTML='<div class="il-feature-top"><span class="il-feature-icon" aria-hidden="true">⌁</span><span class="il-feature-badge"><span class="il-feature-dot"></span> INTERAKTIVNO</span></div>'+
+   '<b class="il-feature-name">Linijska situacija</b>'+
+   '<span class="il-feature-desc">Klikni element i označi njegovu fazu radova</span>'+
+   '<div class="il-feature-footer"><span>TRASA <b>60%</b> <i>·</i> ELEMENTI <b>40%</b></span><span class="il-feature-arrow" aria-hidden="true">↗</span></div>';
+   tile.setAttribute('role','button');tile.tabIndex=0;
    tile.onclick=()=>I.open(id).catch(reportError);
+   tile.onkeydown=event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();tile.click()}};
   }
   try{
    const items=await I.load(id),pct=getProgress(items);
