@@ -46,7 +46,7 @@ function drawShape(row,coord){
  else if(kind==='cabinet')graphics='<rect class="il-symbol" x="'+(x-16)+'" y="'+(y-17)+'" width="32" height="34" rx="3"/><path class="il-line-symbol" d="M'+(x-8)+' '+(y-8)+'h16 M'+(x-8)+' '+y+'h16 M'+(x-8)+' '+(y+8)+'h16"/>';
  else if(kind==='light')graphics='<circle class="il-symbol" cx="'+x+'" cy="'+y+'" r="12"/><path class="il-line-symbol" d="M'+x+' '+(y-22)+'v7 M'+x+' '+(y+15)+'v7 M'+(x-22)+' '+y+'h7 M'+(x+15)+' '+y+'h7"/>';
  let label=row.label;
- if(kind==='sensor')label=row.label.split('-').slice(0,-1).join('-')||row.label;
+ if(kind==='sensor')label=row.label.replace(/-(?:PBM|PBE|PBK|PBJ|PBH)-\d+$/,'');
  if(kind==='cabinet'&&row.item_key==='cabinet-energy')label='Energ. orman';
  let tx=x,ty=y-27,anchor='middle';
  if(pos==='below')ty=y+36;
