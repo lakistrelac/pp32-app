@@ -23,12 +23,18 @@ function findCoords(conf,items){
  const barriers=items.filter(x=>x.item_type==='barrier');
  const cabinet=items.filter(x=>x.item_type==='cabinet');
  const lamps=items.filter(x=>x.item_type==='light');
- const sensorPlaces=sensors.length===5?[155,435,542,929,1085]:sensors.length===4?[155,435,715,1085]:[155,435,715];
- sensors.forEach((row,i)=>{const x=sensorPlaces[i]??(130+i*140);mapping[row.item_key]=[x,146,i%2?'above':'below']});
+ const sensorX={'sensor-k1-11':205,'sensor-k3-13-1':500,'sensor-k3-13-2':748,'sensor-k2-12':1100,'sensor-k5-15':78,'sensor-k5-15-2':78};
+ sensors.forEach((row,i)=>{const x=sensorX[row.item_key]??(120+i*155);mapping[row.item_key]=[x,146, i%2?'above':'below']});
  const signalPlaces=signals.length===3?[270,805,970]:signals.length===2?[270,970]:[270];
  signals.forEach((row,i)=>{mapping[row.item_key]=[signalPlaces[i]??750,226,'below']});
- if(ps.length===4){ps.forEach((row,i)=>{const xy=[[397,291],[852,291],[397,354],[852,354]][i];mapping[row.item_key]=[...xy,i<2?'above':'below']});}
- else if(ps.length===3){ps.forEach((row,i)=>{const xy=[[400,335],[850,335],[400,267]][i];mapping[row.item_key]=[...xy,'above']});}
+ if(ps.length===4){ps.forEach(row=>{
+  const xy={'signal-ps1':[397,354],'signal-ps2':[852,354],'signal-ps3':[397,291],'signal-ps4':[852,291]}[row.item_key];
+  mapping[row.item_key]=[...xy,row.item_key.endsWith('1')||row.item_key.endsWith('2')?'below':'above'];
+ });}
+ else if(ps.length===3){ps.forEach(row=>{
+  const xy={'signal-ps1':[400,354],'signal-ps2':[850,354],'signal-ps3':[400,267]}[row.item_key];
+  mapping[row.item_key]=[...xy,'above'];
+ });}
  else ps.forEach((row,i)=>mapping[row.item_key]=[i?850:400,334,'above']);
  barriers.forEach((row,i)=>mapping[row.item_key]=[i?848:405,436,i?'right':'left']);
  const cabinetPlaces=[[620,423,'right'],[620,509,'right'],[1030,482,'below']];
