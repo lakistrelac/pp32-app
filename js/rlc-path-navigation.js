@@ -19,16 +19,18 @@ function route(html){
  const isProjectList=/class=["'][^"']*\brlcgrid\b/.test(html);
  const isOverview=html.includes('Kablovska rekapitulacija')||html.includes('Kablovska <em>rekapitulacija');
  const isProjectCable=html.includes('cw-page')&&isOverview;
+ const isProjectRemarks=html.includes('class="wrap pr-page"')&&html.includes('id="prForm"');
  const rlc=currentRlc?.id&&currentRlc?.code&&
   (html.includes('data-mod=')||html.includes('id="ilBack"')||html.includes('id="ilmBack"')||
    html.includes('class="wrap il-page"')||html.includes('class="wrap rp-page"')||
    (html.includes(currentRlc.code)&&!isProjectCable&&!isProjectList));
- if(!isProjectList&&!isProjectCable&&!rlc)return null;
+ if(!isProjectList&&!isProjectCable&&!rlc&&!isProjectRemarks)return null;
  const steps=[
   {name:'Početna',icon:'⌂',go:()=>home()},
   {name:'32 putna prelaza',icon:'▤',go:()=>project(currentProject.id)}
  ];
  if(isProjectList)return steps;
+ if(isProjectRemarks){steps.push({name:'Primedbe',icon:'✎'});return steps}
  if(isProjectCable){steps.push({name:'Kablovska rekapitulacija',icon:'▣'});return steps}
  const id=currentRlc.id;
  const landing=html.includes('data-mod=')&&!html.includes('class="wrap rp-page"');
