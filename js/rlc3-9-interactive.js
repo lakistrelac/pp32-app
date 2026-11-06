@@ -110,7 +110,7 @@ function drawMap(conf,data){
 }
 function stages(data){
  const p=progress(data);
- return '<section class="il-progress-panel"><div class="il-progress-summary"><div><span>UKUPNA REALIZACIJA IZ INTERAKTIVNE ŠEME</span><strong>'+fmt(p.total)+'%</strong></div><div class="il-progress-description">Trasa 60% · Ostali elementi 40%</div></div>'+
+ return '<section class="il-progress-panel"><div class="il-progress-summary"><div><span>UKUPNA REALIZACIJA IZ INTERAKTIVNE ŠEME</span><strong>'+fmt(p.total)+'%</strong></div><div class="il-progress-description">Rov i kablovi 60% · ostali elementi 40% · pripremljeno nosi polovinu</div></div>'+
  '<div class="il-progress-bar"><span style="width:'+p.total+'%"></span></div>'+
  '<div class="il-progress-parts"><div><span>ROV I POLAGANJE · 60%</span><b>'+fmt(p.excavation)+' / 60%</b><small>'+statuses[p.trenchStatus]+'</small></div>'+
  '<div><span>OSTALI ELEMENTI · 40%</span><b>'+fmt(p.other)+' / 40%</b><small>'+p.done+' od '+p.totalOther+' urađeno · '+p.prepared+' pripremljeno</small></div></div></section>';
@@ -153,7 +153,7 @@ A.open=async function(id){
  '<div class="il-legend"><span><i class="il-legend-neutral"></i> Bez statusa</span><span><i class="il-legend-prepared"></i> Pripremljen</span><span><i class="il-legend-done"></i> Urađen</span></div>'+
  '<div id="ilmMap" class="il-svg-scroll"></div><div class="il-diagram-foot"><span>'+E(cfg.routeFrom)+' → '+E(cfg.routeTo)+'</span><span>Digitalna SVG šema · ne PDF podloga</span></div></div>'+
  '<aside class="il-sidebar" id="ilmList"></aside></div>'+
- '<section class="il-method"><b>OBRAČUN · 60% + 40%</b><p>Jedinstvena trasa rova i polaganja kablova nosi 60% tek kada je označena „Urađen“. Preostalih 40% ravnomerno dele '+(items.length-1)+' elemenata. „Pripremljen“ menja boju, ali ne povećava realizaciju.</p>'+
+ '<section class="il-method"><b>OBRAČUN · 60% + 40%</b><p>Jedinstvena trasa rova i polaganja kablova nosi 60% kada je urađena ili 30% kada je pripremljena. Preostalih 40% ravnomerno dele '+(items.length-1)+' elemenata. „Pripremljen“ nosi 50% vrednosti svakog elementa, a „Urađen“ 100%. Kada je sve pripremljeno, realizacija je tačno 50%.</p>'+
  '<p class="il-caution">'+E(cfg.caution)+'</p><p>Napojni kabl: '+E(cfg.feed)+'. Projektne dužine kablova ne predstavljaju automatski dužinu iskopanog rova.</p></section>'+
  '<div id="ilmModalRoot"></div></main>';
  shell(screen);
@@ -208,12 +208,12 @@ if(typeof oldRlc==='function')window.rlc=async function(id){
  await oldRlc(id);
  if(currentProject?.code!=='pp32'||!allowed.has(currentRlc?.code))return;
  const tile=document.querySelector('[data-mod="line"]');
- if(tile){tile.classList.add('il-launch-tile');const caption=tile.querySelector('.sub');if(caption)caption.textContent='Interaktivno · statusi 60/40%';tile.onclick=()=>A.open(id).catch(error)}
+ if(tile){tile.classList.add('il-launch-tile');const caption=tile.querySelector('.sub');if(caption)caption.textContent='Interaktivno · pripremljeno 50%, urađeno 100%';tile.onclick=()=>A.open(id).catch(error)}
  try{
   const rows=await window.PP32InteractiveLine.load(id),p=progress(rows);
   const big=document.querySelector('.wrap > .hero .big');if(big)big.textContent=fmt(p.total)+'%';
   const h=document.querySelector('.wrap > .hero');
-  if(h)h.insertAdjacentHTML('beforeend','<span class="il-rlc-progress-explain">Realizacija iz interaktivne linijske · 60% trasa, 40% elementi</span>');
+  if(h)h.insertAdjacentHTML('beforeend','<span class="il-rlc-progress-explain">Pripremljeno 50%, urađeno 100% · težine 60/40%</span>');
  }catch(err){error(err)}
 };
 const oldProject=window.project;
