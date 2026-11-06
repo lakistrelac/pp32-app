@@ -1,0 +1,51 @@
+/* Original project PDF access integrated with interactive PP32 RLC diagrams. */
+.pp32-pdf-strip{
+ display:flex;align-items:center;justify-content:space-between;gap:15px;flex-wrap:wrap;
+ margin:14px 0 19px;padding:15px 18px;border-radius:15px;
+ background:linear-gradient(115deg,#ecf7f8,#f7fbfc);
+ border:1px solid #bad9e0;box-shadow:0 5px 15px rgba(14,70,89,.055)
+}
+.pp32-pdf-strip-copy{display:grid;gap:5px;flex:1 1 210px;min-width:190px}
+.pp32-pdf-strip-copy b{font-size:14px;line-height:1.35;color:#163f55;font-weight:900}
+.pp32-pdf-strip-copy>span{font-size:11px;color:#668493;line-height:1.4}
+.pp32-pdf-controls{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.pp32-pdf-open{
+ display:inline-flex;align-items:center;justify-content:center;gap:9px;
+ min-height:45px;padding:9px 15px;border-radius:11px;
+ border:1px solid #226e81;background:linear-gradient(135deg,#15536a,#207689);
+ color:#fff;font-size:12px;font-weight:900;box-shadow:0 5px 15px rgba(20,82,107,.18);
+ transition:transform .16s,background .16s,box-shadow .16s;
+}
+.pp32-pdf-open svg{flex:none}
+.pp32-pdf-open:not(:disabled):hover{background:#226f88;transform:translateY(-2px);box-shadow:0 8px 19px rgba(16,85,103,.19)}
+.pp32-pdf-open:disabled{opacity:.48;background:#718b97;cursor:not-allowed;box-shadow:none}
+.pp32-pdf-upload,.pp32-pdf-batch-button{
+ display:inline-flex;align-items:center;justify-content:center;
+ min-height:45px;padding:10px 13px;
+ border-radius:10px;border:1px solid #7ab3bb;
+ background:#fff;color:#276477;font-size:12px;font-weight:850;cursor:pointer
+}
+.pp32-pdf-upload:hover,.pp32-pdf-batch-button:hover{background:#e1f4f4}
+.pp32-pdf-open:focus-visible,.pp32-pdf-upload:focus-within,.pp32-pdf-batch-button:focus-within{
+ outline:3px solid #65c9ca;outline-offset:3px
+}
+.pp32-pdf-file-state{font-size:11px;font-weight:800;color:#608896}
+.pp32-pdf-batch{
+ display:flex;gap:15px;align-items:center;flex-wrap:wrap;
+ margin:17px 0;padding:17px 18px;border-radius:15px;
+ border:1px solid #b7d8df;background:#f2fafb;
+}
+.pp32-pdf-batch-copy{flex:1 1 290px;display:grid;gap:5px}
+.pp32-pdf-batch-copy b{color:#214e61;font-size:14px;font-weight:900}
+.pp32-pdf-batch-copy span{color:#6b8a96;font-size:11px;line-height:1.45}
+.pp32-pdf-batch-button{background:#1a6375;color:#fff;border-color:#1a6375}
+.pp32-pdf-batch-button:hover{background:#24788b;color:#fff}
+.pp32-pdf-batch-results{flex:1 0 100%;font-size:12px;color:#296175}
+.pp32-pdf-batch-results ul{padding-left:18px}
+@media(max-width:700px){
+ .pp32-pdf-strip{padding:13px;gap:11px}
+ .pp32-pdf-controls{width:100%}
+ .pp32-pdf-open{flex:1 1 165px}
+ .pp32-pdf-file-state{flex:1 0 100%}
+}
+@media(prefers-reduced-motion:reduce){.pp32-pdf-open{transition:none}.pp32-pdf-open:hover{transform:none}}
