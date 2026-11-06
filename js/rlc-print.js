@@ -33,7 +33,7 @@ R.load=async id=>{
   const done=c.work_status==='done',key=type+'\u001f'+unit;
   if(!byType.has(key))byType.set(key,{name:type,unit,planned:0,installed:0,source:'Automatski iz komponenata'});
   const agg=byType.get(key);agg.planned+=1;if(done)agg.installed+=1;
-  return {index:i+1,code:c.code||'',name:c.name,type,unit,chainage:c.chainage||'',planned:1,installed:done?1:0,progress:workPercent(c.work_status),taskCount:steps.length,steps};
+  return {index:i+1,code:c.code||'',name:c.name,type,unit,chainage:c.chainage||'',planned:1,installed:done?1:0,progress:workPercent(c.work_status),status:c.work_status,taskCount:steps.length,steps};
  });
  const automatic=[...byType.values()].map(x=>({...x,remaining:Math.max(0,x.planned-x.installed)}));
  const manualRows=manual.map(x=>({name:x.name,unit:x.unit,planned:number(x.planned),installed:number(x.installed),remaining:Math.max(0,number(x.planned)-number(x.installed)),source:'Ručni unos',note:x.note||''}));
@@ -76,7 +76,7 @@ R.open=async id=>{
   cell(x.index),cell(x.code||'—'),cell(x.name),cell(x.type),cell(x.chainage||'—'),
   numeric(x.planned),numeric(x.installed),cell(x.progress+'%')
  ]);
- const taskRows=d.componentRows.flatMap(c=>c.steps.map(t=>[cell(c.name),cell(t.title),statusCell(t.is_complete)]));
+ const taskRows=d.componentRows.map(c=>[cell(c.name),cell(c.status==='done'?'Urađen':c.status==='prepared'?'Pripremljen':'Bez statusa'),cell(c.progress+'%')]);
  const missingText=d.missing?'NEPOTPUNA SPECIFIKACIJA · '+d.missing+' stavke na proveru':'Sve unete stavke kablova imaju vrednosti L i br.';
  const html='<main class="wrap rp-page" id="rpReport">'+
  '<div class="rp-toolbar"><button class="rp-back" type="button" id="rpBack">← '+escText(r.code)+'</button>'+
@@ -100,9 +100,9 @@ R.open=async id=>{
  '<p class="rp-table-note">Automatske količine iz komponenata i ručno dodate stavke objedinjene su po nazivu i jedinici mere. Ne sabiraju se različite jedinice.</p></section>'+
  '<section class="rp-section"><div class="rp-section-heading"><div><span>03 / IZVEDENI RADOVI</span><h2>Komponente – pojedinačno</h2></div><strong>'+d.componentRows.length+' elemenata</strong></div>'+
  table(['#','Oznaka','Komponenta','Vrsta','Stacionaža','Plan.','Završ.','Napredak'],componentRows,'rp-components-table')+
- '<p class="rp-table-note">Komponenta se smatra završenom samo ako ima definisane zadatke i svi su označeni kao završeni.</p></section>'+
- '<section class="rp-section rp-tasks-section"><div class="rp-section-heading"><div><span>04 / KONTROLA REALIZACIJE</span><h2>Zadaci po komponentama</h2></div><strong>'+d.tasks.length+' zadataka</strong></div>'+
- table(['Komponenta','Zadatak / aktivnost','Status'],taskRows,'rp-tasks-table')+'</section>'+
+ '<p class="rp-table-note">Pripremljeno = 50% napretka, urađeno = 100%; ostali statusi ne donose procenat.</p></section>'+
+ '<section class="rp-section rp-tasks-section"><div class="rp-section-heading"><div><span>04 / KONTROLA REALIZACIJE</span><h2>Statusi komponenti</h2></div><strong>'+d.componentRows.length+' elemenata</strong></div>'+
+ table(['Komponenta','Status','Napredak'],taskRows,'rp-tasks-table')+'</section>'+
  '<footer class="rp-footer"><span>PP32 · Automatski generisan izveštaj iz evidencije</span>'+
  '<span>'+escText(r.code)+' · '+escText(date)+'</span></footer>'+
  '<p class="rp-bottom-tip">Za PDF izaberi „PDF / Štampaj“, pa u prozoru štampanja odaberi „Sačuvaj kao PDF“. Excel se preuzima direktno kao .xlsx.</p></main>';
@@ -183,8 +183,8 @@ R.makeWorkbook=d=>{
  ...d.equipmentDetails.map((x,i)=>[i+1,x.name,x.unit,x.planned,x.installed,x.remaining,x.source,x.note||''])]},
  {name:'Komponente',rows:[['KOMPONENTE · '+d.r.code],blank,['R.br.','Oznaka','Komponenta','Vrsta','Stacionaža','Jedinica','Planirano','Završeno','Napredak (%)','Broj zadataka'],
  ...d.componentRows.map(x=>[x.index,x.code,x.name,x.type,x.chainage,x.unit,x.planned,x.installed,x.progress,x.taskCount])]},
- {name:'Zadaci',rows:[['ZADACI · '+d.r.code],blank,['Komponenta','Zadatak / aktivnost','Status'],
- ...d.componentRows.flatMap(c=>c.steps.map(t=>[c.name,t.title,t.is_complete?'Završeno':'U toku']))]}
+ {name:'Statusi',rows:[['STATUSI · '+d.r.code],blank,['Komponenta','Status','Napredak (%)'],
+ ...d.componentRows.map(c=>[c.name,c.status==='done'?'Urađen':c.status==='prepared'?'Pripremljen':'Bez statusa',c.progress])]}
  ];
  const ct=['<?xml version="1.0" encoding="UTF-8" standalone="yes"?>',
  '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">',
