@@ -1,4 +1,4 @@
-/* PP32 original PDF project sheets · RLC 2–9.
+/* PP32 original PDF project sheets · RLC 2–9 and 18–25.
  * Uses the existing private Supabase storage bucket and RLC file field.
  * Uploads are admin-only, viewing respects signed storage access.
  * Does not change interactive SVG, progress or task statuses.
@@ -78,8 +78,8 @@ if(typeof previousProject==='function')window.project=async function(projectId){
  if(!grid||document.getElementById('pp32PdfBatchInput'))return;
  const section=document.createElement('section');
  section.className='pp32-pdf-batch';
- section.innerHTML='<div class="pp32-pdf-batch-copy"><b>Originalni projektni PDF-ovi · RLC 2–9</b>'+
- '<span>Poveži sve linijske situacije odjednom. Naziv svakog fajla mora da sadrži RLC broj (npr. RLC3.pdf).</span></div>'+
+ section.innerHTML='<div class="pp32-pdf-batch-copy"><b>Originalni projektni PDF-ovi · RLC 2–9 i RLC 18–25</b>'+
+ '<span>Poveži sve linijske situacije odjednom. Naziv može sadržati RLC broj (npr. RLC23.pdf). Tri originalna fajla bez broja automatski se povezuju redom: običan → RLC18, (1) → RLC19, (2) → RLC20.</span></div>'+
  '<label class="pp32-pdf-batch-button"><span>＋ Dodaj više PDF-ova</span>'+
  '<input id="pp32PdfBatchInput" type="file" multiple accept=".pdf,application/pdf" hidden></label>'+
  '<div class="pp32-pdf-batch-results" id="pp32PdfBatchResults" role="status" aria-live="polite"></div>';
@@ -90,9 +90,13 @@ if(typeof previousProject==='function')window.project=async function(projectId){
   input.disabled=true;const label=section.querySelector('.pp32-pdf-batch-button span');label.textContent='Otpremanje…';
   const seen=new Set(),valid=[],errors=[];
   for(const file of files){
-   const m=file.name.match(/\bRLC\s*0*([2-9])\b/i);
-   if(!m||!isPdf(file)){errors.push(safe(file.name)+': nije prepoznat RLC 2–9 PDF');continue}
-   const code='RLC'+m[1];
+   const found=file.name.match(/\bRLC\s*0*(\d+)\b/i);
+   let code=found?'RLC'+Number(found[1]):null;
+   const legacy=file.name.match(/^3\s*-\s*Linijska situacija sa planom kablova putnog prelaza(?:\(([12])\))?\.pdf$/i);
+   if(!code&&legacy)code='RLC'+(legacy[1]?18+Number(legacy[1]):18);
+   if(!isPdf(file)||!code||!(Number(code.slice(3))>=2&&Number(code.slice(3))<=9||Number(code.slice(3))>=18&&Number(code.slice(3))<=25)){
+    errors.push(safe(file.name)+': RLC broj nije prepoznat (podržani 2–9 i 18–25)');continue
+   }
    if(seen.has(code)){errors.push(code+': izabran je više puta');continue}
    seen.add(code);valid.push({code,file});
   }
