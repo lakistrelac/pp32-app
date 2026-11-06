@@ -24,51 +24,98 @@ function progress(rows){
   count:rows.length};
 }
 N.progress=progress;
-const coord=(row,rows)=>{
- const group=rows.filter(x=>x.item_type===row.item_type);
- const i=group.findIndex(x=>x.id===row.id),n=group.length;
- if(row.item_type==='sensor')return [130+(i+1)*1000/(n+1),160,'above'];
- if(row.item_type==='signal'){
-  if(/^KS|^PKS/.test(row.label)){const k=rows.filter(x=>x.item_type==='signal'&&/^KS|^PKS/.test(x.label));
-   return [210+k.findIndex(x=>x.id===row.id)*280,270,'below'];}
-  const signals=rows.filter(x=>x.item_type==='signal'&&/^PS/.test(x.label));
-  const t=signals.findIndex(x=>x.id===row.id);
-  return [[515,725,485,755][t]||790,t<2?345:460,'above'];
- }
- if(row.item_type==='barrier')return [[560,680,550,700][i]||700,i<2?305:455,'below'];
- if(row.item_type==='cabinet')return [870+i*120,410+i*67,'above'];
- return [625,205,'above'];
-};
+/* Exact relative geometry comes from the supplied PDF drawing page,
+ * not evenly spaced symbols or an invented route. Label coordinates are
+ * source PDF text centers; coloured cable line segments were also measured.
+ */
+function sourcePoint(row,layout){
+ if(row.item_key==='cabinet-energetski-orman')
+  return [(layout.g[0]+layout.g[2])/2,layout.g[1]+110];
+ if(row.item_key==='cabinet-bk')return layout.p.BK;
+ if(row.item_key==='cabinet-lob')return layout.p.LOB;
+ const code=row.item_type==='sensor'?row.label.replace(/-(?:PB[A-Z]-\d+).*$/i,'').replace(/^K2-12$/i,'K2/12'):row.label;
+ return layout.p[code]||null;
+}
 function map(rows,site){
+ const layout=window.PP32SourceLayout?.[site.code];
+ if(!layout)throw Error('Za '+site.code+' nisu učitane koordinate izvornog projekta.');
+ const [bx0,by0,bx1,by1]=layout.b;
+ const [gx0,gy0,gx1,gy1]=layout.g;
+ const mid=(bx0+bx1)/2;
+ const trench=rows.find(x=>x.item_key==='trench');
+ const trenchStatus=trench?.status||'not_started';
+ const path=segments=>segments.map(([x1,y1,x2,y2])=>'M'+x1+' '+y1+'L'+x2+' '+y2).join(' ');
+ const cableD=path(layout.l),powerD=path(layout.e);
+ const statusBadge=row=>row.status==='done'?'100%':row.status==='prepared'?'50%':'';
  const markers=rows.filter(x=>x.item_key!=='trench').map(row=>{
-  const [x,y,side]=coord(row,rows),status=statusName[row.status]||'Bez statusa';
-  let geom='';
-  if(row.item_type==='sensor')geom='<path d="M'+x+' '+(y-13)+'l13 13-13 13-13-13Z"/>';
-  else if(row.item_type==='signal')geom='<path d="M'+x+' '+(y-15)+'v31"/><circle cx="'+x+'" cy="'+(y-7)+'" r="10"/>';
-  else if(row.item_type==='barrier')geom='<rect x="'+(x-12)+'" y="'+(y-12)+'" width="24" height="24" rx="4"/><path d="M'+(x-8)+' '+(y+4)+'l38-28"/>';
-  else geom='<rect x="'+(x-17)+'" y="'+(y-19)+'" width="34" height="38" rx="4"/><path d="M'+(x-9)+' '+(y-8)+'h18 M'+(x-9)+' '+y+'h18 M'+(x-9)+' '+(y+8)+'h18"/>';
-  return '<g class="il-spot '+state(row.status)+' r18-hit" role="button" tabindex="0" focusable="true"'+
-    ' data-r18="'+E(row.item_key)+'" aria-label="'+E(row.label+': '+status)+'">'+
-    '<circle class="il-hotspot" cx="'+x+'" cy="'+y+'" r="31"/>'+
-    '<g class="r18-marker">'+geom+'</g>'+
-    '<text class="r18-marker-name" x="'+x+'" y="'+(y+(side==='above'?-31:43))+'" text-anchor="middle">'+E(row.label)+'</text></g>';
+  const p=sourcePoint(row,layout);
+  if(!p)return ''; // No fictitious coordinate when the PDF has no label.
+  const [x,y]=p,left=x<mid,code=row.item_type;
+  const status=statusName[row.status]||'Bez statusa';
+  const label=E(row.label);
+  const klass='il-spot r18-hit r18-device '+state(row.status);
+  let shape='',name='',hint='';
+  if(row.item_key==='cabinet-bk'){
+   shape='<rect class="r18-source-icon" x="'+(x-12)+'" y="'+(y-17)+'" width="24" height="24" rx="3"/>';
+   name='<text class="r18-source-name" x="'+x+'" y="'+(y+27)+'" text-anchor="middle">BK</text>';
+  }else if(row.item_key==='cabinet-energetski-orman'){
+   shape='<rect class="r18-energy-icon" x="'+(x-12)+'" y="'+(y-12)+'" width="24" height="24" rx="2"/>';
+   name='<text class="r18-source-name" x="'+x+'" y="'+(y+33)+'" text-anchor="middle">NAPAJANJE</text>';
+  }else if(code==='cabinet'){
+   shape='<rect class="r18-lob-icon" x="'+(x-16)+'" y="'+(y-12)+'" width="32" height="24" rx="2"/>';
+   name='<text class="r18-source-name" x="'+x+'" y="'+(y+28)+'" text-anchor="middle">'+label+'</text>';
+  }else if(code==='sensor'){
+   const sx=x+(left?42:-42),sy=y-6;
+   shape='<path class="r18-sensor-icon" d="M'+sx+' '+(sy-8)+'l8 8-8 8-8-8Z"/><circle class="r18-sensor-core" cx="'+sx+'" cy="'+sy+'" r="2.7"/>';
+   name='<text class="r18-source-name" x="'+x+'" y="'+(y+14)+'" text-anchor="middle">'+label+'</text>';
+  }else if(code==='barrier'){
+   const sx=x+(left?22:-22),arm=left?sx-155:sx+155;
+   shape='<rect class="r18-barrier-case" x="'+(sx-9)+'" y="'+(y-8)+'" width="18" height="16" rx="2"/>'+
+    '<path class="r18-barrier-arm" d="M'+sx+' '+(y-1)+'H'+arm+'"/>'+
+    '<path class="r18-barrier-rail" d="M'+sx+' '+(y-1)+'H'+arm+'"/>';
+   name='<text class="r18-source-name" x="'+x+'" y="'+(y+19)+'" text-anchor="middle">'+label+'</text>';
+  }else if(code==='signal'){
+   const isRoad=/^PS/.test(row.label);
+   const sx=x+(left?23:-23),sy=y-11;
+   shape='<path class="r18-signal-pole" d="M'+sx+' '+(sy-14)+'v27"/><rect class="r18-signal-case" x="'+(sx-4)+'" y="'+(sy-16)+'" width="8" height="13" rx="2"/>'+
+    '<circle class="r18-signal-lamp" cx="'+sx+'" cy="'+(sy-12)+'" r="1.7"/>'+
+    (isRoad?'<path class="r18-signal-foot" d="M'+(sx-6)+' '+(sy+13)+'h12"/>':'');
+   name='<text class="r18-source-name" x="'+x+'" y="'+(y+17)+'" text-anchor="middle">'+label+'</text>';
+  }
+  const badge=statusBadge(row);
+  if(badge){
+   const ax=x+(left?-18:18),ay=y-26;
+   hint='<g class="r18-source-progress"><rect x="'+(ax-19)+'" y="'+(ay-12)+'" width="38" height="20" rx="9"/>'+
+    '<text x="'+ax+'" y="'+(ay+2)+'" text-anchor="middle">'+badge+'</text></g>';
+  }
+  return '<g class="'+klass+'" role="button" tabindex="0" focusable="true" data-r18="'+E(row.item_key)+'" aria-label="'+E(row.label+': '+status)+'">'+
+   '<title>'+E(row.label+' · '+status)+'</title>'+
+   '<rect x="'+(x-43)+'" y="'+(y-33)+'" width="86" height="65" class="r18-target"/>'+
+   '<circle class="r18-status-ring" cx="'+(x+(left?-14:14))+'" cy="'+(y-13)+'" r="8"/>'+
+   shape+name+hint+'</g>';
  }).join('');
- const prepared=rows.find(x=>x.item_key==='trench');
- return '<svg class="il-svg r18-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1240 660" role="img" aria-label="Ilustrativna linijska šema '+E(site.code)+', '+E(site.name)+'">'+
- '<defs><pattern id="r18sleepers" width="23" height="16" patternUnits="userSpaceOnUse"><path d="M7 0v16" stroke="#aac0cb" stroke-width="6"/></pattern></defs>'+
- '<rect width="1240" height="660" fill="#f7fbfd"/>'+
- '<rect x="575" y="65" width="104" height="530" rx="8" fill="#dce7ea"/><path d="M628 69v520" stroke="#fff" stroke-width="4" stroke-dasharray="30 21"/>'+
- '<rect x="52" y="137" width="1135" height="42" rx="3" fill="url(#r18sleepers)"/>'+
- '<path d="M52 144H1187 M52 173H1187" stroke="#668b9a" stroke-width="4"/>'+
- '<text x="57" y="115" class="il-side-label">'+E(site.line)+'</text>'+
- '<text x="1180" y="115" text-anchor="end" class="il-side-label">km '+E(site.km)+'</text>'+
- '<g class="r18-cable '+state(prepared?.status||'not_started')+' r18-hit" data-r18="trench" role="button" tabindex="0">'+
- '<path d="M82 212H1170" stroke-width="12" stroke-dasharray="21 8" stroke-linecap="round"/>'+
- '<text x="95" y="239" class="r18-cable-label">ROV I KABLOVI · 60% PONDERISANOG NAPRETKA</text></g>'+
- markers+
- '<text x="68" y="634" class="il-map-note">PRIKAZ OPREME PREMA DOSTAVLJENOM PROJEKTNOM PDF-U · POLOŽAJI SU ILUSTRATIVNI</text>'+
- '<text x="1181" y="634" text-anchor="end" class="il-map-note">'+E(site.code)+' / EVIDENCIJA 2026</text>'+
- '</svg>';
+ const os=Object.entries(layout.o).map(([name,position])=>{
+  const [x,y]=position,left=x<mid;
+  return '<g class="r18-os"><circle cx="'+x+'" cy="'+y+'" r="7"/>'+
+   '<text x="'+(x+(left?-14:14))+'" y="'+(y+4)+'" text-anchor="'+(left?'end':'start')+'">'+E(name)+'</text></g>';
+ }).join('');
+ const power='<g class="r18-source-power"><path d="'+powerD+'"/>'+
+  '<rect x="'+gx0+'" y="'+gy0+'" width="'+(gx1-gx0)+'" height="'+(gy1-gy0)+'"/>'+
+  '<text transform="translate('+((gx0+gx1)/2)+' '+((gy0+gy1)/2)+') rotate(-90)" text-anchor="middle">Energetski orman</text>'+
+  os+'</g>';
+ const cable='<g class="r18-source-cables r18-hit '+state(trenchStatus)+'" data-r18="trench" role="button" tabindex="0">'+
+  '<title>Rov i polaganje kablova · '+E(statusName[trenchStatus]||'Bez statusa')+'</title>'+
+  '<path class="r18-source-lines" d="'+cableD+'"/>'+
+  '<path class="r18-source-line-hits" d="'+cableD+'"/>'+
+  '</g>';
+ const boxes='<rect class="r18-source-bk" x="'+bx0+'" y="'+by0+'" width="'+(bx1-bx0)+'" height="'+(by1-by0)+'"/>'+
+ '<text class="r18-central-km" x="'+mid+'" y="'+(by0+38)+'" text-anchor="middle">'+E(site.km)+'</text>'+
+ '<text class="r18-central-label" transform="translate('+mid+' '+((by0+by1)/2)+') rotate(-90)" text-anchor="middle">BK '+E(site.tag)+'</text>';
+ return '<svg class="il-svg r18-svg r18-source-svg" xmlns="http://www.w3.org/2000/svg" viewBox="255 176 1120 692" role="img" aria-label="Linijska šema '+E(site.code)+'; uređaji i grane kablova na pozicijama iz projektnog PDF-a">'+
+  '<rect x="255" y="176" width="1120" height="692" fill="#fff"/>'+
+  boxes+cable+power+markers+
+  '<text class="r18-map-footer" x="272" y="848">POLOŽAJI OPREME I GRANANJE KABLOVA PREMA ORIGINALNOM PROJEKTNOM CRTEŽU · PDF KOORDINATE</text>'+
+  '<text class="r18-map-footer" x="1360" y="848" text-anchor="end">'+E(site.code)+'</text></svg>';
 }
 function stages(rows){
  const p=progress(rows);
