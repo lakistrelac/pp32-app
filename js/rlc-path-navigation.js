@@ -29,7 +29,7 @@ function pathway(html){
  const rlc=currentRlc;
  if(!rlc?.id||rlc.project_id!==projectId)return null;
  const isLanding=has(html,'data-mod=')&&has(html,'class="tiles');
- const isInteractive=has(html,'id="ilBack"')||has(html,'id="ilmBack"');
+ const isInteractive=has(html,'id="ilBack"')||has(html,'id="ilmBack"')||has(html,'id="r18Back"');
  const isPrint=has(html,'class="wrap rp-page"')||has(html,'id="rpReport"');
  const isRlcModule=isInteractive||isPrint||has(html,'class="wrap cw-page"')||
   (has(html,'id="br"')&&has(html,'class="wrap"'))||
