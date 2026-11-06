@@ -1,6 +1,6 @@
 /* PP32 · Interactive cable-plan schematics RLC18–25.
    Source data: project cable-plan PDFs, mapped in rlc18-25-sites.js.
-   SVG topology and equipment label coordinates follow the supplied project PDF.
+   Classic SVG layout follows the source project device sequence.
    It does not constitute a geodetic drawing or original DWG file.
    Status rows live in Supabase. "Pripremljeno" contributes 50% of each stage.
 */
@@ -25,103 +25,9 @@ function progress(rows){
   count:rows.length};
 }
 N.progress=progress;
-/* Exact relative geometry comes from the supplied PDF drawing page,
- * not evenly spaced symbols or an invented route. Label coordinates are
- * source PDF text centers; coloured cable line segments were also measured.
- */
-function sourcePoint(row,layout){
- if(row.item_key==='cabinet-energetski-orman')
-  return [(layout.g[0]+layout.g[2])/2,layout.g[1]+110];
- if(row.item_key==='cabinet-bk')return layout.p.BK;
- if(row.item_key==='cabinet-lob')return layout.p.LOB;
- const code=row.item_type==='sensor'?row.label.replace(/-(?:PB[A-Z]-\d+).*$/i,'').replace(/^K2-12$/i,'K2/12'):row.label;
- return layout.p[code]||null;
-}
+/* Classic RLC2-9 presentation; the source-based relative order is retained. */
 function map(rows,site){
- const layout=window.PP32SourceLayout?.[site.code];
- if(!layout)throw Error('Za '+site.code+' nisu učitane koordinate izvornog projekta.');
- const [bx0,by0,bx1,by1]=layout.b;
- const [gx0,gy0,gx1,gy1]=layout.g;
- const mid=(bx0+bx1)/2;
- const trench=rows.find(x=>x.item_key==='trench');
- const trenchStatus=trench?.status||'not_started';
- const path=segments=>segments.map(([x1,y1,x2,y2])=>'M'+x1+' '+y1+'L'+x2+' '+y2).join(' ');
- const cableD=path(layout.l),powerD=path(layout.e);
- const statusBadge=row=>row.status==='done'?'100%':row.status==='prepared'?'50%':'';
- const markers=rows.filter(x=>x.item_key!=='trench').map(row=>{
-  const p=sourcePoint(row,layout);
-  if(!p)return ''; // No fictitious coordinate when the PDF has no label.
-  const [x,y]=p,left=x<mid,code=row.item_type;
-  const status=statusName[row.status]||'Bez statusa';
-  const label=E(row.label);
-  const klass='il-spot r18-hit r18-device '+state(row.status);
-  let shape='',name='',hint='',symbolHit='';
-  if(row.item_key==='cabinet-bk'){
-   shape='<rect class="r18-source-icon" x="'+(x-12)+'" y="'+(y-17)+'" width="24" height="24" rx="3"/>';
-   name=''; // Cabinet name already appears on the source-aligned central axis.
-  }else if(row.item_key==='cabinet-energetski-orman'){
-   shape='<rect class="r18-energy-icon" x="'+(x-12)+'" y="'+(y-12)+'" width="24" height="24" rx="2"/>';
-   name=''; // Preserve original vertical green cabinet label.
-  }else if(code==='cabinet'){
-   shape='<rect class="r18-lob-icon" x="'+(x-16)+'" y="'+(y-12)+'" width="32" height="24" rx="2"/>';
-   name='<text class="r18-source-name" x="'+x+'" y="'+(y+5)+'" text-anchor="middle">'+label+'</text>';
-  }else if(code==='sensor'){
-   const sensorKey=row.label.replace(/-(?:PB[A-Z]-\d+).*$/i,'').replace(/^K2-12$/i,'K2/12');
-   const [sx,sy]=layout.m?.[sensorKey]||[x+(left?55:-55),y];
-   symbolHit='<circle class="r18-symbol-interact" cx="'+sx+'" cy="'+sy+'" r="18"/>';
-   shape='<path class="r18-sensor-icon" d="M'+sx+' '+(sy-8)+'l8 8-8 8-8-8Z"/><circle class="r18-sensor-core" cx="'+sx+'" cy="'+sy+'" r="2.7"/>';
-   name='<text class="r18-source-name" x="'+x+'" y="'+(y+5)+'" text-anchor="middle">'+label+'</text>';
-  }else if(code==='barrier'){
-   const sx=x+(left?22:-22),arm=left?sx-120:sx+120;
-   symbolHit='<circle class="r18-symbol-interact" cx="'+sx+'" cy="'+y+'" r="18"/>';
-   shape='<rect class="r18-barrier-case" x="'+(sx-9)+'" y="'+(y-8)+'" width="18" height="16" rx="2"/>'+
-    '<path class="r18-barrier-arm" d="M'+sx+' '+(y-1)+'H'+arm+'"/>'+
-    '<path class="r18-barrier-rail" d="M'+sx+' '+(y-1)+'H'+arm+'"/>';
-   name='<text class="r18-source-name" x="'+x+'" y="'+(y+5)+'" text-anchor="middle">'+label+'</text>';
-  }else if(code==='signal'){
-   const isRoad=/^PS/.test(row.label);
-   const sx=x+(left?23:-23),sy=y-11;
-   symbolHit='<circle class="r18-symbol-interact" cx="'+sx+'" cy="'+sy+'" r="18"/>';
-   shape='<path class="r18-signal-pole" d="M'+sx+' '+(sy-14)+'v27"/><rect class="r18-signal-case" x="'+(sx-4)+'" y="'+(sy-16)+'" width="8" height="13" rx="2"/>'+
-    '<circle class="r18-signal-lamp" cx="'+sx+'" cy="'+(sy-12)+'" r="1.7"/>'+
-    (isRoad?'<path class="r18-signal-foot" d="M'+(sx-6)+' '+(sy+13)+'h12"/>':'');
-   name='<text class="r18-source-name" x="'+x+'" y="'+(y+5)+'" text-anchor="middle">'+label+'</text>';
-  }
-  const badge=statusBadge(row);
-  if(badge){
-   const ax=x+(left?-25:25),ay=y-25;
-   hint='<g class="r18-source-progress"><rect x="'+(ax-19)+'" y="'+(ay-12)+'" width="38" height="20" rx="9"/>'+
-    '<text x="'+ax+'" y="'+(ay+2)+'" text-anchor="middle">'+badge+'</text></g>';
-  }
-  return '<g class="'+klass+'" role="button" tabindex="0" focusable="true" data-r18="'+E(row.item_key)+'" aria-label="'+E(row.label+': '+status)+'">'+
-   '<title>'+E(row.label+' · '+status)+'</title>'+
-   '<rect x="'+(x-54)+'" y="'+(y-5)+'" width="108" height="20" class="r18-target"/>'+
-   '<circle cx="'+x+'" cy="'+(y-16)+'" r="11" class="r18-target r18-symbol-hit"/>'+
-   '<circle class="r18-status-ring" cx="'+(x+(left?-24:24))+'" cy="'+(y-19)+'" r="5"/>'+
-   shape+name+hint+symbolHit+'</g>';
- }).join('');
- const os=Object.entries(layout.o).map(([name,position])=>{
-  const [x,y]=position,left=x<mid;
-  return '<g class="r18-os"><circle cx="'+x+'" cy="'+y+'" r="7"/>'+
-   '<text x="'+(x+(left?-14:14))+'" y="'+(y+4)+'" text-anchor="'+(left?'end':'start')+'">'+E(name)+'</text></g>';
- }).join('');
- const power='<g class="r18-source-power"><path d="'+powerD+'"/>'+
-  '<rect x="'+gx0+'" y="'+gy0+'" width="'+(gx1-gx0)+'" height="'+(gy1-gy0)+'"/>'+
-  '<text transform="translate('+((gx0+gx1)/2)+' '+((gy0+gy1)/2)+') rotate(-90)" text-anchor="middle">Energetski orman</text>'+
-  os+'</g>';
- const cable='<g class="r18-source-cables r18-hit '+state(trenchStatus)+'" data-r18="trench" role="button" tabindex="0">'+
-  '<title>Rov i polaganje kablova · '+E(statusName[trenchStatus]||'Bez statusa')+'</title>'+
-  '<path class="r18-source-lines" d="'+cableD+'"/>'+
-  '<path class="r18-source-line-hits" d="'+cableD+'"/>'+
-  '</g>';
- const boxes='<rect class="r18-source-bk" x="'+bx0+'" y="'+by0+'" width="'+(bx1-bx0)+'" height="'+(by1-by0)+'"/>'+
- '<text class="r18-central-km" x="'+mid+'" y="'+(by0+38)+'" text-anchor="middle">'+E(site.km)+'</text>'+
- '<text class="r18-central-label" transform="translate('+mid+' '+((by0+by1)/2)+') rotate(-90)" text-anchor="middle">BK '+E(site.tag)+'</text>';
- return '<svg class="il-svg r18-svg r18-source-svg" xmlns="http://www.w3.org/2000/svg" viewBox="255 176 1120 692" role="img" aria-label="Linijska šema '+E(site.code)+'; uređaji i grane kablova na pozicijama iz projektnog PDF-a">'+
-  '<rect x="255" y="176" width="1120" height="692" fill="#fff"/>'+
-  boxes+cable+power+markers+
-  '<text class="r18-map-footer" x="272" y="848">POLOŽAJI OPREME I GRANANJE KABLOVA PREMA ORIGINALNOM PROJEKTNOM CRTEŽU · PDF KOORDINATE</text>'+
-  '<text class="r18-map-footer" x="1360" y="848" text-anchor="end">'+E(site.code)+'</text></svg>';
+ return window.PP32ClassicMap.draw(rows,site);
 }
 N.map=map; // Read-only SVG renderer, also used by automated layout checks.
 function stages(rows){
@@ -177,13 +83,13 @@ N.render=function(){
  stages(p.items)+
  '<div class="il-workbench"><div class="il-diagram-panel">'+
  '<div class="il-diagram-toolbar"><div><b>Interaktivna linijska · '+E(site.tag)+'</b>'+
- '<p>Položaji elemenata i kraci kablova preslikani su iz projektne situacije; za detalje koristi izvorni PDF.</p></div>'+
+ '<p>Pregledna šema po principu RLC 2–9; redosled opreme je prema projektu, a razmaci su šematski.</p></div>'+
  '<div class="il-diagram-controls"><button type="button" data-r18zoom="-0.2">−</button><span id="r18ZoomText">'+Math.round(p.zoom*100)+'%</span>'+
  '<button type="button" data-r18zoom="0.2">＋</button><button id="r18ZoomFit" type="button">100%</button></div></div>'+
  '<div class="il-legend"><span><i class="il-legend-neutral"></i> Bez statusa</span>'+
  '<span><i class="il-legend-prepared"></i> Pripremljen 50%</span><span><i class="il-legend-done"></i> Urađen 100%</span></div>'+
  '<div id="r18Map" class="il-svg-scroll"></div><div class="il-diagram-foot"><span>'+E(site.tag)+' · km '+E(site.km)+'</span>'+
- '<span>Raspored je prema projektu · nije georeferencirani DWG</span></div></div>'+
+ '<span>Redosled opreme po projektu · nije DWG razmera</span></div></div>'+
  '<aside class="il-sidebar" id="r18List"></aside></div>'+
  '<section class="il-method"><b>PROJEKTNA SPECIFIKACIJA KABLOVA</b>'+
  '<p>Preuzeti su tip, konstrukcija, projektna dužina L (m) i broj kablova iz tabele dostavljenog PDF-a. '+
@@ -199,7 +105,7 @@ N.render=function(){
  function zoom(delta){
   p.zoom=Math.min(1.7,Math.max(.6,Math.round((p.zoom+delta)*100)/100));
   const svg=board.querySelector('svg');
-  if(svg){svg.style.width=Math.round(1240*p.zoom)+'px';svg.style.height=Math.round(766*p.zoom)+'px'}
+  if(svg){svg.style.width=Math.round(1240*p.zoom)+'px';svg.style.height=Math.round(770*p.zoom)+'px'}
   label.textContent=Math.round(p.zoom*100)+'%';
  }
  function rerender(){
