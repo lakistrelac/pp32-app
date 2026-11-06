@@ -2,7 +2,7 @@
    Loaded after existing RLC navigation wrappers, no effect on other modules. */
 (function(){
 'use strict';
-const eligible=new Set(['RLC2','RLC3','RLC4','RLC5','RLC6','RLC7','RLC8','RLC9']);
+const eligible=new Set(['RLC2','RLC3','RLC4','RLC5','RLC6','RLC7','RLC8','RLC9','RLC18','RLC19','RLC20','RLC21','RLC22','RLC23','RLC24','RLC25']);
 const escHtml=s=>esc(s??'');
 const previous=window.rlc;
 if(typeof previous!=='function')return;
@@ -13,7 +13,7 @@ window.rlc=async function(id){
  if(!tile)return;
  tile.classList.add('im-line-card');
  const n=currentRlc.code;
- const registered=n==='RLC2'?window.PP32InteractiveLine:window.PP32LinesMore;
+ const registered=n==='RLC2'?window.PP32InteractiveLine:(Number(n.slice(3))>=18?window.PP32NewLines:window.PP32LinesMore);
  if(!registered||typeof registered.open!=='function')return;
  tile.setAttribute('role','button');
  tile.setAttribute('tabindex','0');
@@ -33,7 +33,7 @@ window.rlc=async function(id){
   '</div>'+
   '<span class="im-card-kicker">VIZUELNA EVIDENCIJA RADOVA</span>'+
   '<strong class="im-card-title">Linijska situacija</strong>'+
-  '<span class="im-card-copy">Označavanje faza na šemi putnog prelaza.</span>'+
+  '<span class="im-card-copy">Interaktivna šema sa uređajima, kablovima i statusima 0 / 50 / 100%.</span>'+
   '<div class="im-tags"><span>60% trasa</span><span>40% elementi</span></div>'+
   '<div class="im-card-bottom"><span>Otvori šemu · '+escHtml(n)+'</span><span class="im-arrow" aria-hidden="true">↗</span></div>';
  const open=()=>registered.open(id).catch(e=>alert('Linijska situacija: '+(e?.message||String(e))));
