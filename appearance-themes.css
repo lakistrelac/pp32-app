@@ -162,3 +162,34 @@ html[data-pp32-theme="light"] .rp-report-header{
 }
 html[data-pp32-theme="light"] .rp-report-header :is(.rp-label,.rp-title,.rp-title h1,.rp-meta,.rp-meta strong,.rp-logo){color:#fff}
 }
+
+/* Shared controls keep sufficient text contrast in all three variants. */
+html[data-pp32-theme="light"] :is(.btn:not(.sec):not(.danger),.tab.active){
+ background:#276f8c;color:#fff
+}
+html[data-pp32-theme="light"] :is(.home-page .hp-deck-card .home-project-name,.home-page .hp-deck-card .home-project-title,
+.home-page .hp-deck-card .home-project-description,.home-page .hp-deck-card .home-project-footer,
+.home-page .gd-home-banner .gd-home-title,.home-page .gd-home-banner .gd-home-desc){
+ color:#244b60
+}
+html[data-pp32-theme="light"] .pp32-pdf-open{background:linear-gradient(125deg,#1d6480,#2e8498);color:#fff}
+html[data-pp32-theme="adminred"] :is(.btn:not(.sec):not(.danger),.tab.active){background:#7d344d;color:#fff}
+html[data-pp32-theme="adminred"] .home-admin,
+html[data-pp32-theme="adminred"] .pw-panel,
+html[data-pp32-theme="adminred"] .pw-module,
+html[data-pp32-theme="adminred"] .cw-metric,
+html[data-pp32-theme="adminred"] .cw-table-card,
+html[data-pp32-theme="adminred"] .rp-stat,
+html[data-pp32-theme="adminred"] .rp-table-wrap{
+ border-color:#e9cdd6
+}
+html[data-pp32-theme="adminred"] .pp32-theme-toggle{background:rgba(255,220,232,.13)}
+/* All interface themes are disabled for printed technical reports. */
+@media print{
+ html[data-pp32-theme="adminred"] .rp-report-header{
+  background:linear-gradient(127deg,#102e43,#1a475c 65%,#205c68);color:#fff;border-color:#2e6478
+ }
+ html[data-pp32-theme="adminred"] .rp-report-header :is(.rp-label,.rp-title,.rp-title h1,.rp-meta,.rp-meta strong,.rp-logo){color:#fff}
+ html[data-pp32-theme="adminred"] .rp-page .rp-action{background:#20586c;color:#fff}
+ html[data-pp32-theme="adminred"] .rp-page .rp-table-wrap{border-color:#d8e6eb}
+}
