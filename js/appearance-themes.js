@@ -1,9 +1,9 @@
-/* PP32 appearance settings: default, light, and admin-only red. */
+/* PP32 appearance settings: default, light, and admin and leader red. */
 (function(){
 'use strict';
 const KEY='pp32_theme_v1';
-const themes={default:'Standardna',light:'Svetla',adminred:'Admin · crvena'};
-function allowed(t){return t==='adminred'&&!isSuperAdmin()?'default':(themes[t]?t:'default')}
+const themes={default:'Standardna',light:'Svetla',adminred:'Crvena'};
+function allowed(t){return t==='adminred'&&!isAdmin()?'default':(themes[t]?t:'default')}
 function stored(){try{return localStorage.getItem(KEY)||'default'}catch(_){return 'default'}}
 function apply(value,save){
  const theme=allowed(value);
@@ -31,7 +31,7 @@ function install(){
  toggle.innerHTML='<svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></svg><span>Tema</span>';
  const menu=document.createElement('div');menu.id='pp32ThemeMenu';menu.className='pp32-theme-menu';menu.hidden=true;
  const title=document.createElement('div');title.className='pp32-theme-menu-title';title.textContent='IZGLED APLIKACIJE';menu.append(title);
- for(const [key,name,swatch] of [['default','Standardna','standard'],['light','Svetla','light'],...(isSuperAdmin()?[['adminred','Admin · crvena','red']]:[])]){
+ for(const [key,name,swatch] of [['default','Standardna','standard'],['light','Svetla','light'],...(isAdmin()?[['adminred','Admin · crvena','red']]:[])]){
   const button=document.createElement('button');button.type='button';button.className='pp32-theme-choice';button.dataset.theme=key;
   button.innerHTML='<span class="pp32-theme-swatch pp32-swatch-'+swatch+'" aria-hidden="true"></span><span>'+name+'</span><span class="pp32-theme-check" aria-hidden="true">✓</span>';
   button.onclick=()=>{apply(key,true);close()};menu.append(button);
@@ -55,7 +55,7 @@ window.shell=function(body){previous(body);install()};
 const previousAuth=window.auth;
 if(typeof previousAuth==='function')window.auth=function(...args){
  const result=previousAuth.apply(this,args);
- if(!isSuperAdmin())apply('default',false);
+ if(!isAdmin())apply('default',false);
  return result;
 };
 apply(stored(),false);
