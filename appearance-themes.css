@@ -76,3 +76,89 @@ html[data-pp32-theme="adminred"] .pp32-modules-heading h2 em{color:#a74d68}
 html[data-pp32-theme="adminred"] .pp32-modules-heading h2{color:#52253a}
 html[data-pp32-theme="adminred"] .pp32-theme-choice.is-selected{background:#fbe9ee}
 @media(prefers-reduced-motion:reduce){.pp32-theme-toggle{transition:none}}
+
+/* Themed surfaces from separately styled modules. Status colors and drawings stay intact. */
+@media screen{
+html[data-pp32-theme="light"] .home-masthead.hr-enhanced{
+ background:linear-gradient(120deg,#e7f3f9 0%,#cbe7f0 100%);border-color:#bfd9e5;color:#1b475e
+}
+html[data-pp32-theme="light"] .hr-enhanced :is(.home-masthead-copy,.home-system,.home-system-name){color:#234b61}
+html[data-pp32-theme="light"] .home-page .hp-deck-card,
+html[data-pp32-theme="light"] .home-page .hp-deck-card:nth-child(2){
+ background:linear-gradient(120deg,#fff 0%,#deeff6 100%);color:#244b60;border-color:#bdd8e4
+}
+html[data-pp32-theme="light"] .home-page .hp-deck-card :is(.home-project-name,.home-project-title,.home-project-description,.home-project-footer,.home-project-index,.home-project-status){color:#24546b}
+html[data-pp32-theme="light"] .home-page .hp-deck-card :is(.home-project-status,.home-project-index){background:#e0eff5;border-color:#b9d9e4}
+html[data-pp32-theme="light"] .home-page .home-guide-banner.gd-home-banner,
+html[data-pp32-theme="light"] .home-page .home-guide-banner.gd-home-banner:hover{
+ background:linear-gradient(125deg,#e3f3f8,#c7e5ee);color:#204a62;border-color:#b5d6e3
+}
+html[data-pp32-theme="light"] .home-page .home-guide-banner.gd-home-banner :is(.gd-home-desc,.gd-home-tags span,.gd-home-cta,.gd-home-kicker){color:#315e74}
+html[data-pp32-theme="light"] .home-page .home-guide-banner.gd-home-banner .gd-home-visual{background:linear-gradient(120deg,#d0eaf1,#eaf6fa)}
+html[data-pp32-theme="light"] :is(.rg-project-hero,.gd-hero,.cw-hero,.il-hero,.pw-workspace .pw-main-hero,.pw-section-hero){
+ background:linear-gradient(115deg,#e8f5fa,#cce6ef);border-color:#b5d7e3;color:#234b61
+}
+html[data-pp32-theme="light"] :is(.rg-project-hero,.gd-hero,.cw-hero,.il-hero,.pw-workspace .pw-main-hero,.pw-section-hero) :is(h1,h2,strong){color:#234b61}
+html[data-pp32-theme="light"] .rg-project-hero .sub,
+html[data-pp32-theme="light"] .cw-hero p,
+html[data-pp32-theme="light"] .il-hero p,
+html[data-pp32-theme="light"] .pw-workspace .pw-main-hero p{color:#557b8d}
+html[data-pp32-theme="light"] .cw-hero-chip,
+html[data-pp32-theme="light"] .gd-hero-stats span,
+html[data-pp32-theme="light"] .pw-stats span{
+ background:rgba(255,255,255,.7);border-color:#b4d4df;color:#315b71
+}
+html[data-pp32-theme="light"] .cw-hero-art,
+html[data-pp32-theme="light"] .gd-hero-art,
+html[data-pp32-theme="light"] .pw-progress-panel{background:linear-gradient(125deg,#d4eaf1,#e8f5f9);border-color:#b6d7e1}
+html[data-pp32-theme="light"] .rp-report-header{
+ background:linear-gradient(125deg,#e7f3f9,#cbe7ee);border-color:#b6d8e4;color:#23495d
+}
+html[data-pp32-theme="light"] .rp-report-header :is(.rp-label,.rp-title,.rp-title h1,.rp-meta,.rp-meta strong,.rp-logo){color:#23495d}
+html[data-pp32-theme="light"] .rp-logo{background:#ecf7fa;border-color:#b5d8e3}
+html[data-pp32-theme="light"] .rg-editor-hero{background:linear-gradient(120deg,#d8ecf4,#f1f9fc);border-color:#bedbe7;color:#265367}
+html[data-pp32-theme="light"] .rg-editor-hero :is(h1,p,span){color:#265367}
+html[data-pp32-theme="light"] .gd-home-visual{border-color:#bdd9e2}
+html[data-pp32-theme="light"] .pp32-pdf-strip{background:linear-gradient(120deg,#fff,#e7f4f8)}
+/* Admin burgundy accents on every project area (appearance only). */
+html[data-pp32-theme="adminred"] .home-masthead.hr-enhanced{
+ background:linear-gradient(120deg,#351823,#722d48);border-color:#8a4e65
+}
+html[data-pp32-theme="adminred"] .home-page .hp-deck-card,
+html[data-pp32-theme="adminred"] .home-page .hp-deck-card:nth-child(2){
+ --hp-accent:#ed9aaf;
+ background:linear-gradient(120deg,#3e1e2e,#78384e);border-color:#99526b;color:#fff2f6
+}
+html[data-pp32-theme="adminred"] .home-page .hp-deck-card:nth-child(2){--hp-accent:#f5bcc9}
+html[data-pp32-theme="adminred"] .home-page .home-guide-banner.gd-home-banner,
+html[data-pp32-theme="adminred"] .home-page .home-guide-banner.gd-home-banner:hover{
+ background:linear-gradient(120deg,#3e1e2d,#783b50);border-color:#96546b;color:#fff2f6
+}
+html[data-pp32-theme="adminred"] .home-page .gd-home-visual{
+ background:linear-gradient(135deg,#512537,#783b4f);border-color:#a36d80
+}
+html[data-pp32-theme="adminred"] :is(.rg-project-hero,.gd-hero,.cw-hero,.il-hero,.pw-workspace .pw-main-hero,.pw-section-hero,.rg-editor-hero){
+ background:linear-gradient(120deg,#371926,#78354b);border-color:#96536b;color:#fff2f6
+}
+html[data-pp32-theme="adminred"] .cw-hero-art,
+html[data-pp32-theme="adminred"] .gd-hero-art,
+html[data-pp32-theme="adminred"] .pw-progress-panel{background:linear-gradient(130deg,#552537,#7b4054);border-color:#9b6074}
+html[data-pp32-theme="adminred"] .rg-code,
+html[data-pp32-theme="adminred"] .pw-symbol{background:#f9e9ed;color:#913f59;border-color:#e8c2cf}
+html[data-pp32-theme="adminred"] .rg-progress i{background:linear-gradient(90deg,#ae4d6b,#e797ac)}
+html[data-pp32-theme="adminred"] :is(.cw-btn:not(.cw-btn-outline),.pw-btn:not(.secondary):not(.danger)){
+ background:#84364e;border-color:#84364e;color:#fff
+}
+html[data-pp32-theme="adminred"] .rp-action:not(.rp-excel){background:#84364e;border-color:#84364e;color:#fff}
+html[data-pp32-theme="adminred"] .pp32-pdf-strip-copy b{color:#72344a}
+html[data-pp32-theme="adminred"] :is(.pp32-mod-badge,.im-active){background:#74394f;border-color:#9a6275;color:#f4c7d3}
+html[data-pp32-theme="adminred"] .rg-count,
+html[data-pp32-theme="adminred"] .pp32-module-count{color:#93455e;border-color:#e2c0cb;background:#fff8fa}
+}
+@media print{
+/* Reports must keep their original print styling regardless of chosen UI theme. */
+html[data-pp32-theme="light"] .rp-report-header{
+ background:linear-gradient(127deg,#102e43,#1a475c 65%,#205c68);color:#fff;border-color:#2e6478
+}
+html[data-pp32-theme="light"] .rp-report-header :is(.rp-label,.rp-title,.rp-title h1,.rp-meta,.rp-meta strong,.rp-logo){color:#fff}
+}
