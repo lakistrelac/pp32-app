@@ -38,13 +38,19 @@ function install(){
  }
  toggle.onclick=()=>{const open=menu.hidden;menu.hidden=!open;toggle.setAttribute('aria-expanded',String(open))};
  container.append(toggle,menu);top.insertBefore(container,top.querySelector('.role'));
- document.addEventListener('pointerdown',event=>{if(!container.contains(event.target))close()},{signal:window.PP32ThemeAbort?.signal});
  apply(stored(),false);
 }
 const previous=window.shell;
 if(typeof previous!=='function')return;
 window.PP32ThemeAbort?.abort();
 window.PP32ThemeAbort=new AbortController();
+document.addEventListener('pointerdown',event=>{
+ const control=document.querySelector('.pp32-theme-control');
+ if(control&&!control.contains(event.target))close();
+},{signal:window.PP32ThemeAbort.signal});
+document.addEventListener('keydown',event=>{
+ if(event.key==='Escape')close();
+},{signal:window.PP32ThemeAbort.signal});
 window.shell=function(body){previous(body);install()};
 apply(stored(),false);
 })();
