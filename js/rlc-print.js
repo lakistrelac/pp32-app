@@ -18,7 +18,7 @@ R.load=async id=>{
  if(!r)throw Error('Putni prelaz nije pronađen.');
  const [projects,components,manual,cables]=await Promise.all([
   api('/rest/v1/projects?id=eq.'+q(r.project_id)+'&select=id,name,code'),
-  api('/rest/v1/components?rlc_id=eq.'+q(id)+'&select=id,code,name,chainage,component_type_id,component_types(name,unit)&order=name.asc'),
+  api('/rest/v1/components?rlc_id=eq.'+q(id)+'&select=id,code,name,chainage,work_status,component_type_id,component_types(name,unit)&order=name.asc'),
   api('/rest/v1/equipment_items?rlc_id=eq.'+q(id)+'&select=id,name,unit,planned,installed,note&order=name.asc'),
   api('/rest/v1/rlc_cable_items?rlc_id=eq.'+q(id)+'&select=id,cable_type,construction,material,length_m,cable_count,note,sort_order&order=sort_order.asc,created_at.asc&limit=500')
  ]);
@@ -30,10 +30,10 @@ R.load=async id=>{
  const byType=new Map();
  const componentRows=components.map((c,i)=>{
   const type=c.component_types?.name||'Ostalo',unit=c.component_types?.unit||'kom',steps=taskGroups.get(c.id)||[];
-  const done=completed(steps),key=type+'\u001f'+unit;
+  const done=c.work_status==='done',key=type+'\u001f'+unit;
   if(!byType.has(key))byType.set(key,{name:type,unit,planned:0,installed:0,source:'Automatski iz komponenata'});
   const agg=byType.get(key);agg.planned+=1;if(done)agg.installed+=1;
-  return {index:i+1,code:c.code||'',name:c.name,type,unit,chainage:c.chainage||'',planned:1,installed:done?1:0,progress:pct(steps),taskCount:steps.length,steps};
+  return {index:i+1,code:c.code||'',name:c.name,type,unit,chainage:c.chainage||'',planned:1,installed:done?1:0,progress:workPercent(c.work_status),taskCount:steps.length,steps};
  });
  const automatic=[...byType.values()].map(x=>({...x,remaining:Math.max(0,x.planned-x.installed)}));
  const manualRows=manual.map(x=>({name:x.name,unit:x.unit,planned:number(x.planned),installed:number(x.installed),remaining:Math.max(0,number(x.planned)-number(x.installed)),source:'Ručni unos',note:x.note||''}));
@@ -48,7 +48,7 @@ R.load=async id=>{
  const missing=cables.filter(isMissing).length;
  return {p,r,cables,componentRows,tasks,equipment,equipmentDetails,missing,
   totals:{length:total(cables,'length_m'),count:total(cables,'cable_count'),
-   complete:tasks.filter(t=>t.is_complete).length,progress:pct(tasks)}};
+   complete:components.filter(c=>c.work_status==='done').length,progress:workAverage(components)}};
 };
 function table(headers,rows,colClass=''){
  const body=rows.length?rows.map(row=>'<tr>'+row.map(x=>'<td>'+x+'</td>').join('')+'</tr>').join(''):
@@ -89,7 +89,7 @@ R.open=async id=>{
  '<div class="rp-meta">'+meta('Pruga',r.railway_line||'Pruga nije određena')+meta('Stacionaža',r.chainage||'Nije uneta')+
  meta('Projekat',d.p.name)+meta('Stanje na dan',date)+'</div></section>'+
  '<div class="rp-stats">'+stat('Zbir poznatih L',d.totals.length,'m')+stat('Zbir poznatih br.',d.totals.count)+
- stat('Komponente',d.componentRows.length)+stat('Završeni zadaci',d.totals.complete)+'</div>'+
+ stat('Komponente',d.componentRows.length)+stat('Urađene komponente',d.totals.complete)+'</div>'+
  (d.missing?'<div class="rp-alert"><b>VAŽNO: '+escText(missingText)+'</b><p>Nepoznate dužine i brojevi nisu uračunati kao nula. Ukupne vrednosti predstavljaju samo poznate količine.</p></div>':'')+
  '<section class="rp-section"><div class="rp-section-heading"><div><span>01 / PROJEKTNE KOLIČINE</span><h2>Specifikacija kablova</h2></div><strong>'+d.cables.length+' stavki</strong></div>'+
  table(['#','Tip kabla','Konstrukcija','Materijal','L (m)','br.','Napomena'],cableRows,'rp-cables-table')+
@@ -168,7 +168,7 @@ R.makeWorkbook=d=>{
  ['POZNATE KOLIČINE KABLOVA'],['Zbir L (m)',d.totals.length],['Zbir br.',d.totals.count],
  ['Nepotpune stavke',missing],['Status specifikacije',missing?'NEPOTPUNO — NA PROVERU':'SVE VREDNOSTI UNETE'],blank,
  ['OPREMA I RADOVI'],['Vrste opreme',d.equipment.length],['Komponente',d.componentRows.length],
- ['Zadaci',d.tasks.length],['Završeni zadaci',d.totals.complete],['Napredak (%)',d.totals.progress],blank,
+ ['Zadaci',d.tasks.length],['Urađene komponente',d.totals.complete],['Napredak (%)',d.totals.progress],blank,
  ['NAPOMENA','Zbir kolone L i zbir kolone br. su nezavisni i ne množe se.'],['NAPOMENA','Nepoznate vrednosti nisu uračunate kao nula.']]},
  {name:'Kablovi',rows:[
  ['KABLOVI · '+d.r.code],['Pruga',d.r.railway_line||'Nije određena'],
