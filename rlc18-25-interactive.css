@@ -150,3 +150,6 @@ html[data-pp32-theme="light"] .r18-page .r18-source-svg .r18-source-name{fill:#2
 .r18-page .r18-source-svg .r18-device:focus .r18-source-name{
  fill:#126f8a;text-decoration:underline
 }
+
+/* Transparent hit targets cover the actual PDF-measured symbol, not just its text label. */
+.r18-page .r18-source-svg .r18-symbol-interact{fill:transparent;stroke:none;pointer-events:all}
