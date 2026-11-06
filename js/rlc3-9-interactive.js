@@ -145,6 +145,8 @@ A.open=async function(id){
  '<header class="il-hero"><div><div class="il-overline">PP32 / INTERAKTIVNA EVIDENCIJA IZVOĐENJA</div><h1>'+E(cfg.name)+' <span>· '+E(rlc.code)+'</span></h1>'+
  '<p>'+E(rlc.chainage||'km '+cfg.km)+' · '+E(rlc.railway_line||'Ruma–Šabac–Donja Borina')+'</p></div>'+
  '<div class="il-hero-progress"><strong id="ilmHeroPct">0%</strong><span>UKUPAN NAPREDAK</span></div></header>'+
+ '<section class="pp32-pdf-strip"><div class="pp32-pdf-strip-copy"><b>Originalni projektni crtež</b><span>PDF linijske situacije sa planom uključenja · projektna podloga</span></div>'+
+ window.PP32OriginalPDF.controls(rlc)+'</section>'+
  '<div id="ilmStages"></div><div class="il-workbench"><div class="il-diagram-panel"><div class="il-diagram-toolbar"><div><b>Interaktivna linijska situacija · '+E(cfg.short)+'</b>'+
  '<p>Označi element na šemi ili iz liste. Status se čuva po RLC-u.</p></div><div class="il-diagram-controls"><button type="button" data-ilzoom="-0.2">−</button><span id="ilmZoomText">100%</span>'+
  '<button type="button" data-ilzoom="0.2">＋</button><button id="ilmZoomReset" type="button">100%</button></div></div>'+
@@ -156,6 +158,7 @@ A.open=async function(id){
  '<div id="ilmModalRoot"></div></main>';
  shell(screen);
  document.getElementById('ilmBack').onclick=()=>window.rlc(id).catch(error);
+ window.PP32OriginalPDF.attach(rlc,()=>A.open(id));
  const box=document.getElementById('ilmMap'),zoomLabel=document.getElementById('ilmZoomText');
  function zoom(delta){page.zoom=Math.min(1.65,Math.max(.55,Math.round((page.zoom+delta)*100)/100));const s=box.querySelector('svg');if(s){s.style.width=Math.round(1240*page.zoom)+'px';s.style.height=Math.round(770*page.zoom)+'px'}zoomLabel.textContent=Math.round(page.zoom*100)+'%'}
  function refresh(){
