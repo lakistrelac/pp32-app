@@ -55,7 +55,7 @@ function map(rows,site){
   const status=statusName[row.status]||'Bez statusa';
   const label=E(row.label);
   const klass='il-spot r18-hit r18-device '+state(row.status);
-  let shape='',name='',hint='';
+  let shape='',name='',hint='',symbolHit='';
   if(row.item_key==='cabinet-bk'){
    shape='<rect class="r18-source-icon" x="'+(x-12)+'" y="'+(y-17)+'" width="24" height="24" rx="3"/>';
    name=''; // Cabinet name already appears on the source-aligned central axis.
@@ -68,10 +68,12 @@ function map(rows,site){
   }else if(code==='sensor'){
    const sensorKey=row.label.replace(/-(?:PB[A-Z]-\d+).*$/i,'').replace(/^K2-12$/i,'K2/12');
    const [sx,sy]=layout.m?.[sensorKey]||[x+(left?55:-55),y];
+   symbolHit='<circle class="r18-symbol-interact" cx="'+sx+'" cy="'+sy+'" r="18"/>';
    shape='<path class="r18-sensor-icon" d="M'+sx+' '+(sy-8)+'l8 8-8 8-8-8Z"/><circle class="r18-sensor-core" cx="'+sx+'" cy="'+sy+'" r="2.7"/>';
    name='<text class="r18-source-name" x="'+x+'" y="'+(y+5)+'" text-anchor="middle">'+label+'</text>';
   }else if(code==='barrier'){
    const sx=x+(left?22:-22),arm=left?sx-120:sx+120;
+   symbolHit='<circle class="r18-symbol-interact" cx="'+sx+'" cy="'+y+'" r="18"/>';
    shape='<rect class="r18-barrier-case" x="'+(sx-9)+'" y="'+(y-8)+'" width="18" height="16" rx="2"/>'+
     '<path class="r18-barrier-arm" d="M'+sx+' '+(y-1)+'H'+arm+'"/>'+
     '<path class="r18-barrier-rail" d="M'+sx+' '+(y-1)+'H'+arm+'"/>';
@@ -79,6 +81,7 @@ function map(rows,site){
   }else if(code==='signal'){
    const isRoad=/^PS/.test(row.label);
    const sx=x+(left?23:-23),sy=y-11;
+   symbolHit='<circle class="r18-symbol-interact" cx="'+sx+'" cy="'+sy+'" r="18"/>';
    shape='<path class="r18-signal-pole" d="M'+sx+' '+(sy-14)+'v27"/><rect class="r18-signal-case" x="'+(sx-4)+'" y="'+(sy-16)+'" width="8" height="13" rx="2"/>'+
     '<circle class="r18-signal-lamp" cx="'+sx+'" cy="'+(sy-12)+'" r="1.7"/>'+
     (isRoad?'<path class="r18-signal-foot" d="M'+(sx-6)+' '+(sy+13)+'h12"/>':'');
@@ -95,7 +98,7 @@ function map(rows,site){
    '<rect x="'+(x-54)+'" y="'+(y-5)+'" width="108" height="20" class="r18-target"/>'+
    '<circle cx="'+x+'" cy="'+(y-16)+'" r="11" class="r18-target r18-symbol-hit"/>'+
    '<circle class="r18-status-ring" cx="'+(x+(left?-24:24))+'" cy="'+(y-19)+'" r="5"/>'+
-   shape+name+hint+'</g>';
+   shape+name+hint+symbolHit+'</g>';
  }).join('');
  const os=Object.entries(layout.o).map(([name,position])=>{
   const [x,y]=position,left=x<mid;
