@@ -1,6 +1,7 @@
 /* PP32 · Interactive cable-plan schematics RLC18–25.
    Source data: project cable-plan PDFs, mapped in rlc18-25-sites.js.
-   SVG is a clear illustrative scheme, NOT a geodetic or CAD-accurate drawing.
+   SVG topology and equipment label coordinates follow the supplied project PDF.
+   It does not constitute a geodetic drawing or original DWG file.
    Status rows live in Supabase. "Pripremljeno" contributes 50% of each stage.
 */
 (function(){
@@ -117,6 +118,7 @@ function map(rows,site){
   '<text class="r18-map-footer" x="272" y="848">POLOŽAJI OPREME I GRANANJE KABLOVA PREMA ORIGINALNOM PROJEKTNOM CRTEŽU · PDF KOORDINATE</text>'+
   '<text class="r18-map-footer" x="1360" y="848" text-anchor="end">'+E(site.code)+'</text></svg>';
 }
+N.map=map; // Read-only SVG renderer, also used by automated layout checks.
 function stages(rows){
  const p=progress(rows);
  return '<section class="il-progress-panel"><div class="il-progress-summary"><div><span>UKUPNA REALIZACIJA · '+E(N.page.site.code)+'</span><strong>'+fmt(p.total)+'%</strong></div>'+
@@ -170,13 +172,13 @@ N.render=function(){
  stages(p.items)+
  '<div class="il-workbench"><div class="il-diagram-panel">'+
  '<div class="il-diagram-toolbar"><div><b>Interaktivna linijska · '+E(site.tag)+'</b>'+
- '<p>Ilustrativni raspored. Precizne položaje i kilometraže čitaj iz originalnog PDF-a.</p></div>'+
+ '<p>Položaji elemenata i kraci kablova preslikani su iz projektne situacije; za detalje koristi izvorni PDF.</p></div>'+
  '<div class="il-diagram-controls"><button type="button" data-r18zoom="-0.2">−</button><span id="r18ZoomText">'+Math.round(p.zoom*100)+'%</span>'+
  '<button type="button" data-r18zoom="0.2">＋</button><button id="r18ZoomFit" type="button">100%</button></div></div>'+
  '<div class="il-legend"><span><i class="il-legend-neutral"></i> Bez statusa</span>'+
  '<span><i class="il-legend-prepared"></i> Pripremljen 50%</span><span><i class="il-legend-done"></i> Urađen 100%</span></div>'+
  '<div id="r18Map" class="il-svg-scroll"></div><div class="il-diagram-foot"><span>'+E(site.tag)+' · km '+E(site.km)+'</span>'+
- '<span>Šematski prikaz, nije CAD niti geodetska razmera</span></div></div>'+
+ '<span>Raspored je prema projektu · nije georeferencirani DWG</span></div></div>'+
  '<aside class="il-sidebar" id="r18List"></aside></div>'+
  '<section class="il-method"><b>PROJEKTNA SPECIFIKACIJA KABLOVA</b>'+
  '<p>Preuzeti su tip, konstrukcija, projektna dužina L (m) i broj kablova iz tabele dostavljenog PDF-a. '+
@@ -192,7 +194,7 @@ N.render=function(){
  function zoom(delta){
   p.zoom=Math.min(1.7,Math.max(.6,Math.round((p.zoom+delta)*100)/100));
   const svg=board.querySelector('svg');
-  if(svg){svg.style.width=Math.round(1240*p.zoom)+'px';svg.style.height=Math.round(660*p.zoom)+'px'}
+  if(svg){svg.style.width=Math.round(1240*p.zoom)+'px';svg.style.height=Math.round(766*p.zoom)+'px'}
   label.textContent=Math.round(p.zoom*100)+'%';
  }
  function rerender(){
@@ -219,9 +221,12 @@ N.render=function(){
     const response=await api('/rest/v1/rpc/set_rlc_device_status',{method:'POST',
      body:JSON.stringify({p_item:row.id,p_status:btn.dataset.r18set})});
     if(!response||!response.line_items)throw Error('Upis nije potvrđen.');
-    row.status=btn.dataset.r18set;clear();
-    // Recalculate and redraw without losing list/map selection.
-    const previousZoom=p.zoom;N.render();p.zoom=previousZoom;
+    row.status=btn.dataset.r18set;
+    const oldBoard=document.getElementById('r18Map');
+    const oldLeft=oldBoard?.scrollLeft||0,oldTop=oldBoard?.scrollTop||0;
+    clear();N.render();
+    const newBoard=document.getElementById('r18Map');
+    if(newBoard){newBoard.scrollLeft=oldLeft;newBoard.scrollTop=oldTop}
    }catch(error){message.textContent='Greška: '+(error?.message||String(error));btn.disabled=false}
   });
  }
