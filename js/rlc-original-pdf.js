@@ -70,6 +70,23 @@ P.attach=function(rlc,reload){
   finally{if(input.isConnected){input.disabled=false;input.value='';span.textContent=original}}
  };
 };
+/* PDF upload and original drawing access stay visible on the RLC overview,
+ * even before the interactive diagram has been opened.
+ */
+const previousRlc=window.rlc;
+if(typeof previousRlc==='function')window.rlc=async function(rlcId){
+ await previousRlc(rlcId);
+ if(currentProject?.code!=='pp32'||!currentRlc?.id||String(currentRlc.id)!==String(rlcId))return;
+ const tiles=document.querySelector('.tiles');
+ if(!tiles||document.getElementById('pp32PdfUpload'))return;
+ const section=document.createElement('section');
+ section.className='pp32-pdf-strip pp32-pdf-rlc-entry';
+ section.innerHTML='<div class="pp32-pdf-strip-copy"><b>Originalni projektni PDF · '+safe(currentRlc.code)+'</b>'+
+ '<span>Dodaj svoju izvornu linijsku situaciju. PDF ostaje odvojen od interaktivne šeme.</span></div>'+
+ P.controls(currentRlc);
+ tiles.parentElement.insertBefore(section,tiles);
+ P.attach(currentRlc,()=>window.rlc(rlcId));
+};
 const previousProject=window.project;
 if(typeof previousProject==='function')window.project=async function(projectId){
  await previousProject(projectId);
@@ -78,8 +95,8 @@ if(typeof previousProject==='function')window.project=async function(projectId){
  if(!grid||document.getElementById('pp32PdfBatchInput'))return;
  const section=document.createElement('section');
  section.className='pp32-pdf-batch';
- section.innerHTML='<div class="pp32-pdf-batch-copy"><b>Originalni projektni PDF-ovi · RLC 2–9 i RLC 18–25</b>'+
- '<span>Poveži sve linijske situacije odjednom. Naziv može sadržati RLC broj (npr. RLC23.pdf). Tri originalna fajla bez broja automatski se povezuju redom: običan → RLC18, (1) → RLC19, (2) → RLC20.</span></div>'+
+ section.innerHTML='<div class="pp32-pdf-batch-copy"><b>Originalni PDF-ovi · pojedinačno ili grupno</b>'+
+ '<span>Poveži sve linijske situacije odjednom. Naziv može sadržati RLC broj (npr. RLC23.pdf). Tri originalna fajla bez broja prepoznaju se po nazivu: osnovni → RLC18, (1) → RLC19, (2) → RLC20. Takođe možeš da dodaš bilo koji PDF direktno unutar svog RLC-a.</span></div>'+
  '<label class="pp32-pdf-batch-button"><span>＋ Dodaj više PDF-ova</span>'+
  '<input id="pp32PdfBatchInput" type="file" multiple accept=".pdf,application/pdf" hidden></label>'+
  '<div class="pp32-pdf-batch-results" id="pp32PdfBatchResults" role="status" aria-live="polite"></div>';
