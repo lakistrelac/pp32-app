@@ -1,0 +1,115 @@
+/* PP32 original PDF project sheets · RLC 2–9.
+ * Uses the existing private Supabase storage bucket and RLC file field.
+ * Uploads are admin-only, viewing respects signed storage access.
+ * Does not change interactive SVG, progress or task statuses.
+ */
+(function(){
+'use strict';
+const P=window.PP32OriginalPDF={};
+const safe=value=>String(value==null?'':value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const isPdf=file=>!!file && /\.pdf$/i.test(file.name)&&(!file.type||file.type==='application/pdf');
+const MAX_SIZE=25*1024*1024;
+function filePath(rlc){
+ return 'lines/'+rlc.id+'/'+Date.now()+'_'+String(rlc.code||'RLC').replace(/[^a-zA-Z0-9_-]/g,'')+'_original.pdf';
+}
+async function upload(file,rlc){
+ if(!isPdf(file))throw Error('Izaberi originalni PDF dokument.');
+ if(file.size>MAX_SIZE)throw Error('Fajl je veći od dozvoljenih 25 MB.');
+ if(!isAdmin())throw Error('Samo administrator može dodati projektni PDF.');
+ const path=filePath(rlc);
+ await api('/storage/v1/object/pp32-documents/'+path,{
+  method:'POST',
+  headers:{'Content-Type':'application/pdf','x-upsert':'false'},
+  body:file
+ });
+ await api('/rest/v1/rlcs?id=eq.'+encodeURIComponent(rlc.id),{
+  method:'PATCH',headers:{Prefer:'return=minimal'},
+  body:JSON.stringify({line_storage_path:path,updated_at:new Date().toISOString()})
+ });
+ rlc.line_storage_path=path;
+ return path;
+}
+P.controls=function(rlc){
+ const exists=!!rlc?.line_storage_path;
+ return '<div class="pp32-pdf-controls">'+
+ '<button id="pp32OriginalPdf" type="button" class="pp32-pdf-open" '+(exists?'':'disabled aria-disabled="true"')+
+ ' title="'+(exists?'Otvori originalnu linijsku situaciju':'Originalni PDF još nije dodat')+'">'+
+ '<svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+
+ '<path d="M7 3h7l5 5v12a1 1 0 0 1-1 1H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z"/><path d="M14 3v6h5M9 14h7M9 17h7"/>'+
+ '</svg><span>Originalni PDF</span></button>'+
+ (isAdmin()?'<label class="pp32-pdf-upload"><span>＋ '+(exists?'Zameni PDF':'Dodaj PDF')+'</span>'+
+ '<input type="file" id="pp32PdfUpload" accept=".pdf,application/pdf" hidden></label>':'')+
+ '<span class="pp32-pdf-file-state">'+(exists?'PDF dostupan':'PDF nije povezan')+'</span>'+
+ '</div>';
+};
+P.attach=function(rlc,reload){
+ const button=document.getElementById('pp32OriginalPdf');
+ if(button&&!button.disabled)button.onclick=async()=>{
+  // Browser popup blockers require opening a new tab directly on the click.
+  const tab=window.open('about:blank','_blank');
+  if(tab){try{tab.document.title='Originalna linijska situacija';tab.document.body.textContent='Učitavanje projektnog PDF-a…'}catch(_){}}
+  button.disabled=true;
+  try{
+   const url=await signed(rlc.line_storage_path);
+   if(tab)tab.location.replace(url);
+   else window.location.assign(url);
+  }catch(error){
+   if(tab)tab.close();
+   alert('Originalni PDF nije moguće otvoriti: '+(error?.message||String(error)));
+  }finally{if(button.isConnected)button.disabled=false}
+ };
+ const input=document.getElementById('pp32PdfUpload');
+ if(input)input.onchange=async()=>{
+  const file=input.files?.[0];if(!file)return;
+  const span=input.parentElement.querySelector('span'),original=span.textContent;
+  input.disabled=true;span.textContent='Otpremanje PDF-a…';
+  try{
+   await upload(file,rlc);
+   await reload();
+  }catch(error){alert('Dodavanje PDF-a nije uspelo: '+(error?.message||String(error)))}
+  finally{if(input.isConnected){input.disabled=false;input.value='';span.textContent=original}}
+ };
+};
+const previousProject=window.project;
+if(typeof previousProject==='function')window.project=async function(projectId){
+ await previousProject(projectId);
+ if(currentProject?.code!=='pp32'||!isAdmin())return;
+ const grid=document.querySelector('.rlcgrid');
+ if(!grid||document.getElementById('pp32PdfBatchInput'))return;
+ const section=document.createElement('section');
+ section.className='pp32-pdf-batch';
+ section.innerHTML='<div class="pp32-pdf-batch-copy"><b>Originalni projektni PDF-ovi · RLC 2–9</b>'+
+ '<span>Poveži sve linijske situacije odjednom. Naziv svakog fajla mora da sadrži RLC broj (npr. RLC3.pdf).</span></div>'+
+ '<label class="pp32-pdf-batch-button"><span>＋ Dodaj više PDF-ova</span>'+
+ '<input id="pp32PdfBatchInput" type="file" multiple accept=".pdf,application/pdf" hidden></label>'+
+ '<div class="pp32-pdf-batch-results" id="pp32PdfBatchResults" role="status" aria-live="polite"></div>';
+ grid.parentElement.insertBefore(section,grid);
+ const input=section.querySelector('#pp32PdfBatchInput'),result=section.querySelector('#pp32PdfBatchResults');
+ input.onchange=async()=>{
+  const files=[...input.files||[]];if(!files.length)return;
+  input.disabled=true;const label=section.querySelector('.pp32-pdf-batch-button span');label.textContent='Otpremanje…';
+  const seen=new Set(),valid=[],errors=[];
+  for(const file of files){
+   const m=file.name.match(/\bRLC\s*0*([2-9])\b/i);
+   if(!m||!isPdf(file)){errors.push(safe(file.name)+': nije prepoznat RLC 2–9 PDF');continue}
+   const code='RLC'+m[1];
+   if(seen.has(code)){errors.push(code+': izabran je više puta');continue}
+   seen.add(code);valid.push({code,file});
+  }
+  try{
+   const rs=await api('/rest/v1/rlcs?project_id=eq.'+encodeURIComponent(currentProject.id)+'&select=id,code,line_storage_path');
+   const byCode=new Map(rs.map(row=>[row.code,row]));let count=0;
+   for(const {code,file} of valid){
+    const rlc=byCode.get(code);
+    if(!rlc){errors.push(code+': prelaz nije pronađen');continue}
+    try{await upload(file,rlc);count++;result.textContent='Sačuvano '+count+' / '+valid.length+' PDF-ova…';}
+    catch(e){errors.push(code+': '+(e?.message||String(e)))}
+   }
+   result.innerHTML='<strong>Uspešno povezano: '+count+' od '+valid.length+'.</strong>'+
+    (errors.length?'<ul>'+errors.map(x=>'<li>'+safe(x)+'</li>').join('')+'</ul>':
+    '<span> PDF-ovi su sada dostupni u odgovarajućim interaktivnim linijskim situacijama.</span>');
+  }catch(e){result.textContent='Greška: '+(e?.message||String(e))}
+  finally{input.value='';input.disabled=false;label.textContent='＋ Dodaj više PDF-ova'}
+ };
+};
+})();
