@@ -58,41 +58,43 @@ function map(rows,site){
   let shape='',name='',hint='';
   if(row.item_key==='cabinet-bk'){
    shape='<rect class="r18-source-icon" x="'+(x-12)+'" y="'+(y-17)+'" width="24" height="24" rx="3"/>';
-   name='<text class="r18-source-name" x="'+x+'" y="'+(y+27)+'" text-anchor="middle">BK</text>';
+   name=''; // Cabinet name already appears on the source-aligned central axis.
   }else if(row.item_key==='cabinet-energetski-orman'){
    shape='<rect class="r18-energy-icon" x="'+(x-12)+'" y="'+(y-12)+'" width="24" height="24" rx="2"/>';
-   name='<text class="r18-source-name" x="'+x+'" y="'+(y+33)+'" text-anchor="middle">NAPAJANJE</text>';
+   name=''; // Preserve original vertical green cabinet label.
   }else if(code==='cabinet'){
    shape='<rect class="r18-lob-icon" x="'+(x-16)+'" y="'+(y-12)+'" width="32" height="24" rx="2"/>';
-   name='<text class="r18-source-name" x="'+x+'" y="'+(y+28)+'" text-anchor="middle">'+label+'</text>';
+   name='<text class="r18-source-name" x="'+x+'" y="'+(y+5)+'" text-anchor="middle">'+label+'</text>';
   }else if(code==='sensor'){
-   const sx=x+(left?42:-42),sy=y-6;
+   const sensorKey=row.label.replace(/-(?:PB[A-Z]-\d+).*$/i,'').replace(/^K2-12$/i,'K2/12');
+   const [sx,sy]=layout.m?.[sensorKey]||[x+(left?55:-55),y];
    shape='<path class="r18-sensor-icon" d="M'+sx+' '+(sy-8)+'l8 8-8 8-8-8Z"/><circle class="r18-sensor-core" cx="'+sx+'" cy="'+sy+'" r="2.7"/>';
-   name='<text class="r18-source-name" x="'+x+'" y="'+(y+14)+'" text-anchor="middle">'+label+'</text>';
+   name='<text class="r18-source-name" x="'+x+'" y="'+(y+5)+'" text-anchor="middle">'+label+'</text>';
   }else if(code==='barrier'){
-   const sx=x+(left?22:-22),arm=left?sx-155:sx+155;
+   const sx=x+(left?22:-22),arm=left?sx-120:sx+120;
    shape='<rect class="r18-barrier-case" x="'+(sx-9)+'" y="'+(y-8)+'" width="18" height="16" rx="2"/>'+
     '<path class="r18-barrier-arm" d="M'+sx+' '+(y-1)+'H'+arm+'"/>'+
     '<path class="r18-barrier-rail" d="M'+sx+' '+(y-1)+'H'+arm+'"/>';
-   name='<text class="r18-source-name" x="'+x+'" y="'+(y+19)+'" text-anchor="middle">'+label+'</text>';
+   name='<text class="r18-source-name" x="'+x+'" y="'+(y+5)+'" text-anchor="middle">'+label+'</text>';
   }else if(code==='signal'){
    const isRoad=/^PS/.test(row.label);
    const sx=x+(left?23:-23),sy=y-11;
    shape='<path class="r18-signal-pole" d="M'+sx+' '+(sy-14)+'v27"/><rect class="r18-signal-case" x="'+(sx-4)+'" y="'+(sy-16)+'" width="8" height="13" rx="2"/>'+
     '<circle class="r18-signal-lamp" cx="'+sx+'" cy="'+(sy-12)+'" r="1.7"/>'+
     (isRoad?'<path class="r18-signal-foot" d="M'+(sx-6)+' '+(sy+13)+'h12"/>':'');
-   name='<text class="r18-source-name" x="'+x+'" y="'+(y+17)+'" text-anchor="middle">'+label+'</text>';
+   name='<text class="r18-source-name" x="'+x+'" y="'+(y+5)+'" text-anchor="middle">'+label+'</text>';
   }
   const badge=statusBadge(row);
   if(badge){
-   const ax=x+(left?-18:18),ay=y-26;
+   const ax=x+(left?-25:25),ay=y-25;
    hint='<g class="r18-source-progress"><rect x="'+(ax-19)+'" y="'+(ay-12)+'" width="38" height="20" rx="9"/>'+
     '<text x="'+ax+'" y="'+(ay+2)+'" text-anchor="middle">'+badge+'</text></g>';
   }
   return '<g class="'+klass+'" role="button" tabindex="0" focusable="true" data-r18="'+E(row.item_key)+'" aria-label="'+E(row.label+': '+status)+'">'+
    '<title>'+E(row.label+' · '+status)+'</title>'+
-   '<rect x="'+(x-43)+'" y="'+(y-33)+'" width="86" height="65" class="r18-target"/>'+
-   '<circle class="r18-status-ring" cx="'+(x+(left?-14:14))+'" cy="'+(y-13)+'" r="8"/>'+
+   '<rect x="'+(x-54)+'" y="'+(y-5)+'" width="108" height="20" class="r18-target"/>'+
+   '<circle cx="'+x+'" cy="'+(y-16)+'" r="11" class="r18-target r18-symbol-hit"/>'+
+   '<circle class="r18-status-ring" cx="'+(x+(left?-24:24))+'" cy="'+(y-19)+'" r="5"/>'+
    shape+name+hint+'</g>';
  }).join('');
  const os=Object.entries(layout.o).map(([name,position])=>{
