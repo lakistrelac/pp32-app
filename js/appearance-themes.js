@@ -52,5 +52,11 @@ document.addEventListener('keydown',event=>{
  if(event.key==='Escape')close();
 },{signal:window.PP32ThemeAbort.signal});
 window.shell=function(body){previous(body);install()};
+const previousAuth=window.auth;
+if(typeof previousAuth==='function')window.auth=function(...args){
+ const result=previousAuth.apply(this,args);
+ if(!isAdmin())apply('default',false);
+ return result;
+};
 apply(stored(),false);
 })();
