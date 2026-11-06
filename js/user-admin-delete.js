@@ -1,13 +1,14 @@
 (function(){
 function deleteButtonFor(u){
-  if(!isAdmin() || !session?.user?.id || u.id===session.user.id || u.role==='admin') return '';
+  if(!isSuperAdmin() || !session?.user?.id || u.id===session.user.id || u.role==='admin') return '';
   return '<button class="btn small" data-del-user="'+u.id+'" data-del-email="'+esc(u.email||'')+'" style="background:#8f1d1d;border-color:#8f1d1d">Ukloni</button>';
 }
 
 window.manageUsers=async function(){
+  if(!isSuperAdmin())return alert('Samo administrator menja nivoe pristupa.');
   const us=await api('/rest/v1/profiles?select=id,email,full_name,role,active,created_at&order=created_at.asc');
   let h='<div class="wrap"><button class="back" id="bh">← Projekti</button><h1>Korisnici i prava</h1><p class="sub">Admin može da odobri nalog, promeni ulogu ili potpuno ukloni korisnika kako bi isti email mogao ponovo da se registruje.</p><div class="rows">';
-  h+=us.map(u=>'<div class="row user-row"><div><b>'+esc(u.full_name||u.email||u.id)+'</b><small>'+esc(u.email||'')+'</small></div><div class="btnrow"><select data-role="'+u.id+'"><option value="admin" '+(u.role==='admin'?'selected':'')+'>admin</option><option value="member" '+(u.role==='member'?'selected':'')+'>member</option><option value="viewer" '+(u.role==='viewer'?'selected':'')+'>viewer · pregled svih projekata</option><option value="guest_pp32" '+(u.role==='guest_pp32'?'selected':'')+'>Gost · samo 32 PP i Uputstvo</option></select><label><input type="checkbox" data-active="'+u.id+'" '+(u.active?'checked':'')+'> aktivan</label><button class="btn small" data-save-user="'+u.id+'">Sačuvaj</button>'+deleteButtonFor(u)+'</div></div>').join('');
+  h+=us.map(u=>'<div class="row user-row"><div><b>'+esc(u.full_name||u.email||u.id)+'</b><small>'+esc(u.email||'')+'</small></div><div class="btnrow"><select data-role="'+u.id+'"><option value="admin" '+(u.role==='admin'?'selected':'')+'>admin</option><option value="leader" '+(u.role==='leader'?'selected':'')+'>lider · upravlja radovima bez menjanja nivoa</option><option value="member" '+(u.role==='member'?'selected':'')+'>member</option><option value="viewer" '+(u.role==='viewer'?'selected':'')+'>viewer · pregled svih projekata</option><option value="guest_pp32" '+(u.role==='guest_pp32'?'selected':'')+'>Gost · samo 32 PP i Uputstvo</option></select><label><input type="checkbox" data-active="'+u.id+'" '+(u.active?'checked':'')+'> aktivan</label><button class="btn small" data-save-user="'+u.id+'">Sačuvaj</button>'+deleteButtonFor(u)+'</div></div>').join('');
   h+='</div><div class="notice" style="margin-top:14px">Uklanjanje briše nalog za prijavu, ali postojeća istorija radova ostaje sačuvana. Nakon toga isti email može napraviti novi nalog.</div></div>';
   shell(h);
   bh.onclick=home;
@@ -16,7 +17,7 @@ window.manageUsers=async function(){
 };
 
 window.removeUserAccount=async function(id,email){
-  if(!isAdmin())return alert('Samo administrator može ukloniti korisnika.');
+  if(!isSuperAdmin())return alert('Samo administrator može ukloniti korisnika.');
   if(id===session?.user?.id)return alert('Ne možeš ukloniti sopstveni administratorski nalog.');
 
   const first=confirm('Ukloniti korisnika '+(email||'')+'?\n\nNalog za prijavu će biti potpuno obrisan. Istorija radova ostaje sačuvana.');
