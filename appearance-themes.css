@@ -1,0 +1,78 @@
+/* PP32 themes. The default theme keeps the existing design untouched.
+   Light = clean neutral surfaces. Admin red = optional burgundy/red styling.
+   Theme choice is visual only and never changes roles or permissions. */
+.pp32-theme-control{position:relative;display:flex;align-items:center;flex:none}
+.top .pp32-theme-toggle{min-height:39px;display:inline-flex;align-items:center;justify-content:center;gap:7px;
+ border:1px solid rgba(173,224,232,.5);border-radius:10px;background:rgba(255,255,255,.12);
+ color:#fff;font-size:12px;font-weight:850;padding:8px 11px}
+.top .pp32-theme-toggle:hover{background:rgba(255,255,255,.23)}
+.pp32-theme-menu[hidden]{display:none!important}
+.pp32-theme-menu{position:absolute;right:0;top:calc(100% + 10px);z-index:50;width:224px;
+ border:1px solid #cbdde3;border-radius:13px;background:#fff;color:#223e4e;
+ box-shadow:0 14px 35px rgba(10,30,44,.22);padding:8px}
+.pp32-theme-menu-title{padding:7px 10px 10px;color:#728997;font-size:10px;font-weight:900;letter-spacing:.09em}
+.pp32-theme-choice{width:100%;border:0;background:transparent;border-radius:9px;display:flex;align-items:center;
+ gap:10px;text-align:left;color:#2b4857;font-size:12px;font-weight:800;padding:10px}
+.pp32-theme-choice:hover,.pp32-theme-choice.is-selected{background:#eaf4f7}
+.pp32-theme-choice .pp32-theme-check{margin-left:auto;visibility:hidden;color:#177a80;font-size:15px}
+.pp32-theme-choice.is-selected .pp32-theme-check{visibility:visible}
+.pp32-theme-swatch{width:25px;height:25px;border:1px solid #b9cbd1;border-radius:8px;flex:none}
+.pp32-swatch-standard{background:linear-gradient(135deg,#102b46 50%,#e9f4f7 50%)}
+.pp32-swatch-light{background:linear-gradient(135deg,#dcecf3 50%,#fff 50%)}
+.pp32-swatch-red{background:linear-gradient(135deg,#4c1d2b 50%,#db6274 50%)}
+.pp32-theme-toggle:focus-visible,.pp32-theme-choice:focus-visible{outline:3px solid #7dd7e0;outline-offset:2px}
+@media(max-width:650px){.top .pp32-theme-toggle{padding:8px;gap:4px}.top .pp32-theme-toggle span{display:none}
+.pp32-theme-menu{right:-54px;width:211px}}
+/* Light theme */
+html[data-pp32-theme="light"]{--nav:#dbeaf1;--bg:#f8fbfd;--ink:#223f51;--muted:#647f8f;--line:#d4e5ec;--blue:#267d9d}
+html[data-pp32-theme="light"] .top{color:#25485c;border-bottom:1px solid #bed4e0}
+html[data-pp32-theme="light"] .top .role{background:#fff;color:#2b607a}
+html[data-pp32-theme="light"] .top .nav-home{background:#fff;border-color:#b2d2df;color:#245a74}
+html[data-pp32-theme="light"] .top .pp32-theme-toggle{background:#fff;border-color:#b2d2df;color:#245a74}
+html[data-pp32-theme="light"] .top #out{background:#fff;color:#245a74}
+html[data-pp32-theme="light"] .home-masthead{background:linear-gradient(125deg,#e9f4f9,#c9e2ec);color:#1b475e}
+html[data-pp32-theme="light"] .home-masthead p,
+html[data-pp32-theme="light"] .home-metrics span,
+html[data-pp32-theme="light"] .home-system-line span{color:#4c7589}
+html[data-pp32-theme="light"] .home-kicker{color:#377d9a}
+html[data-pp32-theme="light"] .home-system,
+html[data-pp32-theme="light"] .home-metrics>div{background:#ffffff8a;border-color:#bdd9e4}
+html[data-pp32-theme="light"] .home-project-card,
+html[data-pp32-theme="light"] .pp32-nav-path,
+html[data-pp32-theme="light"] .rg-card,
+html[data-pp32-theme="light"] .gd-card{background:#fff;border-color:#cbdfe7}
+html[data-pp32-theme="light"] .tiles.pp32-module-grid .pp32-module-card,
+html[data-pp32-theme="light"] .tiles.pp32-module-grid .im-line-card{
+ background:linear-gradient(125deg,#fff,#e9f4f9)!important;color:#254c62!important;border-color:#b9d5df!important;
+ box-shadow:0 5px 15px rgba(35,92,120,.08)}
+html[data-pp32-theme="light"] .tiles.pp32-module-grid .pp32-module-card :is(.pp32-mod-title,.pp32-mod-kicker,.pp32-mod-description,.pp32-mod-footer,.pp32-mod-tags span),
+html[data-pp32-theme="light"] .tiles.pp32-module-grid .im-line-card :is(.im-card-title,.im-card-kicker,.im-card-copy,.im-card-bottom,.im-tags span){color:#29556c!important}
+html[data-pp32-theme="light"] .tiles.pp32-module-grid :is(.pp32-mod-icon,.im-tile-icon){background:#d7edf3;border-color:#bad7e1}
+html[data-pp32-theme="light"] .tiles.pp32-module-grid :is(.pp32-mod-tags span,.im-tags span){background:#e4f2f7;border-color:#c4dfe8}
+/* Optional admin red theme */
+html[data-pp32-theme="adminred"]{--nav:#441b2a;--bg:#fbf5f6;--ink:#36242b;--muted:#806a73;--line:#ead6dc;--blue:#a13d58;--red:#b52c44}
+html[data-pp32-theme="adminred"] .top{background:linear-gradient(110deg,#371421,#61253a)}
+html[data-pp32-theme="adminred"] .top .nav-home{background:linear-gradient(135deg,#f5c6d0,#e999ab);color:#4b2031;border-color:#e8b2c0}
+html[data-pp32-theme="adminred"] .home-masthead{background:linear-gradient(125deg,#351421,#722d46)}
+html[data-pp32-theme="adminred"] .home-project-card{border-color:#e5c6d0}
+html[data-pp32-theme="adminred"] .home-project-card:hover{border-color:#bf7189}
+html[data-pp32-theme="adminred"] .pp32-nav-path{background:#fff9fa;border-color:#e5c6d0}
+html[data-pp32-theme="adminred"] .pp32-nav-path-item{color:#814159}
+html[data-pp32-theme="adminred"] .pp32-nav-path-item:hover:not(:disabled),
+html[data-pp32-theme="adminred"] .pp32-nav-path-item[aria-current="page"]{background:#f8e5ea;color:#75273f}
+html[data-pp32-theme="adminred"] .tiles.pp32-module-grid .pp32-module-card,
+html[data-pp32-theme="adminred"] .tiles.pp32-module-grid .im-line-card{
+ background:radial-gradient(ellipse at 90% 0%,rgba(237,123,155,.16),transparent 60%),linear-gradient(125deg,#3b1c2b,#682f45)!important;
+ border-color:#93526a!important;color:#fff5f7!important}
+html[data-pp32-theme="adminred"] .tiles.pp32-module-grid .pp32-module-card:before,
+html[data-pp32-theme="adminred"] .tiles.pp32-module-grid .im-line-card:before{background:linear-gradient(90deg,#f5a6b8,#c96a86,transparent)}
+html[data-pp32-theme="adminred"] .tiles.pp32-module-grid :is(.pp32-mod-kicker,.im-card-kicker){color:#f7b4c5}
+html[data-pp32-theme="adminred"] .tiles.pp32-module-grid :is(.pp32-mod-description,.im-card-copy,.pp32-mod-footer,.im-card-bottom){color:#f5d3dd}
+html[data-pp32-theme="adminred"] .pp32-pdf-strip{background:#fff0f3;border-color:#e8b7c6}
+html[data-pp32-theme="adminred"] .pp32-pdf-open{background:linear-gradient(125deg,#752b43,#a54765);border-color:#8d3b55}
+html[data-pp32-theme="adminred"] .app-back-enhanced{background:#fff0f3!important;border-color:#d9a6b6!important;color:#753148!important}
+html[data-pp32-theme="adminred"] .app-back-arrow{background:#783048!important;border-color:#a45c73!important}
+html[data-pp32-theme="adminred"] .pp32-modules-heading h2 em{color:#a74d68}
+html[data-pp32-theme="adminred"] .pp32-modules-heading h2{color:#52253a}
+html[data-pp32-theme="adminred"] .pp32-theme-choice.is-selected{background:#fbe9ee}
+@media(prefers-reduced-motion:reduce){.pp32-theme-toggle{transition:none}}
