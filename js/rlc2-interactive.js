@@ -175,6 +175,8 @@ I.render=function(){
  '<h1>PBA-1 <em>Ruma</em> <span>· RLC 2</span></h1>'+
  '<p>'+E(s.rlc.chainage||'km 3+285')+' · '+E(s.rlc.railway_line||'Ruma–Šabac–Donja Borina')+'</p></div>'+
  '<div class="il-hero-progress"><strong>'+fmt(pr.total)+'%</strong><span>UKUPAN NAPREDAK</span></div></header>'+
+ '<section class="pp32-pdf-strip"><div class="pp32-pdf-strip-copy"><b>Originalni projektni crtež</b><span>PDF linijske situacije sa planom uključenja · projektna podloga</span></div>'+
+ window.PP32OriginalPDF.controls(s.rlc)+'</section>'+
  stageInfo(pr)+
  '<div class="il-workbench"><div class="il-diagram-panel">'+
  '<div class="il-diagram-toolbar"><div><b>Interaktivna linijska situacija</b><p>Dodirni element ili trasu za promenu statusa.</p></div>'+
@@ -187,6 +189,7 @@ I.render=function(){
  '<p class="il-caution">Napojni kabl od stanice Ruma označen je na projektnoj linijskoj situaciji kao PP41 4×6 mm², 3.500 m. To je dužina kabla u šemi, a ne potvrđena dužina iskopanog rova. Položaji na ovoj interaktivnoj šemi su orijentacioni, ne geodetski.</p></section>'+
  '<div id="ilModalRoot"></div></main>');
  document.getElementById('ilBack').onclick=()=>window.rlc(s.rlcId).catch(reportError);
+ window.PP32OriginalPDF.attach(s.rlc,()=>I.open(s.rlcId));
  const svgEl=document.querySelector('.il-svg');
  const setScale=scale=>{s.scale=Math.min(1.6,Math.max(.55,Math.round(scale*100)/100));svgEl.style.width=Math.round(1240*s.scale)+'px';svgEl.style.height=Math.round(708*s.scale)+'px';document.getElementById('ilZoomText').textContent=Math.round(s.scale*100)+'%';};
  setScale(s.scale);
