@@ -22,7 +22,7 @@ window.home=async function(){
    '</div>'+
   '</section>';
 
- if(isAdmin())h+='<section class="home-admin"><div><span class="home-admin-label">ADMINISTRACIJA</span><b>Upravljanje sistemom</b></div><div class="home-admin-actions"><button class="btn small" id="newProjectBtn">＋ Novi projekat</button><button class="btn sec small" id="usersBtn">Korisnici i prava</button></div></section>';
+ if(isAdmin())h+='<section class="home-admin"><div><span class="home-admin-label">ADMINISTRACIJA</span><b>Upravljanje sistemom</b></div><div class="home-admin-actions"><button class="btn small" id="newProjectBtn">＋ Novi projekat</button>'+(isSuperAdmin()?'<button class="btn sec small" id="usersBtn">Korisnici i prava</button>':'')+'</div></section>';
 
  h+='<div class="home-section-head"><div><span class="home-section-kicker">PROJEKTI</span><h2>Aktivni projekti</h2></div><span class="home-section-count">'+count+' ukupno</span></div>'+
  '<div class="home-project-grid">';
@@ -50,7 +50,7 @@ window.home=async function(){
  document.getElementById('guideBtn').onclick=guideHome;
  if(isAdmin()){
    document.getElementById('newProjectBtn').onclick=newProjectForm;
-   document.getElementById('usersBtn').onclick=manageUsers;
+   if(isSuperAdmin())document.getElementById('usersBtn').onclick=manageUsers;
  }
 };
 })();
