@@ -1,6 +1,7 @@
 (function(){
 window.home=async function(){
- const ps=await api('/rest/v1/projects?select=*&order=name.asc');
+ const psAll=await api('/rest/v1/projects?select=*&order=name.asc');
+ const ps=profile?.role==='guest_pp32'?psAll.filter(p=>p.code==='pp32'):psAll;
  const count=ps.length;
  let h='<div class="wrap home-page">'+
   '<section class="home-masthead">'+
@@ -16,7 +17,7 @@ window.home=async function(){
    '<div class="home-system">'+
     '<div class="home-system-head"><span class="home-status-dot"></span><b>Sistem aktivan</b></div>'+
     '<div class="home-system-name">PP32 Central</div>'+
-    '<div class="home-system-line"><span>Pristup</span><b>'+esc(profile?.role||'korisnik')+'</b></div>'+
+    '<div class="home-system-line"><span>Pristup</span><b>'+esc(profile?.role==='guest_pp32'?'Gost · samo 32 PP':profile?.role||'korisnik')+'</b></div>'+
     '<div class="home-system-line"><span>Verzija</span><b>'+esc(APP_VERSION)+'</b></div>'+
    '</div>'+
   '</section>';
