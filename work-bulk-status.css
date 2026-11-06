@@ -1,0 +1,33 @@
+/* Shared bulk status actions for project and RLC work stages. */
+.pp32-bulk-bar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;
+ gap:12px 18px;margin:17px 0 20px;padding:15px 17px;
+ background:linear-gradient(115deg,#f0f8fa,#fff);border:1px solid #b9d7e1;
+ border-radius:14px;box-shadow:0 5px 17px rgba(14,57,73,.07)}
+.pp32-bulk-heading{display:grid;gap:4px;flex:1 1 200px}
+.pp32-bulk-heading b{font-size:13px;font-weight:900;color:#1e4d63}
+.pp32-bulk-heading span{font-size:11px;line-height:1.45;color:#526f7e}
+.pp32-bulk-actions{display:flex;flex-wrap:wrap;gap:8px}
+.pp32-bulk-actions button,.work-status-picks button{
+ min-height:39px;padding:9px 12px;border:1px solid #bdced7;border-radius:10px;
+ font-size:11px;font-weight:850;background:#fff;color:#2f6378;cursor:pointer}
+.pp32-bulk-actions button:focus-visible,.work-status-picks button:focus-visible{
+ outline:3px solid #71bfc7;outline-offset:2px}
+.pp32-bulk-actions .pp32-bulk-prepared,
+.work-status-picks [data-work="prepared"]{background:#fff1d6;border-color:#d9af58;color:#754c15}
+.pp32-bulk-actions .pp32-bulk-done,
+.work-status-picks [data-work="done"]{background:#e4f5ec;border-color:#8fc4a5;color:#226044}
+.pp32-bulk-actions .pp32-bulk-clear{background:#f5f8fa;color:#4a6572}
+.pp32-bulk-actions button:hover:not(:disabled),.work-status-picks button:hover:not(:disabled){filter:brightness(.96);transform:translateY(-1px)}
+.pp32-bulk-actions button:disabled,.work-status-picks button:disabled{opacity:.5;cursor:wait}
+.pp32-bulk-message{flex:1 0 100%;min-height:1px;color:#265c76;font-size:11px}
+.pp32-bulk-message:empty{display:none}
+.work-status-picks{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.work-status-picks button{flex:1 1 125px;min-height:43px}
+.work-status-picks button.work-current{outline:2px solid currentColor;outline-offset:1px}
+html[data-pp32-theme="adminred"] .pp32-bulk-bar{background:#fff4f6;border-color:#dbb5c3}
+html[data-pp32-theme="adminred"] .pp32-bulk-heading b{color:#71364d}
+html[data-pp32-theme="adminred"] .pp32-bulk-heading span{color:#744e5f}
+html[data-pp32-theme="light"] .pp32-bulk-heading span{color:#36566b}
+@media(max-width:700px){.pp32-bulk-bar{padding:12px;gap:10px}.pp32-bulk-actions{width:100%}
+.pp32-bulk-actions button{flex:1 1 140px}}
+@media print{.pp32-bulk-bar{display:none!important}}
