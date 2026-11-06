@@ -1,0 +1,89 @@
+/* Project remarks: submission per project, review queue for admin and leader. */
+.pr-page{padding-top:20px;padding-bottom:50px}
+.pr-hero{display:flex;justify-content:space-between;align-items:center;gap:19px;flex-wrap:wrap;
+ background:linear-gradient(125deg,#123046,#205568);color:#fff;border:1px solid #3a7d89;
+ border-radius:19px;padding:23px 25px;margin-bottom:17px;box-shadow:0 12px 28px #123e501a}
+.pr-kicker{display:block;font-size:10px;font-weight:900;color:#a1ddd9;letter-spacing:.12em;margin-bottom:8px}
+.pr-hero h1{font-size:clamp(22px,3vw,31px);margin:0 0 7px;line-height:1.18}
+.pr-hero p{color:#d0e7eb;margin:0;font-size:12px;line-height:1.55}
+.pr-stats{display:grid;grid-template-columns:repeat(2,minmax(78px,1fr));gap:8px;min-width:240px}
+.pr-stats span{border:1px solid #78a6b24f;border-radius:10px;background:#ffffff12;padding:9px 12px;
+ display:grid;gap:3px;font-size:10px;color:#cde2e9;text-align:center}
+.pr-stats b{font-size:21px;color:#fff}
+.pr-compose,.pr-feed{background:#fff;border:1px solid #d7e5eb;border-radius:16px;padding:20px 21px;
+ box-shadow:0 8px 26px #15344b0b;margin-bottom:18px}
+.pr-section-head{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:16px}
+.pr-section-head b{font-size:17px;color:#234b61}
+.pr-section-head p{font-size:11px;color:#698594;margin:5px 0 0}
+.pr-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px 16px}
+.pr-fields label{display:grid;gap:6px;color:#3b6475;font-size:11px;font-weight:850;min-width:0}
+.pr-fields label.pr-full{grid-column:1/-1}
+.pr-fields :is(input,select,textarea),.pr-filter-label select,.pr-review select{
+ width:100%;min-width:0;border:1px solid #cfdee5;background:#fbfefe;border-radius:9px;
+ padding:10px 12px;color:#234c60;font-size:13px;outline:0;font-family:inherit}
+.pr-fields input:disabled{background:#f0f5f7;color:#78939f}
+.pr-fields textarea{resize:vertical;min-height:106px;line-height:1.55}
+.pr-fields :is(input,select,textarea):focus,.pr-filter-label select:focus,.pr-review select:focus{
+ border-color:#64b9c4;box-shadow:0 0 0 3px #64b9c422}
+.pr-form-foot{display:flex;align-items:center;justify-content:space-between;gap:13px;flex-wrap:wrap;margin-top:16px}
+.pr-form-foot>span{font-size:12px;color:#387b85;flex:1}
+.pr-form-foot button:disabled{opacity:.57;cursor:wait}
+.pr-filter-label{display:flex;align-items:center;gap:8px;color:#58788a;font-size:11px;font-weight:800}
+.pr-filter-label select{width:158px;background:#fff;padding:9px 11px;font-size:11px}
+.pr-entries{display:grid;gap:13px}
+.pr-entry{padding:17px;border:1px solid #dce8ed;border-left:4px solid #58a9b7;
+ border-radius:12px;background:#fcfefe}
+.pr-entry[hidden]{display:none!important}
+.pr-entry[data-status="in_progress"]{border-left-color:#d6a349}
+.pr-entry[data-status="resolved"]{border-left-color:#4fa67d}
+.pr-entry-top{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.pr-entry-top>div{display:flex;align-items:center;flex-wrap:wrap;gap:8px}
+.pr-project{color:#255d72;font-size:11px;font-weight:900}
+.pr-area{background:#edf6f7;border:1px solid #d0e8eb;color:#55818d;font-size:10px;
+ border-radius:99px;padding:5px 9px;font-weight:800}
+.pr-status{display:inline-flex;padding:6px 10px;border-radius:99px;
+ background:#e9f5f8;color:#22677b;font-size:10px;font-weight:900}
+.pr-status-in_progress{background:#fff1d9;color:#93672a}
+.pr-status-resolved{background:#e5f6eb;color:#31744f}
+.pr-entry h3{font-size:15px;color:#213e51;line-height:1.35;margin:12px 0 8px;overflow-wrap:anywhere}
+.pr-details{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.6;
+ color:#3d5c6a;font-size:12px;margin:0 0 15px}
+.pr-meta{display:flex;flex-wrap:wrap;align-items:center;gap:9px 17px;padding-top:11px;border-top:1px solid #e4edf0;
+ color:#718e9b;font-size:10px}
+.pr-review{display:flex;align-items:center;gap:10px;max-width:260px;margin-top:12px;
+ font-size:11px;color:#456e7f;font-weight:800}
+.pr-review select{padding:7px 10px;font-size:11px;background:#fff}
+.pr-empty{padding:26px;text-align:center;border:1px dashed #c5dbe3;border-radius:11px;
+ color:#79929d;font-size:12px;background:#f9fcfd}
+.pr-project-link{display:flex;align-items:center;gap:14px;width:100%;padding:14px 18px;
+ margin:14px 0 19px;min-height:73px;text-align:left;
+ border:1px solid #b6dce3;border-radius:14px;background:linear-gradient(110deg,#e8f7f8,#fff);
+ box-shadow:0 6px 18px #245d740b;cursor:pointer;color:#26576c}
+.pr-project-link:hover,.pr-pw-module:hover{border-color:#72bac6;background:#e2f5f8}
+.pr-link-icon{display:grid;place-items:center;flex:0 0 auto;background:#d6f0ee;border:1px solid #a9d6d6;
+ border-radius:12px;width:42px;height:42px;font-size:21px;color:#2a7981}
+.pr-project-link>span:nth-child(2){display:grid;gap:4px;flex:1;min-width:0}
+.pr-project-link b{font-size:15px;font-weight:900}
+.pr-project-link small{font-size:11px;color:#668b99}
+.pr-project-link strong{margin-left:auto;white-space:nowrap;color:#2f7285;font-size:12px}
+.pr-corridor-tile{min-height:110px;display:flex;flex-direction:column;align-items:flex-start;gap:6px}
+.pr-corridor-tile .pr-link-icon{width:35px;height:35px}
+.pr-all-button{white-space:normal}
+html[data-pp32-theme="light"] .pr-hero{background:linear-gradient(120deg,#e9f5f9,#cde7ee);color:#274c61;border-color:#afcfdb}
+html[data-pp32-theme="light"] .pr-hero :is(h1,.pr-stats b){color:#24495c}
+html[data-pp32-theme="light"] .pr-hero :is(p,.pr-stats span){color:#5d8090}
+html[data-pp32-theme="light"] .pr-stats span{background:#fff9;border-color:#b8d9e4}
+html[data-pp32-theme="adminred"] .pr-hero{background:linear-gradient(120deg,#371824,#733148);border-color:#98566d}
+html[data-pp32-theme="adminred"] .pr-link-icon{color:#85425b;background:#f5e1e8;border-color:#e6bccb}
+html[data-pp32-theme="adminred"] .pr-project-link{background:#fff2f5;border-color:#e4becc;color:#783c53}
+html[data-pp32-theme="adminred"] .pr-entry{border-left-color:#b85b78}
+html[data-pp32-theme="adminred"] .pr-entry[data-status="resolved"]{border-left-color:#4fa67d}
+@media(max-width:700px){
+ .pr-hero{padding:19px 16px}.pr-stats{min-width:0;width:100%}
+ .pr-compose,.pr-feed{padding:16px}
+ .pr-fields{grid-template-columns:1fr}
+ .pr-fields label.pr-full{grid-column:auto}
+ .pr-project-link{padding:12px;gap:10px}
+ .pr-project-link strong{font-size:11px}
+ .pr-project-link small{font-size:10px}
+}
