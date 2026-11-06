@@ -1,5 +1,5 @@
 /* Interactive SVG layouts for RLC18–RLC25, derived from individual cable plans. */
-.r18-page .r18-svg{display:block;width:1240px;height:660px;max-width:none;user-select:none}
+.r18-page .r18-svg{display:block;width:1240px;height:766px;max-width:none;user-select:none}
 .r18-page .r18-svg .r18-hit{cursor:pointer;outline:0}
 .r18-page .r18-svg .il-hotspot{fill:transparent;stroke:none;pointer-events:all}
 .r18-page .r18-svg .r18-marker{fill:#f4fafb;stroke:#657e93;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}
@@ -28,3 +28,109 @@ html[data-pp32-theme="adminred"] .r18-cable-table td{color:#683e4d}
 html[data-pp32-theme="light"] .r18-cable-table th{color:#234f67}
 @media(max-width:750px){.r18-cable-table table{font-size:10px}.r18-cable-table :is(th,td){padding:9px 7px}}
 @media print{.r18-cable-table{break-inside:avoid}}
+
+/* RLC18–25 technical schematic drawn at coordinates measured in the user's PDFs. */
+.r18-page .r18-source-svg{background:#fff}
+.r18-page .r18-source-svg .r18-source-bk,
+.r18-page .r18-source-svg .r18-source-power{
+ vector-effect:non-scaling-stroke
+}
+.r18-page .r18-source-svg .r18-source-bk{
+ stroke:#2b45ed;stroke-width:1.7;fill:#fafdff
+}
+.r18-page .r18-source-svg .r18-central-km{
+ font-size:13px;font-family:Arial,sans-serif;fill:#183bc5;font-weight:800;
+ writing-mode:vertical-rl
+}
+.r18-page .r18-source-svg .r18-central-label{
+ font:bold 23px Arial,sans-serif;fill:#182fb7;pointer-events:none
+}
+.r18-page .r18-source-svg .r18-source-cables .r18-source-lines{
+ fill:none;stroke:#284bec;stroke-width:1.8;stroke-linecap:square;stroke-linejoin:miter;
+ pointer-events:none
+}
+.r18-page .r18-source-svg .r18-source-cables.il-prepared .r18-source-lines{stroke:#b68624;stroke-width:2.5}
+.r18-page .r18-source-svg .r18-source-cables.il-done .r18-source-lines{stroke:#278751;stroke-width:2.5}
+.r18-page .r18-source-svg .r18-source-line-hits{
+ fill:none;stroke:transparent;stroke-width:17;pointer-events:stroke
+}
+.r18-page .r18-source-svg .r18-source-cables:hover .r18-source-lines,
+.r18-page .r18-source-svg .r18-source-cables:focus .r18-source-lines{
+ stroke-width:3.8
+}
+.r18-page .r18-source-svg .r18-source-power path{
+ fill:none;stroke:#278850;stroke-width:1.7;pointer-events:none
+}
+.r18-page .r18-source-svg .r18-source-power rect{
+ fill:#f4fff7;stroke:#258651;stroke-width:1.8
+}
+.r18-page .r18-source-svg .r18-source-power>text{
+ fill:#147548;font:14px Arial,sans-serif;pointer-events:none
+}
+.r18-page .r18-source-svg .r18-os circle{fill:#1d9258;stroke:#0b7945;stroke-width:1}
+.r18-page .r18-source-svg .r18-os text{fill:#238b56;font:12px Arial,sans-serif}
+.r18-page .r18-source-svg .r18-source-name{
+ font-family:Arial,sans-serif;font-size:12px;font-weight:700;fill:#2445b5;
+ text-rendering:geometricPrecision;paint-order:stroke;stroke:#fff;stroke-width:3px;
+ stroke-linejoin:round;pointer-events:none
+}
+.r18-page .r18-source-svg .r18-target{fill:transparent;stroke:transparent;stroke-width:1;pointer-events:all}
+.r18-page .r18-source-svg .r18-device:focus-visible .r18-target,
+.r18-page .r18-source-svg .r18-device:hover .r18-target{
+ stroke:#2b8496;stroke-width:2;stroke-dasharray:5 3;fill:#cceef022
+}
+.r18-page .r18-source-svg .r18-source-icon{
+ stroke:#34415c;stroke-width:1.8;fill:#f6fcff;pointer-events:none
+}
+.r18-page .r18-source-svg .r18-energy-icon{
+ stroke:#188654;stroke-width:1.7;fill:#dbf5e8;pointer-events:none
+}
+.r18-page .r18-source-svg .r18-lob-icon{
+ stroke:#c5363f;stroke-width:2;fill:#fff1f0;pointer-events:none
+}
+.r18-page .r18-source-svg .r18-sensor-icon{
+ stroke:#ee2cdb;stroke-width:2;fill:#fae8fb;pointer-events:none
+}
+.r18-page .r18-source-svg .r18-sensor-core{fill:#e221d7;pointer-events:none}
+.r18-page .r18-source-svg .r18-barrier-case{
+ stroke:#394357;stroke-width:2;fill:#d2d7da;pointer-events:none
+}
+.r18-page .r18-source-svg .r18-barrier-arm{
+ stroke:#363b42;stroke-width:6;stroke-dasharray:13 9;pointer-events:none
+}
+.r18-page .r18-source-svg .r18-barrier-rail{
+ stroke:#bb3232;stroke-width:3;stroke-dasharray:15 20;pointer-events:none
+}
+.r18-page .r18-source-svg .r18-signal-pole,
+.r18-page .r18-source-svg .r18-signal-foot{
+ fill:none;stroke:#253f56;stroke-width:2.5;pointer-events:none
+}
+.r18-page .r18-source-svg .r18-signal-case{
+ fill:#263947;stroke:#1c2839;stroke-width:1.2;pointer-events:none
+}
+.r18-page .r18-source-svg .r18-signal-lamp{fill:#e7af25;pointer-events:none}
+.r18-page .r18-source-svg .r18-status-ring{
+ fill:#fff;stroke:#9eaeb9;stroke-width:3;pointer-events:none
+}
+.r18-page .r18-source-svg .r18-device.il-prepared .r18-status-ring{
+ fill:#fff0c8;stroke:#c89624
+}
+.r18-page .r18-source-svg .r18-device.il-done .r18-status-ring{
+ fill:#c8f4dc;stroke:#27935b
+}
+.r18-page .r18-source-svg .r18-source-progress rect{
+ fill:#efefef;stroke:#9cb5bf;stroke-width:1;pointer-events:none
+}
+.r18-page .r18-source-svg .r18-device.il-prepared .r18-source-progress rect{fill:#ffe4a1;stroke:#a77b21}
+.r18-page .r18-source-svg .r18-device.il-done .r18-source-progress rect{fill:#c8f0d8;stroke:#23764e}
+.r18-page .r18-source-svg .r18-source-progress text{
+ font:bold 10px Arial,sans-serif;fill:#243d45;pointer-events:none
+}
+.r18-page .r18-source-svg .r18-map-footer{
+ font:10px Arial,sans-serif;fill:#607483
+}
+html[data-pp32-theme="adminred"] .r18-page .r18-source-svg .r18-source-name{fill:#2a44b9}
+html[data-pp32-theme="light"] .r18-page .r18-source-svg .r18-source-name{fill:#2445b5}
+@media (max-width:760px){
+ .r18-page .r18-svg{max-width:none}
+}
