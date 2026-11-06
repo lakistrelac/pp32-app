@@ -18,10 +18,11 @@ function context(html){
  }
  if(currentRlc?.id&&currentRlc.project_id===currentProject.id&&(
      html.includes('data-mod=')||html.includes('id="ilBack"')||
-     html.includes('id="ilmBack"')||(html.includes('id="br"')&&html.includes(currentRlc.code))
+     html.includes('id="ilmBack"')||html.includes('id="r18Back"')||(html.includes('id="br"')&&html.includes(currentRlc.code))
  )){
   const id=currentRlc.id,code=currentRlc.code;
   return {scope:'rlc',target:id,label:'svim elementima '+code,refresh:async()=>{
+   if(html.includes('id="r18Back"')&&window.PP32NewLines?.open)return window.PP32NewLines.open(id);
    if(html.includes('id="ilBack"')&&window.PP32InteractiveLine?.open)return window.PP32InteractiveLine.open(id);
    if(html.includes('id="ilmBack"')&&window.PP32LinesMore?.open)return window.PP32LinesMore.open(id);
    if(html.includes('<h1>Komponente')&&typeof window.components==='function')return window.components();
