@@ -31,7 +31,7 @@ P.data=async()=>{
  const tasks=elements.length?await rest('project_element_tasks','?element_id=in.('+elements.map(x=>x.id).join(',')+')&select=*'):[];
  return {segments,elements,tasks};
 };
-P.percent=tasks=>tasks.length?Math.round(tasks.filter(x=>x.is_complete).length*100/tasks.length):0;
+P.percent=elements=>workAverage(elements);
 P.sectionTitle=(name,action='')=>'<div class="pw-section-title"><h2>'+esc(name)+'</h2>'+action+'</div>';
 P.signed=async(path)=>{
  const d=await api('/storage/v1/object/sign/pp32-documents/'+enc(path).replace(/%2F/gi,'/'),{method:'POST',body:JSON.stringify({expiresIn:3600})});
@@ -47,7 +47,7 @@ P.upload=async(file,group)=>{
 };
 P.home=async()=>{
  await P.reload();
- const d=await P.data(),pct=P.percent(d.tasks);
+ const d=await P.data(),pct=P.percent(d.elements);
  const cards=[
  ['segments','▦','Faze i komponente',d.segments.length+' faza · '+d.elements.length+' elemenata'],
  ['line','⌁','Linijska situacija',currentProject.line_storage_path?'Dokument dodat':'Dodaj PDF ili sliku'],
@@ -57,7 +57,7 @@ P.home=async()=>{
  ];
  const body='<main class="wrap pw-workspace"><button class="pw-back" id="pwBack">← Svi projekti</button>'+
  '<section class="pw-main-hero"><div><span>CENTRALNA EVIDENCIJA / PROJEKAT</span><h1>'+esc(currentProject.name)+'</h1><p>'+esc(currentProject.description||'Upravljanje radovima')+'</p>'+
- '<div class="pw-stats"><span>'+d.segments.length+' faza</span><span>'+d.elements.length+' elemenata</span><span>'+d.tasks.length+' zadataka</span></div></div>'+
+ '<div class="pw-stats"><span>'+d.segments.length+' faza</span><span>'+d.elements.length+' elemenata</span><span>'+d.elements.filter(e=>e.work_status==='prepared').length+' pripremljeno</span></div></div>'+
  '<div class="pw-progress-panel"><small>REALIZACIJA</small><strong>'+pct+'%</strong><div class="pw-progress"><i style="width:'+pct+'%"></i></div></div></section>'+
  P.sectionTitle('Moduli projekta',isAdmin()?P.btn('pwSettings','⚙ Podešavanja','secondary'):'')+
  '<div class="pw-grid">'+cards.map(x=>'<button type="button" class="pw-module" data-pw="'+x[0]+'"><span class="pw-symbol">'+x[1]+'</span><span class="pw-module-label"><b>'+x[2]+'</b><small>'+esc(x[3])+'</small></span><b class="pw-arrow">↗</b></button>').join('')+'</div>'+
