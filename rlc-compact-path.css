@@ -19,7 +19,15 @@
 .tiles.pp32-module-grid .pp32-mod-footer{padding-top:8px!important;font-size:10px}
 .tiles.pp32-module-grid .pp32-mod-arrow{width:23px;height:23px}
 .tiles.pp32-module-grid .im-line-card .im-top{gap:7px}
-.tiles.pp32-module-grid .im-line-card .im-bottom{margin-top:auto}
+.tiles.pp32-module-grid .im-line-card .im-card-kicker{margin-bottom:4px;font-size:8px}
+.tiles.pp32-module-grid .im-line-card .im-card-title{font-size:17px;line-height:1.2}
+.tiles.pp32-module-grid .im-line-card .im-card-copy{font-size:10px;line-height:1.35;margin-top:5px}
+.tiles.pp32-module-grid .im-line-card .im-tags{margin:7px 0;gap:5px}
+.tiles.pp32-module-grid .im-line-card .im-tags span{padding:4px 7px;font-size:9px}
+.tiles.pp32-module-grid .im-line-card .im-card-bottom{margin-top:auto;padding-top:8px;font-size:10px}
+.tiles.pp32-module-grid .im-line-card .im-arrow{font-size:17px}
+.tiles.pp32-module-grid .pp32-mod-description,
+.tiles.pp32-module-grid .im-card-copy{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
 .pp32-nav-path{
  position:fixed;left:12px;top:72px;bottom:14px;z-index:16;
  width:204px;overflow:auto;overscroll-behavior:contain;
