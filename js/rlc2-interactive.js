@@ -37,9 +37,8 @@ function getProgress(data){
  const others=data.filter(x=>x.item_key!=='trench');
  const done=others.filter(x=>x.status==='done').length;
  const prepared=others.filter(x=>x.status==='prepared').length;
- const trenchDone=trench?.status==='done';
- const excavation=trenchDone?60:0;
- const otherPart=others.length?(40*done/others.length):0;
+ const excavation=trench?.status==='done'?60:trench?.status==='prepared'?30:0;
+ const otherPart=others.length?(40*(done+0.5*prepared)/others.length):0;
  return {total:Math.round((excavation+otherPart)*10)/10,excavation,other:Math.round(otherPart*10)/10,
    totalOther:others.length,done,prepared,unmarked:others.length-done-prepared,
    trenchStatus:trench?.status||'not_started'};
@@ -123,7 +122,7 @@ function stageInfo(progress){
  const percent=Math.min(100,Math.max(0,progress.total));
  return '<section class="il-progress-panel">'+
  '<div class="il-progress-summary"><div><span>UKUPNA REALIZACIJA RLC 2</span><strong>'+fmt(percent)+'%</strong></div>'+
- '<div class="il-progress-description">Obračun samo po interaktivnoj linijskoj situaciji · status „Urađen“</div></div>'+
+ '<div class="il-progress-description">Pripremljen = 50% vrednosti elementa · Urađen = 100%</div></div>'+
  '<div class="il-progress-bar"><span style="width:'+percent+'%"></span></div>'+
  '<div class="il-progress-parts">'+
  '<div><span>ROV I KABLOVI · 60%</span><b>'+fmt(progress.excavation)+' / 60%</b><small>'+stateText[progress.trenchStatus]+'</small></div>'+
@@ -185,7 +184,7 @@ I.render=function(){
  '<div class="il-svg-scroll" id="ilSvgScroll">'+svg(s.data)+'</div>'+
  '<div class="il-diagram-foot"><span>Stanica Ruma → K2/12-PBA-1</span><span>Interaktivna SVG šema, nije podloga PDF-a</span></div></div>'+
  '<aside class="il-sidebar">'+list(s.data)+'</aside></div>'+
- '<section class="il-method"><b>METOD OBRAČUNA</b><p>Jedinstvena trasa rova i polaganja kablova nosi <strong>60%</strong> kada dobije status „Urađen“. Ostalih '+pr.totalOther+' elemenata zajedno nose <strong>40%</strong> (svaki '+fmt(40/pr.totalOther)+' procentnih poena). Status „Pripremljen“ služi za praćenje pripreme, ali ne povećava procenat izvedenih radova.</p>'+
+ '<section class="il-method"><b>METOD OBRAČUNA</b><p>Jedinstvena trasa rova i polaganja kablova nosi <strong>60%</strong> kada je urađena (pripremljena trasa nosi 30%). Ostalih '+pr.totalOther+' elemenata zajedno nose <strong>40%</strong> (svaki '+fmt(40/pr.totalOther)+' procentnih poena). Status „Pripremljen“ donosi 50% vrednosti svakog elementa (trasa 30 od 60%, ostali elementi polovinu svojih udela). „Urađen“ donosi punih 100% vrednosti.</p>'+
  '<p class="il-caution">Napojni kabl od stanice Ruma označen je na projektnoj linijskoj situaciji kao PP41 4×6 mm², 3.500 m. To je dužina kabla u šemi, a ne potvrđena dužina iskopanog rova. Položaji na ovoj interaktivnoj šemi su orijentacioni, ne geodetski.</p></section>'+
  '<div id="ilModalRoot"></div></main>');
  document.getElementById('ilBack').onclick=()=>window.rlc(s.rlcId).catch(reportError);
@@ -231,14 +230,14 @@ if(typeof oldRlc==='function'){
   const tile=document.querySelector('[data-mod="line"]');
   if(tile){
    tile.classList.add('il-launch-tile');
-   const label=tile.querySelector('.sub');if(label)label.textContent='Interaktivno · statusi i 60/40%';
+   const label=tile.querySelector('.sub');if(label)label.textContent='Interaktivno · pripremljeno 50%, urađeno 100%';
    tile.onclick=()=>I.open(id).catch(reportError);
   }
   try{
    const items=await I.load(id),pct=getProgress(items);
    normalizeProgressIntoRlcHero(pct.total);
    const hero=document.querySelector('.wrap > .hero');
-   if(hero)hero.insertAdjacentHTML('beforeend','<span class="il-rlc-progress-explain">Napredak iz interaktivne linijske situacije · rov 60% + elementi 40%</span>');
+   if(hero)hero.insertAdjacentHTML('beforeend','<span class="il-rlc-progress-explain">Interaktivno: pripremljeno 50%, urađeno 100% · trasa 60% / ostali 40%</span>');
   }catch(e){reportError(e)}
  };
 }
