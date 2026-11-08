@@ -64,6 +64,7 @@ function addMap(element,ctx,options){
   element.innerHTML='<div class="ppmap-fallback">Mapa nije mogla da se učita. Proveri internet vezu i osveži stranicu.</div>';
   return null;
  }
+ element.innerHTML='';
  const map=L.map(element,{scrollWheelZoom:false,zoomControl:false});
  L.control.zoom({position:'topright'}).addTo(map);
  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
