@@ -360,11 +360,11 @@ Object.assign(window.PP32NewLineSites=window.PP32NewLineSites||{},
       ],
       [
         "3x4x0.9",
-        2560,
+        1560,
         2
       ]
     ],
-    "notes": "Prelaz, BK i projektna situacija označeni su 66+716. Kod energetskog ormana pogrešno stoji 33+484 (očigledno preneto iz drugog crteža); NE koristiti kao stacionažu RLC36. Napojni kabl PP41 4×6 mm² 520 m.",
+    "notes": "Prelaz, BK i projektna situacija označeni su 66+716. Kod energetskog ormana pogrešno stoji 33+484 (očigledno preneto iz drugog crteža); NE koristiti kao stacionažu RLC36. Napojni kabl PP41 4×6 mm² 520 m. U zbirnoj tabeli 3×4×0,9 stoji 1.560 m, a dve označene grane su 1.280 + 1.280 m = 2.560 m; neusklađenost ostaje za projektnu proveru.",
     "pdf": "3 - Linijska situacija sa planom kablova putnog prelaza RLC36 u kilometru 66+716(1).pdf"
   }
 });
