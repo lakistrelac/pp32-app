@@ -112,9 +112,9 @@ if(typeof previousProject==='function')window.project=async function(projectId){
    const legacy=file.name.match(/^3\s*-\s*Linijska situacija sa planom kablova putnog prelaza(?:\(([12])\))?\.pdf$/i);
    if(!code&&legacy)code='RLC'+(legacy[1]?18+Number(legacy[1]):18);
    if(!code&&/^3\(2\)\.pdf$/i.test(file.name))code='RLC35';
-   if(!code&&/^3\(3\)\.pdf$/i.test(file.name))code='RLC28'; // exact supplied file for Lajkovac PBJ-1
-   if(!isPdf(file)||!code||!(Number(code.slice(3))>=2&&Number(code.slice(3))<=9||(Number(code.slice(3))>=18&&Number(code.slice(3))<=29||Number(code.slice(3))>=31&&Number(code.slice(3))<=36))){
-    errors.push(safe(file.name)+': RLC broj nije prepoznat (podržani 2–9, 18–29 i 31–36)');continue
+   if(!code&&/^3\(3\)\.pdf$/i.test(file.name))code='RLC28'; // exact supplied file for Paraćin Blok 2
+   if(!isPdf(file)||!code||!(Number(code.slice(3))>=2&&Number(code.slice(3))<=9||(Number(code.slice(3))>=18&&Number(code.slice(3))<=26||Number(code.slice(3))>=28&&Number(code.slice(3))<=29||Number(code.slice(3))>=31&&Number(code.slice(3))<=36))){
+    errors.push(safe(file.name)+': RLC broj nije prepoznat (podržani 2–9, 18–26, 28–29 i 31–36)');continue
    }
    if(seen.has(code)){errors.push(code+': izabran je više puta');continue}
    seen.add(code);valid.push({code,file});
