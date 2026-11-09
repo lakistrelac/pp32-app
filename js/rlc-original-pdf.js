@@ -111,8 +111,8 @@ if(typeof previousProject==='function')window.project=async function(projectId){
    let code=found?'RLC'+Number(found[1]):null;
    const legacy=file.name.match(/^3\s*-\s*Linijska situacija sa planom kablova putnog prelaza(?:\(([12])\))?\.pdf$/i);
    if(!code&&legacy)code='RLC'+(legacy[1]?18+Number(legacy[1]):18);
-   if(!isPdf(file)||!code||!(Number(code.slice(3))>=2&&Number(code.slice(3))<=9||Number(code.slice(3))>=18&&Number(code.slice(3))<=25)){
-    errors.push(safe(file.name)+': RLC broj nije prepoznat (podržani 2–9 i 18–25)');continue
+   if(!isPdf(file)||!code||!(Number(code.slice(3))>=2&&Number(code.slice(3))<=9||Number(code.slice(3))>=18&&Number(code.slice(3))<=36)){
+    errors.push(safe(file.name)+': RLC broj nije prepoznat (podržani 2–9 i 18–36)');continue
    }
    if(seen.has(code)){errors.push(code+': izabran je više puta');continue}
    seen.add(code);valid.push({code,file});
