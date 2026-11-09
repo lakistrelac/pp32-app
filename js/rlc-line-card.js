@@ -2,7 +2,7 @@
    Loaded after existing RLC navigation wrappers, no effect on other modules. */
 (function(){
 'use strict';
-const eligible=new Set(['RLC2','RLC3','RLC4','RLC5','RLC6','RLC7','RLC8','RLC9','RLC18','RLC19','RLC20','RLC21','RLC22','RLC23','RLC24','RLC25']);
+const eligible=new Set(['RLC2','RLC3','RLC4','RLC5','RLC6','RLC7','RLC8','RLC9','RLC18','RLC19','RLC20','RLC21','RLC22','RLC23','RLC24','RLC25','RLC31','RLC32','RLC33','RLC34','RLC35','RLC36']);
 const escHtml=s=>esc(s??'');
 const previous=window.rlc;
 if(typeof previous!=='function')return;
