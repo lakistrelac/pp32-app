@@ -12,7 +12,7 @@ function coords(site,rows){
  const order=window.PP32RlcClassicOrder?.[site.code];
  if(!order)throw Error('Nedostaje projektni redosled opreme za '+site.code);
  const out={};
- const short=r=>r.item_type==='sensor'?r.label.replace(/-PB[A-Z]-\d+$/i,''):r.label;
+ const short=r=>r.item_type==='sensor'?((site.stations||[]).find(s=>'sensor-'+s.toLowerCase().replace(/[\/_]/g,'-')===r.item_key)||r.label.replace(/-(?:PB[A-Z]-\d+|PP-?\d+(?:\/PP-?\d+)?)$/i,'')):r.label;
  for(const bank of ['left','right']){
   const list=order[bank]||[],n=list.length;
   list.forEach((key,i)=>{
@@ -58,7 +58,7 @@ function shape(row,point,site){
  else if(kind==='barrier')fig='<rect class="il-symbol" x="'+(x-10)+'" y="'+(y-11)+'" width="20" height="22" rx="2"/><path class="il-line-symbol" d="M'+(x-4)+' '+(y-4)+'l36-21"/>';
  else fig='<rect class="il-symbol" x="'+(x-16)+'" y="'+(y-17)+'" width="32" height="34" rx="3"/><path class="il-line-symbol" d="M'+(x-8)+' '+(y-8)+'h16 M'+(x-8)+' '+y+'h16 M'+(x-8)+' '+(y+8)+'h16"/>';
  let label=row.label;
- if(kind==='sensor')label=row.label.replace(/-PB[A-Z]-\d+$/i,'');
+ if(kind==='sensor')label=(site.stations||[]).find(s=>'sensor-'+s.toLowerCase().replace(/[\/_]/g,'-')===row.item_key)||row.label.replace(/-(?:PB[A-Z]-\d+|PP-?\d+(?:\/PP-?\d+)?)$/i,'');
  if(row.item_key==='cabinet-energetski-orman')label='Energ. orman';
  const [tx,ty,align]=where==='below'?[x,y+37,'middle']:where==='left'?[x-27,y+4,'end']:where==='right'?[x+27,y+4,'start']:[x,y-27,'middle'];
  return '<g class="il-spot '+status(row.status)+'" data-r18="'+e(row.item_key)+'" tabindex="0" role="button" aria-label="'+e(row.label)+'">'+
