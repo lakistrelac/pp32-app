@@ -1,16 +1,16 @@
-/* PP32 appearance settings: default, light, and admin and leader red. */
+/* PP32 appearance settings: default, light, admin/leader red and orange. */
 (function(){
 'use strict';
 const KEY='pp32_theme_v1';
-const themes={default:'Standardna',light:'Svetla',adminred:'Crvena'};
-function allowed(t){return t==='adminred'&&!isAdmin()?'default':(themes[t]?t:'default')}
+const themes={default:'Standardna',light:'Svetla',adminred:'Crvena',adminorange:'Narandžasta'};
+function allowed(t){return (t==='adminred'||t==='adminorange')&&!isAdmin()?'default':(themes[t]?t:'default')}
 function stored(){try{return localStorage.getItem(KEY)||'default'}catch(_){return 'default'}}
 function apply(value,save){
  const theme=allowed(value);
  document.documentElement.dataset.pp32Theme=theme;
  if(save)try{localStorage.setItem(KEY,theme)}catch(_){}
  const meta=document.querySelector('meta[name="theme-color"]');
- if(meta)meta.setAttribute('content',theme==='adminred'?'#451c27':theme==='light'?'#e6f0f5':'#102b46');
+ if(meta)meta.setAttribute('content',theme==='adminred'?'#451c27':theme==='adminorange'?'#71330b':theme==='light'?'#e6f0f5':'#102b46');
  document.querySelectorAll('.pp32-theme-choice').forEach(b=>{
   const active=b.dataset.theme===theme;b.setAttribute('aria-pressed',String(active));
   b.classList.toggle('is-selected',active);
@@ -31,7 +31,7 @@ function install(){
  toggle.innerHTML='<svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></svg><span>Tema</span>';
  const menu=document.createElement('div');menu.id='pp32ThemeMenu';menu.className='pp32-theme-menu';menu.hidden=true;
  const title=document.createElement('div');title.className='pp32-theme-menu-title';title.textContent='IZGLED APLIKACIJE';menu.append(title);
- for(const [key,name,swatch] of [['default','Standardna','standard'],['light','Svetla','light'],...(isAdmin()?[['adminred','Crvena · admin / lider','red']]:[])]){
+ for(const [key,name,swatch] of [['default','Standardna','standard'],['light','Svetla','light'],...(isAdmin()?[['adminred','Crvena · admin / lider','red'],['adminorange','Narandžasta · admin / lider','orange']]:[])]){
   const button=document.createElement('button');button.type='button';button.className='pp32-theme-choice';button.dataset.theme=key;
   button.innerHTML='<span class="pp32-theme-swatch pp32-swatch-'+swatch+'" aria-hidden="true"></span><span>'+name+'</span><span class="pp32-theme-check" aria-hidden="true">✓</span>';
   button.onclick=()=>{apply(key,true);close()};menu.append(button);
