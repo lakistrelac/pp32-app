@@ -43,6 +43,11 @@ function coords(site,rows){
   else if(row.item_key==='cabinet-energetski-orman')out[row.item_key]=[620,561,'right'];
   else out[row.item_key]=[order.lob==='left'?312:936,602,order.lob];
  }
+ // Exact source-side placement overrides for exceptional drawings (e.g. RLC34 PS2/PS3).
+ const custom=order.positions||{};
+ for(const [key,position] of Object.entries(custom)){
+  if(rows.some(r=>r.item_key===key))out[key]=position;
+ }
  return out;
 }
 function shape(row,point,site){
