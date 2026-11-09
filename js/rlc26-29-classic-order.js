@@ -14,8 +14,8 @@ Object.assign(window.PP32RlcClassicOrder=window.PP32RlcClassicOrder||{},
     "right": [
       "K3/13_2a",
       "K3/13_2b",
-      "K5/15-1",
       "K5/15-2",
+      "K5/15-1",
       "K2/12"
     ],
     "lob": "right",
@@ -31,12 +31,12 @@ Object.assign(window.PP32RlcClassicOrder=window.PP32RlcClassicOrder||{},
         "above"
       ],
       "sensor-k5-15-1": [
-        914,
+        992,
         147,
         "below"
       ],
       "sensor-k5-15-2": [
-        992,
+        914,
         147,
         "above"
       ],
