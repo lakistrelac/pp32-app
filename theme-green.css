@@ -1,0 +1,225 @@
+/* PP32 · Forest green theme, optional to existing admin/leader users.
+   Dark forest-green banners use ivory text, light surfaces use dark forest ink.
+   Status semantics (green/amber/red) and SVG project drawings are untouched. */
+.pp32-swatch-green{background:linear-gradient(135deg,#12663c 49%,#4be598 51%);border-color:#36a76f}
+@media screen {
+html[data-pp32-theme="admingreen"]{
+  color-scheme:light;
+  --nav:#106139;--bg:#f2fdf8;--ink:#173627;--muted:#47755e;
+  --line:#b4e7ce;--blue:#148a4f;--orange:#1dbe6e;
+  --pp32-forest-dark:#105935;
+  --pp32-forest-sub:#c7f7df;
+  --pp32-forest-highlight:#a8f3cd;
+  --pp32-forest-border:#37a870;
+}
+html[data-pp32-theme="admingreen"] .top{
+ background:linear-gradient(105deg,#0f4a2d,#18804c);color:#effdf6;
+ border-bottom:1px solid #259b60;
+}
+html[data-pp32-theme="admingreen"] .top .brand{color:#f3fdf8}
+html[data-pp32-theme="admingreen"] .top .role{color:#106139;background:#dffaed}
+html[data-pp32-theme="admingreen"] .top .nav-home{
+ background:linear-gradient(135deg,#a8f3ce,#7eedb5);
+ color:#0f4c2e;border-color:#6feaad;
+}
+html[data-pp32-theme="admingreen"] .top #out,
+html[data-pp32-theme="admingreen"] .top .pp32-theme-toggle{
+ background:rgba(255,249,241,.12);color:#f4fef9;border:1px solid rgba(255,220,177,.48);
+}
+html[data-pp32-theme="admingreen"] .top .pp32-theme-toggle:hover,
+html[data-pp32-theme="admingreen"] .top #out:hover{background:rgba(255,249,241,.22)}
+html[data-pp32-theme="admingreen"] .pp32-theme-menu{border-color:#8edeb6;background:#f5fefa;color:#16482f}
+html[data-pp32-theme="admingreen"] .pp32-theme-menu-title{color:#397b5a}
+html[data-pp32-theme="admingreen"] .pp32-theme-choice{color:#1b4b33}
+html[data-pp32-theme="admingreen"] .pp32-theme-choice:hover,
+html[data-pp32-theme="admingreen"] .pp32-theme-choice.is-selected{background:#d6f9e8}
+html[data-pp32-theme="admingreen"] .pp32-theme-choice .pp32-theme-check{color:#178e52}
+html[data-pp32-theme="admingreen"] :is(button,a,input,textarea,select):focus-visible{
+ outline:3px solid #38e38e;outline-offset:3px;
+}
+html[data-pp32-theme="admingreen"] :is(.wrap button.back,button.cw-back,button.rp-back,button.pw-back,button.gd-breadcrumb,button.gd-secondary-back,button.il-back,button.lp-back,button.cb-back).app-back-enhanced{
+ background:linear-gradient(135deg,#e2fbef,#f3fdf8)!important;
+ border-color:#63c695!important;color:#156e42!important;
+ box-shadow:0 4px 13px rgba(102,50,12,.13)!important;
+}
+html[data-pp32-theme="admingreen"] .app-back-enhanced>.app-back-arrow{
+ background:#137745!important;color:#fff!important;border-color:#36a16c!important;
+}
+html[data-pp32-theme="admingreen"] .pp32-nav-path{
+ background:#f5fefa;border-color:#a1e4c3;
+}
+html[data-pp32-theme="admingreen"] .pp32-nav-path-item{color:#1a7648}
+html[data-pp32-theme="admingreen"] .pp32-nav-path-item[aria-current="page"],
+html[data-pp32-theme="admingreen"] .pp32-nav-path-item:hover:not(:disabled){
+ background:#cff8e3;color:#0f5c36;
+}
+html[data-pp32-theme="admingreen"] :is(.pp32-nav-path-hint,.pp32-nav-path-title){color:#42795e}
+/* Prominent banners: all light lettering on deliberately dark surfaces. */
+html[data-pp32-theme="admingreen"] :is(
+ .home-masthead.hr-enhanced,.rg-project-hero,.gd-hero,.cw-hero,.il-hero,
+ .pw-workspace .pw-main-hero,.pw-section-hero,.rg-editor-hero,.rp-report-header
+){
+ background:radial-gradient(ellipse at 90% 0,rgba(247,155,58,.22),transparent 60%),
+ linear-gradient(120deg,#104e2f 0%,#177546 62%,#1f9359 100%);
+ border-color:#3cac74;color:#ebfcf3;
+}
+html[data-pp32-theme="admingreen"] :is(
+ .home-masthead.hr-enhanced,.rg-project-hero,.gd-hero,.cw-hero,.il-hero,
+ .pw-workspace .pw-main-hero,.pw-section-hero,.rg-editor-hero,.rp-report-header
+) :is(h1,h2,h3,strong){
+ color:#f2fdf8;
+}
+html[data-pp32-theme="admingreen"] .home-masthead.hr-enhanced :is(
+ .home-masthead-copy h1,.home-metrics strong,.home-system-line b
+){color:#f3fdf8}
+html[data-pp32-theme="admingreen"] :is(
+ .home-masthead.hr-enhanced .home-masthead-copy p,
+ .home-masthead.hr-enhanced .home-system-name,
+ .home-masthead.hr-enhanced .home-system-line span,
+ .home-masthead.hr-enhanced .home-metrics span,
+ .rg-project-hero .sub,.gd-hero-copy>p,.cw-hero-copy>p,
+ .il-hero p,.il-hero h1 span,.il-hero-progress span,
+ .pw-workspace .pw-main-hero p,.rg-editor-hero p,
+ .rp-report-header .rp-title p,.rp-report-header .rp-title h1 small,
+ .rp-report-header .rp-meta-item span,.rp-report-header .rp-meta-item strong
+){color:#cef8e3}
+html[data-pp32-theme="admingreen"] :is(
+ .home-kicker,.home-masthead.hr-enhanced .home-kicker,
+ .il-overline,.il-hero-progress strong,.gd-hero h1 em,
+ .cw-hero h1 em,.il-hero h1 em,.gd-hero-stats strong,
+ .pw-progress-panel strong,.rp-report-header .rp-label,
+ .rp-report-header .rp-label>span:last-child,
+ .rp-report-header .rp-title>div>span
+){color:#a8f3cd}
+html[data-pp32-theme="admingreen"] :is(
+ .home-masthead.hr-enhanced .home-metrics>div,
+ .home-masthead.hr-enhanced .home-system,
+ .gd-hero-stats span,.cw-hero-chip,.pw-stats span
+){background:rgba(48,20,8,.42);border-color:rgba(255,211,153,.35);color:#d9fae9}
+html[data-pp32-theme="admingreen"] :is(.gd-hero-stats span,.cw-hero-chip,.pw-stats span){color:#caf7e1}
+html[data-pp32-theme="admingreen"] .hr-headline-accent{color:#a8f3cd}
+html[data-pp32-theme="admingreen"] .hr-primary-cta{
+ background:#9ff1c8;border-color:#7eedb5;color:#0f472b;
+}
+html[data-pp32-theme="admingreen"] .hr-ghost-cta{
+ background:rgba(255,247,234,.08);color:#e3fbef;border-color:#5ecb95;
+}
+/* Home project deck and knowledge banner. */
+html[data-pp32-theme="admingreen"] .home-page .hp-deck-card,
+html[data-pp32-theme="admingreen"] .home-page .hp-deck-card:nth-child(2),
+html[data-pp32-theme="admingreen"] .home-page .home-guide-banner.gd-home-banner,
+html[data-pp32-theme="admingreen"] .home-page .home-guide-banner.gd-home-banner:hover{
+ --hp-accent:#93f0c2;
+ background:radial-gradient(ellipse at 100% 0,rgba(255,177,74,.17),transparent 59%),
+ linear-gradient(122deg,#115232,#18814d);
+ color:#f2fdf8;border-color:#3dac75;
+}
+html[data-pp32-theme="admingreen"] .home-page .hp-deck-card:nth-child(2){--hp-accent:#70ebad}
+html[data-pp32-theme="admingreen"] .home-page .hp-deck-card :is(
+ h3,.home-project-name,.home-project-title,.home-project-footer,.home-project-footer b
+),
+html[data-pp32-theme="admingreen"] .home-page .home-guide-banner.gd-home-banner :is(
+ .gd-home-copy h2,.gd-home-copy h2 span,.gd-home-cta,.gd-home-cta b
+){color:#f2fdf8}
+html[data-pp32-theme="admingreen"] .home-page .hp-deck-card :is(
+ p,.home-project-code,.home-project-status,.home-project-index,.hp-deck-eyebrow,.home-project-description
+),
+html[data-pp32-theme="admingreen"] .home-page .home-guide-banner.gd-home-banner :is(
+ .gd-home-copy p,.gd-home-tags span,.gd-home-kicker,.gd-home-icon span
+){color:#c5f7de}
+html[data-pp32-theme="admingreen"] .home-page .hp-deck-card :is(.home-project-index,.home-project-status,.home-project-footer b),
+html[data-pp32-theme="admingreen"] .home-page .home-guide-banner.gd-home-banner :is(.gd-home-tags span,.gd-home-icon,.gd-home-cta b){
+ background:rgba(50,23,8,.38);border-color:rgba(255,212,151,.31);
+}
+html[data-pp32-theme="admingreen"] :is(.gd-home-visual,.gd-hero-art,.cw-hero-art){
+ background:linear-gradient(130deg,#0d4529,#1a794a);border-color:#43ac78;
+}
+html[data-pp32-theme="admingreen"] .home-page .home-guide-banner.gd-home-banner .gd-home-visual{
+ background:linear-gradient(135deg,#0c4127,#1b7c4c);
+}
+/* RLC module cards: avoid pale text on light accents. */
+html[data-pp32-theme="admingreen"] .tiles.pp32-module-grid .pp32-module-card,
+html[data-pp32-theme="admingreen"] .tiles.pp32-module-grid .im-line-card{
+ --pp32-accent:#99f0c4;--pp32-accent-bg:rgba(255,180,77,.13);
+ background:radial-gradient(ellipse at 92% 2%,rgba(240,161,58,.2),transparent 60%),
+ linear-gradient(125deg,#115232,#1d8551)!important;
+ border-color:#41a975!important;color:#eafcf3!important;
+}
+html[data-pp32-theme="admingreen"] .tiles.pp32-module-grid .pp32-module-card:before,
+html[data-pp32-theme="admingreen"] .tiles.pp32-module-grid .im-line-card:before{
+ background:linear-gradient(90deg,#94f0c2,#47e596,transparent);
+}
+html[data-pp32-theme="admingreen"] .tiles.pp32-module-grid :is(
+ .pp32-mod-title,.im-card-title){color:#f4fdf9!important}
+html[data-pp32-theme="admingreen"] .tiles.pp32-module-grid :is(
+ .pp32-mod-description,.im-card-copy,.pp32-mod-footer,.im-card-bottom,
+ .pp32-mod-kicker,.im-card-kicker,.pp32-mod-tags span,.im-tags span,
+ .pp32-mod-badge,.im-active
+){color:#caf7e1!important}
+html[data-pp32-theme="admingreen"] .tiles.pp32-module-grid :is(
+ .pp32-mod-icon,.im-tile-icon,.pp32-mod-badge,.im-active,.pp32-mod-tags span,.im-tags span
+){background:rgba(47,21,8,.38);border-color:rgba(255,207,145,.33)}
+html[data-pp32-theme="admingreen"] .tiles.pp32-module-grid :is(
+ .pp32-mod-svg,.pp32-mod-arrow,.im-card-bottom .im-arrow){color:#b7f5d6}
+html[data-pp32-theme="admingreen"] .pp32-modules-heading h2,
+html[data-pp32-theme="admingreen"] .pp32-modules-heading h2 em,
+html[data-pp32-theme="admingreen"] :is(.rg-heading h2,.rg-heading h2 em,.cw-heading h2,.cw-heading h2 em,.pw-section-title h2,.rg-name,.pw-module-label b){
+ color:#11653b;
+}
+html[data-pp32-theme="admingreen"] :is(.rg-heading p,.rg-route,.rg-km,.rg-number,
+ .rg-progress-caption,.pw-module-label small,.cw-table-head p,.il-diagram-toolbar p,
+ .il-diagram-foot,.pp32-modules-heading p,.pr-section-head p,.pr-meta){
+ color:#42775d;
+}
+/* Light cards and controls: maintain a strong ink-on-ivory contrast. */
+html[data-pp32-theme="admingreen"] :is(.rg-card,.gd-card,.pw-panel,.pw-module,
+ .cw-metric,.cw-table-card,.rp-stat,.rp-table-wrap,.il-progress-panel,.il-diagram-panel,
+ .il-sidebar,.pp32-pdf-strip,.r18-cable-table,.home-admin){
+ border-color:#a7e5c6;background-color:#fafefc;
+}
+html[data-pp32-theme="admingreen"] :is(
+ .rg-search,.rg-toolbar select,.pp32-module-count,.rg-count,.cw-search,
+ .pr-fields input,.pr-fields textarea,.pw-field input,.pw-field textarea
+){border-color:#8bd6b1;background:#f9fefc;color:#1b4e35}
+html[data-pp32-theme="admingreen"] :is(.rg-search input,.cw-search input,
+ .pw-field input,.pw-field textarea,.pr-fields input,.pr-fields textarea){
+ color:#1d4833;
+}
+html[data-pp32-theme="admingreen"] :is(.rg-search input,.cw-search input,
+ .pw-field input,.pr-fields input,.pw-field textarea,.pr-fields textarea)::placeholder{
+ color:#46785f;opacity:1;
+}
+html[data-pp32-theme="admingreen"] :is(.rg-count,.pp32-module-count,.rg-code,
+ .pw-symbol,.rg-progress-caption b,.cw-metric strong,.rp-stat strong,
+ .il-progress-summary strong,.r18-cable-table td){
+ color:#14673d;
+}
+html[data-pp32-theme="admingreen"] .rg-code,
+html[data-pp32-theme="admingreen"] .pw-symbol{
+ background:#d0f8e4;border-color:#90e4ba;
+}
+html[data-pp32-theme="admingreen"] :is(.il-progress-parts>div,.cw-table-card th,
+ .r18-cable-table th,.rp-table-wrap th){
+ background:#e0fbed;border-color:#9fe3c1;color:#1e6240;
+}
+html[data-pp32-theme="admingreen"] .r18-cable-table table{background:#fafefc}
+html[data-pp32-theme="admingreen"] .pp32-pdf-strip{
+ background:linear-gradient(120deg,#f3fdf8,#dafaea);border-color:#96e2bc;
+}
+html[data-pp32-theme="admingreen"] .pp32-pdf-strip-copy :is(b,span),
+html[data-pp32-theme="admingreen"] .pp32-pdf-file-state{color:#18613d}
+html[data-pp32-theme="admingreen"] :is(.pp32-pdf-open,.btn:not(.sec):not(.danger),
+ .tab.active,.pw-btn:not(.secondary):not(.danger),
+ .cw-btn:not(.cw-btn-outline),.rp-action:not(.rp-excel)){
+ background:#15824c;border-color:#15824c;color:#f4fef9;
+}
+html[data-pp32-theme="admingreen"] .pp32-pdf-open:hover,
+html[data-pp32-theme="admingreen"] .btn:not(.sec):not(.danger):hover{
+ background:#1c975a;color:#f4fef9;
+}
+html[data-pp32-theme="admingreen"] :is(.app-back-enhanced,.rp-action,.pp32-theme-choice){
+ transition:background-color .15s,border-color .15s;
+}
+/* Keep illustration/safety data semantic, not theme-colored: SVG, progress status
+   states, signal status controls, and originals are not targeted here. */
+}
