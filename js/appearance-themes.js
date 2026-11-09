@@ -4,7 +4,7 @@
 const KEY='pp32_theme_v1';
 const themes={default:'Standardna',light:'Svetla',adminred:'Crvena',admingreen:'Zelena'};
 function allowed(t){return (t==='adminred'||t==='admingreen')&&!isAdmin()?'default':(themes[t]?t:'default')}
-function stored(){try{return localStorage.getItem(KEY)||'default'}catch(_){return 'default'}}
+function stored(){try{const saved=localStorage.getItem(KEY)||'default';return saved==='adminorange'?'admingreen':saved}catch(_){return 'default'}}
 function apply(value,save){
  const theme=allowed(value);
  document.documentElement.dataset.pp32Theme=theme;
