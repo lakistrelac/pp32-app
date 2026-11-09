@@ -1,0 +1,225 @@
+/* PP32 · Amber / copper theme, optional to existing admin/leader users.
+   Dark copper banners use ivory text, light surfaces use dark brown ink.
+   Status semantics (green/amber/red) and SVG project drawings are untouched. */
+.pp32-swatch-orange{background:linear-gradient(135deg,#69310f 49%,#f4a33c 51%);border-color:#a86b35}
+@media screen {
+html[data-pp32-theme="adminorange"]{
+  color-scheme:light;
+  --nav:#63300e;--bg:#fff8f0;--ink:#352518;--muted:#715c4b;
+  --line:#e8cdb3;--blue:#91420d;--orange:#c36a18;
+  --pp32-amber-dark:#5b2c0e;
+  --pp32-amber-sub:#ffe0bf;
+  --pp32-amber-highlight:#ffd29b;
+  --pp32-amber-border:#a96a36;
+}
+html[data-pp32-theme="adminorange"] .top{
+ background:linear-gradient(105deg,#4c240d,#834015);color:#fff7ed;
+ border-bottom:1px solid #9d5523;
+}
+html[data-pp32-theme="adminorange"] .top .brand{color:#fff9f1}
+html[data-pp32-theme="adminorange"] .top .role{color:#63300e;background:#fff2da}
+html[data-pp32-theme="adminorange"] .top .nav-home{
+ background:linear-gradient(135deg,#ffdc9c,#ffc06b);
+ color:#4e270d;border-color:#f7ba62;
+}
+html[data-pp32-theme="adminorange"] .top #out,
+html[data-pp32-theme="adminorange"] .top .pp32-theme-toggle{
+ background:rgba(255,249,241,.12);color:#fffaf3;border:1px solid rgba(255,220,177,.48);
+}
+html[data-pp32-theme="adminorange"] .top .pp32-theme-toggle:hover,
+html[data-pp32-theme="adminorange"] .top #out:hover{background:rgba(255,249,241,.22)}
+html[data-pp32-theme="adminorange"] .pp32-theme-menu{border-color:#dfb78d;background:#fffaf4;color:#482b16}
+html[data-pp32-theme="adminorange"] .pp32-theme-menu-title{color:#79563b}
+html[data-pp32-theme="adminorange"] .pp32-theme-choice{color:#4b2d1b}
+html[data-pp32-theme="adminorange"] .pp32-theme-choice:hover,
+html[data-pp32-theme="adminorange"] .pp32-theme-choice.is-selected{background:#ffead0}
+html[data-pp32-theme="adminorange"] .pp32-theme-choice .pp32-theme-check{color:#924513}
+html[data-pp32-theme="adminorange"] :is(button,a,input,textarea,select):focus-visible{
+ outline:3px solid #e99b32;outline-offset:3px;
+}
+html[data-pp32-theme="adminorange"] :is(.wrap button.back,button.cw-back,button.rp-back,button.pw-back,button.gd-breadcrumb,button.gd-secondary-back,button.il-back,button.lp-back,button.cb-back).app-back-enhanced{
+ background:linear-gradient(135deg,#fff2de,#fffaf1)!important;
+ border-color:#c69363!important;color:#713812!important;
+ box-shadow:0 4px 13px rgba(102,50,12,.13)!important;
+}
+html[data-pp32-theme="adminorange"] .app-back-enhanced>.app-back-arrow{
+ background:#7a3910!important;color:#fff!important;border-color:#a26435!important;
+}
+html[data-pp32-theme="adminorange"] .pp32-nav-path{
+ background:#fffaf4;border-color:#e5c3a0;
+}
+html[data-pp32-theme="adminorange"] .pp32-nav-path-item{color:#783e18}
+html[data-pp32-theme="adminorange"] .pp32-nav-path-item[aria-current="page"],
+html[data-pp32-theme="adminorange"] .pp32-nav-path-item:hover:not(:disabled){
+ background:#fbe6cc;color:#5e2e0d;
+}
+html[data-pp32-theme="adminorange"] :is(.pp32-nav-path-hint,.pp32-nav-path-title){color:#765a45}
+/* Prominent banners: all light lettering on deliberately dark surfaces. */
+html[data-pp32-theme="adminorange"] :is(
+ .home-masthead.hr-enhanced,.rg-project-hero,.gd-hero,.cw-hero,.il-hero,
+ .pw-workspace .pw-main-hero,.pw-section-hero,.rg-editor-hero,.rp-report-header
+){
+ background:radial-gradient(ellipse at 90% 0,rgba(247,155,58,.22),transparent 60%),
+ linear-gradient(120deg,#50270e 0%,#783c14 62%,#96511c 100%);
+ border-color:#ac703c;color:#fff7e8;
+}
+html[data-pp32-theme="adminorange"] :is(
+ .home-masthead.hr-enhanced,.rg-project-hero,.gd-hero,.cw-hero,.il-hero,
+ .pw-workspace .pw-main-hero,.pw-section-hero,.rg-editor-hero,.rp-report-header
+) :is(h1,h2,h3,strong){
+ color:#fff9f0;
+}
+html[data-pp32-theme="adminorange"] .home-masthead.hr-enhanced :is(
+ .home-masthead-copy h1,.home-metrics strong,.home-system-line b
+){color:#fff9f1}
+html[data-pp32-theme="adminorange"] :is(
+ .home-masthead.hr-enhanced .home-masthead-copy p,
+ .home-masthead.hr-enhanced .home-system-name,
+ .home-masthead.hr-enhanced .home-system-line span,
+ .home-masthead.hr-enhanced .home-metrics span,
+ .rg-project-hero .sub,.gd-hero-copy>p,.cw-hero-copy>p,
+ .il-hero p,.il-hero h1 span,.il-hero-progress span,
+ .pw-workspace .pw-main-hero p,.rg-editor-hero p,
+ .rp-report-header .rp-title p,.rp-report-header .rp-title h1 small,
+ .rp-report-header .rp-meta-item span,.rp-report-header .rp-meta-item strong
+){color:#ffe4c7}
+html[data-pp32-theme="adminorange"] :is(
+ .home-kicker,.home-masthead.hr-enhanced .home-kicker,
+ .il-overline,.il-hero-progress strong,.gd-hero h1 em,
+ .cw-hero h1 em,.il-hero h1 em,.gd-hero-stats strong,
+ .pw-progress-panel strong,.rp-report-header .rp-label,
+ .rp-report-header .rp-label>span:last-child,
+ .rp-report-header .rp-title>div>span
+){color:#ffd59b}
+html[data-pp32-theme="adminorange"] :is(
+ .home-masthead.hr-enhanced .home-metrics>div,
+ .home-masthead.hr-enhanced .home-system,
+ .gd-hero-stats span,.cw-hero-chip,.pw-stats span
+){background:rgba(48,20,8,.42);border-color:rgba(255,211,153,.35);color:#ffecd3}
+html[data-pp32-theme="adminorange"] :is(.gd-hero-stats span,.cw-hero-chip,.pw-stats span){color:#ffe5c2}
+html[data-pp32-theme="adminorange"] .hr-headline-accent{color:#ffd59b}
+html[data-pp32-theme="adminorange"] .hr-primary-cta{
+ background:#ffd391;border-color:#ffc06b;color:#48250e;
+}
+html[data-pp32-theme="adminorange"] .hr-ghost-cta{
+ background:rgba(255,247,234,.08);color:#fff2df;border-color:#cc945d;
+}
+/* Home project deck and knowledge banner. */
+html[data-pp32-theme="adminorange"] .home-page .hp-deck-card,
+html[data-pp32-theme="adminorange"] .home-page .hp-deck-card:nth-child(2),
+html[data-pp32-theme="adminorange"] .home-page .home-guide-banner.gd-home-banner,
+html[data-pp32-theme="adminorange"] .home-page .home-guide-banner.gd-home-banner:hover{
+ --hp-accent:#ffcd84;
+ background:radial-gradient(ellipse at 100% 0,rgba(255,177,74,.17),transparent 59%),
+ linear-gradient(122deg,#54290f,#844315);
+ color:#fff9f0;border-color:#ac743d;
+}
+html[data-pp32-theme="adminorange"] .home-page .hp-deck-card:nth-child(2){--hp-accent:#f6ad64}
+html[data-pp32-theme="adminorange"] .home-page .hp-deck-card :is(
+ h3,.home-project-name,.home-project-title,.home-project-footer,.home-project-footer b
+),
+html[data-pp32-theme="adminorange"] .home-page .home-guide-banner.gd-home-banner :is(
+ .gd-home-copy h2,.gd-home-copy h2 span,.gd-home-cta,.gd-home-cta b
+){color:#fffaf0}
+html[data-pp32-theme="adminorange"] .home-page .hp-deck-card :is(
+ p,.home-project-code,.home-project-status,.home-project-index,.hp-deck-eyebrow,.home-project-description
+),
+html[data-pp32-theme="adminorange"] .home-page .home-guide-banner.gd-home-banner :is(
+ .gd-home-copy p,.gd-home-tags span,.gd-home-kicker,.gd-home-icon span
+){color:#ffe1bd}
+html[data-pp32-theme="adminorange"] .home-page .hp-deck-card :is(.home-project-index,.home-project-status,.home-project-footer b),
+html[data-pp32-theme="adminorange"] .home-page .home-guide-banner.gd-home-banner :is(.gd-home-tags span,.gd-home-icon,.gd-home-cta b){
+ background:rgba(50,23,8,.38);border-color:rgba(255,212,151,.31);
+}
+html[data-pp32-theme="adminorange"] :is(.gd-home-visual,.gd-hero-art,.cw-hero-art){
+ background:linear-gradient(130deg,#46220c,#7b4118);border-color:#ac7143;
+}
+html[data-pp32-theme="adminorange"] .home-page .home-guide-banner.gd-home-banner .gd-home-visual{
+ background:linear-gradient(135deg,#42210b,#7e4219);
+}
+/* RLC module cards: avoid pale text on light accents. */
+html[data-pp32-theme="adminorange"] .tiles.pp32-module-grid .pp32-module-card,
+html[data-pp32-theme="adminorange"] .tiles.pp32-module-grid .im-line-card{
+ --pp32-accent:#ffd08a;--pp32-accent-bg:rgba(255,180,77,.13);
+ background:radial-gradient(ellipse at 92% 2%,rgba(240,161,58,.2),transparent 60%),
+ linear-gradient(125deg,#542b0f,#87441b)!important;
+ border-color:#a97141!important;color:#fff7e7!important;
+}
+html[data-pp32-theme="adminorange"] .tiles.pp32-module-grid .pp32-module-card:before,
+html[data-pp32-theme="adminorange"] .tiles.pp32-module-grid .im-line-card:before{
+ background:linear-gradient(90deg,#ffcd85,#ea9742,transparent);
+}
+html[data-pp32-theme="adminorange"] .tiles.pp32-module-grid :is(
+ .pp32-mod-title,.im-card-title){color:#fffaf2!important}
+html[data-pp32-theme="adminorange"] .tiles.pp32-module-grid :is(
+ .pp32-mod-description,.im-card-copy,.pp32-mod-footer,.im-card-bottom,
+ .pp32-mod-kicker,.im-card-kicker,.pp32-mod-tags span,.im-tags span,
+ .pp32-mod-badge,.im-active
+){color:#ffe4c2!important}
+html[data-pp32-theme="adminorange"] .tiles.pp32-module-grid :is(
+ .pp32-mod-icon,.im-tile-icon,.pp32-mod-badge,.im-active,.pp32-mod-tags span,.im-tags span
+){background:rgba(47,21,8,.38);border-color:rgba(255,207,145,.33)}
+html[data-pp32-theme="adminorange"] .tiles.pp32-module-grid :is(
+ .pp32-mod-svg,.pp32-mod-arrow,.im-card-bottom .im-arrow){color:#ffdfad}
+html[data-pp32-theme="adminorange"] .pp32-modules-heading h2,
+html[data-pp32-theme="adminorange"] .pp32-modules-heading h2 em,
+html[data-pp32-theme="adminorange"] :is(.rg-heading h2,.rg-heading h2 em,.cw-heading h2,.cw-heading h2 em,.pw-section-title h2,.rg-name,.pw-module-label b){
+ color:#67340f;
+}
+html[data-pp32-theme="adminorange"] :is(.rg-heading p,.rg-route,.rg-km,.rg-number,
+ .rg-progress-caption,.pw-module-label small,.cw-table-head p,.il-diagram-toolbar p,
+ .il-diagram-foot,.pp32-modules-heading p,.pr-section-head p,.pr-meta){
+ color:#745b45;
+}
+/* Light cards and controls: maintain a strong ink-on-ivory contrast. */
+html[data-pp32-theme="adminorange"] :is(.rg-card,.gd-card,.pw-panel,.pw-module,
+ .cw-metric,.cw-table-card,.rp-stat,.rp-table-wrap,.il-progress-panel,.il-diagram-panel,
+ .il-sidebar,.pp32-pdf-strip,.r18-cable-table,.home-admin){
+ border-color:#e6c7a6;background-color:#fffdf9;
+}
+html[data-pp32-theme="adminorange"] :is(
+ .rg-search,.rg-toolbar select,.pp32-module-count,.rg-count,.cw-search,
+ .pr-fields input,.pr-fields textarea,.pw-field input,.pw-field textarea
+){border-color:#d6b18b;background:#fffdf8;color:#4e301b}
+html[data-pp32-theme="adminorange"] :is(.rg-search input,.cw-search input,
+ .pw-field input,.pw-field textarea,.pr-fields input,.pr-fields textarea){
+ color:#482d1d;
+}
+html[data-pp32-theme="adminorange"] :is(.rg-search input,.cw-search input,
+ .pw-field input,.pr-fields input,.pw-field textarea,.pr-fields textarea)::placeholder{
+ color:#755d49;opacity:1;
+}
+html[data-pp32-theme="adminorange"] :is(.rg-count,.pp32-module-count,.rg-code,
+ .pw-symbol,.rg-progress-caption b,.cw-metric strong,.rp-stat strong,
+ .il-progress-summary strong,.r18-cable-table td){
+ color:#693812;
+}
+html[data-pp32-theme="adminorange"] .rg-code,
+html[data-pp32-theme="adminorange"] .pw-symbol{
+ background:#fbe7cd;border-color:#e6bc8e;
+}
+html[data-pp32-theme="adminorange"] :is(.il-progress-parts>div,.cw-table-card th,
+ .r18-cable-table th,.rp-table-wrap th){
+ background:#fff0db;border-color:#e4c49e;color:#63391d;
+}
+html[data-pp32-theme="adminorange"] .r18-cable-table table{background:#fffdf9}
+html[data-pp32-theme="adminorange"] .pp32-pdf-strip{
+ background:linear-gradient(120deg,#fffaf1,#ffedd5);border-color:#e3bd95;
+}
+html[data-pp32-theme="adminorange"] .pp32-pdf-strip-copy :is(b,span),
+html[data-pp32-theme="adminorange"] .pp32-pdf-file-state{color:#633716}
+html[data-pp32-theme="adminorange"] :is(.pp32-pdf-open,.btn:not(.sec):not(.danger),
+ .tab.active,.pw-btn:not(.secondary):not(.danger),
+ .cw-btn:not(.cw-btn-outline),.rp-action:not(.rp-excel)){
+ background:#854012;border-color:#854012;color:#fffaf3;
+}
+html[data-pp32-theme="adminorange"] .pp32-pdf-open:hover,
+html[data-pp32-theme="adminorange"] .btn:not(.sec):not(.danger):hover{
+ background:#9b5018;color:#fffaf3;
+}
+html[data-pp32-theme="adminorange"] :is(.app-back-enhanced,.rp-action,.pp32-theme-choice){
+ transition:background-color .15s,border-color .15s;
+}
+/* Keep illustration/safety data semantic, not theme-colored: SVG, progress status
+   states, signal status controls, and originals are not targeted here. */
+}
