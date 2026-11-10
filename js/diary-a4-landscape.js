@@ -9,7 +9,7 @@ const workerLabels=['Građ. radn.','Zanatl.','Teh. osob.','Ostali','Ukupno'];
 const formState={};let scope=null,entries=[],selected=null,dirty=false,locked=false;
 function empty(){return Object.fromEntries(keys.map(k=>[k,'']));}
 function field(k,cls='',multi=false){return multi?
- '<textarea class="gd2-input '+cls+'" data-gd2="'+k+'" spellcheck="true" aria-label="'+escText(k)+'"></textarea>':
+ '<div class="gd2-writing-wrap"><div class="gd2-rules" aria-hidden="true">'+Array.from({length:14},()=>'<div></div>').join('')+'</div><textarea class="gd2-input '+cls+'" data-gd2="'+k+'" spellcheck="true" aria-label="'+(k==='description'?'Opis rada':'Primedbe')+'"></textarea></div>':
  '<input class="gd2-input '+cls+'" data-gd2="'+k+'" type="text" autocomplete="off" aria-label="'+escText(k)+'">';}
 function line(label,k){return '<label class="gd2-line"><span>'+label+'</span>'+field(k)+'</label>';}
 function small(label,k){return '<label class="gd2-small"><span>'+label+'</span>'+field(k)+'</label>';}
@@ -94,9 +94,13 @@ function render(){
   apply(selected?unpack(d):empty());
  };
  document.getElementById('gd2-print').onclick=()=>{
-  document.body.classList.add('gd2-printing');
+  const over=[...document.querySelectorAll('.gd2-sheet textarea')].some(n=>n.scrollHeight>n.clientHeight+4);
+  if(over){
+   toast('Текст прелази простор једног A4 листа. Скрати текст или направи следећи лист како ништа не би било одсечено.');
+   alert('Текст је дужи од простора на једном A4 листу. За штампу је потребно скратити текст или га распоредити на додатни лист. Запис се може сачувати и овако.');
+   return;
+  }
   window.print();
-  document.body.classList.remove('gd2-printing');
  };
  if(!readOnly){
   document.getElementById('gd2-new').onclick=()=>{if(!confirmLeave())return;selected=null;apply(empty());document.getElementById('gd2-select').value='';};
@@ -110,7 +114,6 @@ async function save(){
  if(!hasContent(a)){toast('Празан лист можете одштампати без чувања.');return;}
  // DB requires date and work_done. Use date only for record indexing; sheet stays blank if omitted.
  const date=asDate(a);
- if((a.day||a.month||a.year)&&!date){toast('Датум није исправан. Попуните дан, месец и годину или оставите сва три празна.');return;}
  const storedDate=date||new Date().toISOString().slice(0,10);
  const payload={entry_date:storedDate,entry_no:null,team:a.contractor||null,responsible_person:a.diaryKeeper||null,
  weather:a.rain||null,work_done:a.description||' ',issues:a.notes||null,form_data:a};
