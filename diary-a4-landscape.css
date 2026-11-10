@@ -45,7 +45,10 @@
 .gd2-body section{display:flex;flex-direction:column;min-height:0}
 .gd2-work{border-right:1px solid #a34866}
 .gd2-body h2{height:7mm;line-height:7mm;margin:0;text-align:center;font-size:11px;letter-spacing:1px;border-bottom:1px solid #a34866}
-.gd2-sheet textarea.gd2-lined{flex:1;min-height:0;line-height:6.5mm;padding:0 2mm!important;font:11px/6.5mm Arial,sans-serif!important;background-image:repeating-linear-gradient(to bottom,transparent 0,transparent calc(6.5mm - 1px),#b77b91 calc(6.5mm - 1px),#b77b91 6.5mm);background-size:100% 6.5mm;white-space:pre-wrap;overflow:auto}
+.gd2-writing-wrap{flex:1;min-height:0;position:relative;overflow:hidden}
+.gd2-rules{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.gd2-rules>div{height:6.5mm;border-bottom:1px solid #b77b91}
+.gd2-sheet textarea.gd2-lined{position:absolute;inset:0;height:100%;width:100%;min-height:0;line-height:6.5mm;padding:0 2mm!important;font:11px/6.5mm Arial,sans-serif!important;background:transparent!important;white-space:pre-wrap;overflow:auto}
 .gd2-signatures{height:12mm;display:grid;grid-template-columns:31% 40% 29%}
 .gd2-signatures label{padding:1mm 2mm;border-right:1px solid #a34866;display:flex;gap:2mm;align-items:center}
 .gd2-signatures label:last-child{border:0}
