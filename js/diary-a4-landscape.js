@@ -5,7 +5,7 @@
 'use strict';
 const C='gd2',escText=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const keys=['contractor','site','location','investor','day','month','year','shift1from','shift1to','shift1total','shift2from','shift2to','shift2total','shift3from','shift3to','shift3total','w1','w2','w3','w4','w5','w6','w7','w8','w9','w10','w11','w12','w13','w14','w15','m1','m2','m3','t1from','t1to','t1temp','t2from','t2to','t2temp','t3from','t3to','t3temp','rain','wind','otherWeather','description','notes','diaryKeeper','contractorManager','supervisor'];
-const workerLabels=['Građ. radn.','Zanatl.','Teh. osob.','Ostali','Ukupno'];
+const workerLabels=['Грађ. радн.','Занатл.','Тех. особ.','Остали','Укупно'];
 const formState={};let scope=null,entries=[],selected=null,dirty=false,locked=false;
 function empty(){return Object.fromEntries(keys.map(k=>[k,'']));}
 function field(k,cls='',multi=false){return multi?
