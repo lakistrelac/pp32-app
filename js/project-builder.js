@@ -34,7 +34,7 @@ P.data=async()=>{
 P.percent=elements=>workAverage(elements);
 P.sectionTitle=(name,action='')=>'<div class="pw-section-title"><h2>'+esc(name)+'</h2>'+action+'</div>';
 P.signed=async(path)=>{
- const d=await api('/storage/v1/object/sign/pp32-documents/'+enc(path).replace(/%2F/gi,'/'),{method:'POST',body:JSON.stringify({expiresIn:3600})});
+ const d=await api('/storage/v1/object/sign/pp32-documents/'+enc(path).replace(/%2F/gi,'/'),{method:'POST',body:JSON.stringify({expiresIn:300})});
  return URL+'/storage/v1'+(d.signedURL||d.signedUrl);
 };
 P.upload=async(file,group)=>{
