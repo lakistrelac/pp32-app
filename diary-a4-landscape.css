@@ -66,3 +66,54 @@
  .gd2-sheet textarea.gd2-lined{visibility:hidden!important;overflow:hidden!important}
  .gd2-sheet .gd2-print-value{display:block!important;visibility:visible!important;position:absolute;inset:0;padding:0 2mm;font:11px/6.5mm Arial,sans-serif;white-space:pre-wrap;overflow:hidden;color:#111;word-break:break-word}
 }
+
+
+/* A4 diary layout fix: global input and table styles may exceed the grid tracks. */
+.gd2-page .gd2-sheet {overflow:hidden!important;max-width:none!important}
+.gd2-page .gd2-sheet .gd2-top,
+.gd2-page .gd2-sheet .gd2-mid,
+.gd2-page .gd2-sheet .gd2-body,
+.gd2-page .gd2-sheet .gd2-signatures {width:100%;max-width:100%;min-width:0;flex-shrink:0;overflow:hidden}
+.gd2-page .gd2-sheet .gd2-body {flex:1 1 auto;min-height:0}
+.gd2-page .gd2-sheet .gd2-top > section,
+.gd2-page .gd2-sheet .gd2-mid > section,
+.gd2-page .gd2-sheet .gd2-body > section {min-width:0;max-width:100%;overflow:hidden}
+.gd2-page .gd2-sheet .gd2-workers {padding:0!important;overflow:hidden!important}
+.gd2-page .gd2-sheet .gd2-workers table {
+ display:table!important;width:100%!important;max-width:100%!important;
+ min-width:0!important;height:100%!important;margin:0!important;
+ table-layout:fixed!important;border-collapse:collapse!important;border-spacing:0!important
+}
+.gd2-page .gd2-sheet .gd2-workers thead {display:table-header-group!important}
+.gd2-page .gd2-sheet .gd2-workers tbody {display:table-row-group!important}
+.gd2-page .gd2-sheet .gd2-workers tr {display:table-row!important}
+.gd2-page .gd2-sheet .gd2-workers th,
+.gd2-page .gd2-sheet .gd2-workers td {
+ display:table-cell!important;box-sizing:border-box!important;min-width:0!important;
+ max-width:none!important;padding:0!important;margin:0!important;
+ white-space:normal!important;overflow:hidden!important;overflow-wrap:anywhere;
+ text-align:center!important;vertical-align:middle!important;
+ font:8px/1.15 Arial,sans-serif!important
+}
+.gd2-page .gd2-sheet .gd2-workers th:first-child {width:13%!important}
+.gd2-page .gd2-sheet .gd2-workers th:last-child {width:20%!important}
+.gd2-page .gd2-sheet input.gd2-input {
+ display:block!important;flex:1 1 0;min-width:0!important;max-width:100%!important;
+ box-sizing:border-box!important;float:none!important;
+ padding:1px 2px!important;margin:0!important;font:10px/1.2 Arial,sans-serif!important
+}
+.gd2-page .gd2-sheet .gd2-workers input.gd2-input {width:100%!important;height:100%!important}
+.gd2-page .gd2-sheet .gd2-weather-row,
+.gd2-page .gd2-sheet .gd2-shift {min-width:0;width:100%;overflow:hidden}
+.gd2-page .gd2-sheet .gd2-weather-row > span,
+.gd2-page .gd2-sheet .gd2-shift > span {flex:0 0 auto}
+.gd2-page .gd2-sheet .gd2-temps,
+.gd2-page .gd2-sheet .gd2-temps .gd2-weather-inputs,
+.gd2-page .gd2-sheet .gd2-temps .gd2-small {min-width:0;overflow:hidden}
+.gd2-page .gd2-sheet .gd2-temps .gd2-small input {width:100%!important}
+.gd2-page .gd2-sheet textarea.gd2-lined {
+ position:absolute!important;inset:0!important;display:block!important;
+ width:100%!important;height:100%!important;min-height:0!important;
+ padding:0 2mm!important;font:11px/6.5mm Arial,sans-serif!important
+}
+@media print {.gd2-page .gd2-sheet {overflow:hidden!important}}
