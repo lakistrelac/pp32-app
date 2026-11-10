@@ -9,7 +9,7 @@ const workerLabels=['Грађ. радн.','Занатл.','Тех. особ.','�
 const formState={};let scope=null,entries=[],selected=null,dirty=false,locked=false;
 function empty(){return Object.fromEntries(keys.map(k=>[k,'']));}
 function field(k,cls='',multi=false){return multi?
- '<div class="gd2-writing-wrap"><div class="gd2-rules" aria-hidden="true">'+Array.from({length:14},()=>'<div></div>').join('')+'</div><textarea class="gd2-input '+cls+'" data-gd2="'+k+'" spellcheck="true" aria-label="'+(k==='description'?'Opis rada':'Primedbe')+'"></textarea></div>':
+ '<div class="gd2-writing-wrap"><div class="gd2-rules" aria-hidden="true">'+Array.from({length:14},()=>'<div></div>').join('')+'</div><div class="gd2-print-value" data-gd2-print="'+k+'" aria-hidden="true"></div><textarea class="gd2-input '+cls+'" data-gd2="'+k+'" spellcheck="true" aria-label="'+(k==='description'?'Opis rada':'Primedbe')+'"></textarea></div>':
  '<input class="gd2-input '+cls+'" data-gd2="'+k+'" type="text" autocomplete="off" aria-label="'+escText(k)+'">';}
 function line(label,k){return '<label class="gd2-line"><span>'+label+'</span>'+field(k)+'</label>';}
 function small(label,k){return '<label class="gd2-small"><span>'+label+'</span>'+field(k)+'</label>';}
@@ -43,7 +43,7 @@ function extract(){
  const values={};document.querySelectorAll('[data-gd2]').forEach(n=>values[n.dataset.gd2]=n.value);
  return values;
 }
-function apply(data){document.querySelectorAll('[data-gd2]').forEach(n=>n.value=String(data[n.dataset.gd2]??''));dirty=false;}
+function apply(data){document.querySelectorAll('[data-gd2]').forEach(n=>{n.value=String(data[n.dataset.gd2]??'');const mirror=document.querySelector('[data-gd2-print="'+n.dataset.gd2+'"]');if(mirror)mirror.textContent=n.value;});dirty=false;}
 function unpack(d){
  if(!d)return empty();
  const a={...empty(),...(d.form_data&&typeof d.form_data==='object'?d.form_data:{})};
@@ -83,7 +83,7 @@ function render(){
  '<div class="gd2-scroll">'+sheet()+'</div></main>');
  document.querySelectorAll('[data-gd2]').forEach(n=>{
   n.readOnly=readOnly;
-  n.addEventListener('input',()=>{dirty=true;toast('Несачуване измене');});
+  n.addEventListener('input',()=>{const mirror=document.querySelector('[data-gd2-print="'+n.dataset.gd2+'"]');if(mirror)mirror.textContent=n.value;dirty=true;toast('Несачуване измене');});
  });
  apply(selected?unpack(entries.find(d=>d.id===selected)):empty());
  document.getElementById('gd2-back').onclick=()=>{if(!confirmLeave())return;back();};
