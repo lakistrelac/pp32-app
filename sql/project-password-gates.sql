@@ -94,7 +94,7 @@ begin
   return jsonb_build_object('ok',false,'error','Šifra mora imati od 12 do 128 znakova.');
  end if;
  insert into private.project_passwords(project_id,password_hash,updated_by,updated_at)
- values(p_project,extensions.crypt(p_password,extensions.gen_salt('bf',12)),auth.uid(),now())
+ values(p_project,extensions.crypt(encode(extensions.digest(p_password,'sha256'),'hex'),extensions.gen_salt('bf',12)),auth.uid(),now())
  on conflict(project_id) do update set
   password_hash=excluded.password_hash,updated_by=excluded.updated_by,updated_at=excluded.updated_at;
  delete from private.project_grants where project_id=p_project;
@@ -125,7 +125,7 @@ begin
    return jsonb_build_object('ok',false,'error','Previše pokušaja. Pokušaj ponovo za 15 minuta.');
  end if;
  if p_password is null or length(p_password)>256 or
-    extensions.crypt(p_password,pw_hash) is distinct from pw_hash then
+    extensions.crypt(encode(extensions.digest(p_password,'sha256'),'hex'),pw_hash) is distinct from pw_hash then
    new_count:=case when old_attempt.window_started<now()-interval '15 minutes' then 1 else old_attempt.attempts+1 end;
    update private.project_password_attempts set attempts=new_count,
      window_started=case when old_attempt.window_started<now()-interval '15 minutes' then now() else old_attempt.window_started end,
@@ -217,3 +217,122 @@ create policy pp32_project_password_gate_storage on storage.objects
  as restrictive for all to authenticated
  using (bucket_id<>'pp32-documents' or private.storage_project_can_access(name))
  with check (bucket_id<>'pp32-documents' or private.storage_project_can_access(name));
+
+
+-- Home page must be able to list project names, but modifications require an unlock.
+drop policy if exists pp32_project_password_update on public.projects;
+create policy pp32_project_password_update on public.projects as restrictive
+ for update to authenticated using (private.project_can_access(id))
+ with check (private.project_can_access(id));
+drop policy if exists pp32_project_password_delete on public.projects;
+create policy pp32_project_password_delete on public.projects as restrictive
+ for delete to authenticated using (private.project_can_access(id));
+
+-- SECURITY DEFINER work-status RPC functions bypass table RLS: explicitly gate them too.
+create or replace function public.set_work_status(p_scope text,p_target uuid,p_status text)
+returns jsonb language plpgsql security definer set search_path=''
+as $$
+declare n integer:=0; a integer:=0; b integer:=0; c integer:=0; v_project uuid;
+begin
+ if auth.uid() is null or not private.can_edit_work() then
+  raise exception 'Nemaš pravo izmene radova.';
+ end if;
+ if p_target is null or p_status not in ('not_started','prepared','done') or p_status is null then
+  raise exception 'Neispravan cilj ili status.';
+ end if;
+ case p_scope
+  when 'line_item' then
+    select private.project_from_rlc(rlc_id) into v_project from public.rlc_line_items where id=p_target;
+  when 'component' then v_project:=private.project_from_component(p_target);
+  when 'project_element' then v_project:=private.project_from_element(p_target);
+  when 'rlc' then v_project:=private.project_from_rlc(p_target);
+  when 'segment' then v_project:=private.project_from_segment(p_target);
+  when 'project' then select id into v_project from public.projects where id=p_target;
+  else raise exception 'Nepoznata grupa elemenata.';
+ end case;
+ if v_project is null or not private.project_can_access(v_project) then
+  raise exception 'Prvo otključaj projekat njegovom šifrom.';
+ end if;
+ case p_scope
+  when 'line_item' then
+   update public.rlc_line_items set status=p_status,updated_at=now() where id=p_target;
+   get diagnostics n=row_count;
+  when 'component' then
+   update public.components set work_status=p_status,updated_at=now() where id=p_target;
+   get diagnostics n=row_count;
+  when 'project_element' then
+   update public.project_elements set work_status=p_status,updated_at=now() where id=p_target;
+   get diagnostics n=row_count;
+  when 'rlc' then
+   update public.rlc_line_items set status=p_status,updated_at=now() where rlc_id=p_target;
+   get diagnostics a=row_count;
+   update public.components set work_status=p_status,updated_at=now() where rlc_id=p_target;
+   get diagnostics b=row_count; n:=a+b;
+  when 'segment' then
+   update public.project_elements set work_status=p_status,updated_at=now() where segment_id=p_target;
+   get diagnostics n=row_count;
+  when 'project' then
+   update public.project_elements set work_status=p_status,updated_at=now()
+     where segment_id in (select id from public.project_segments where project_id=p_target);
+   get diagnostics a=row_count;
+   update public.components set work_status=p_status,updated_at=now()
+     where rlc_id in (select id from public.rlcs where project_id=p_target);
+   get diagnostics b=row_count;
+   update public.rlc_line_items set status=p_status,updated_at=now()
+     where rlc_id in (select id from public.rlcs where project_id=p_target);
+   get diagnostics c=row_count; n:=a+b+c;
+ end case;
+ if n=0 then raise exception 'Za izabranu grupu nije pronađen nijedan element.'; end if;
+ return jsonb_build_object('updated',n,'scope',p_scope,'status',p_status);
+end $$;
+
+create or replace function public.set_rlc_device_status(p_item uuid,p_status text)
+returns jsonb language plpgsql security definer set search_path=''
+as $$
+declare v_rlc uuid;v_key text;n integer;n_components integer;
+begin
+ if auth.uid() is null or not private.can_edit_work() then
+  raise exception 'Nemaš pravo izmene radova.';
+ end if;
+ if p_status is null or p_status not in ('not_started','prepared','done') then
+  raise exception 'Neispravan status.';
+ end if;
+ select li.rlc_id,li.item_key into v_rlc,v_key
+ from public.rlc_line_items li join public.rlcs r on r.id=li.rlc_id
+ join public.projects p on p.id=r.project_id
+ where li.id=p_item and p.code='pp32' and r.code in
+ ('RLC18','RLC19','RLC20','RLC21','RLC22','RLC23','RLC24','RLC25');
+ if v_rlc is null then raise exception 'Element nije pronađen.'; end if;
+ if not private.project_can_access(private.project_from_rlc(v_rlc)) then
+  raise exception 'Prvo otključaj projekat njegovom šifrom.';
+ end if;
+ update public.rlc_line_items set status=p_status,updated_at=now() where id=p_item;
+ get diagnostics n=row_count;
+ if v_key<>'trench' then
+  update public.components set work_status=p_status,updated_at=now()
+   where rlc_id=v_rlc and code=v_key;
+  get diagnostics n_components=row_count;
+ else n_components:=0;end if;
+ return jsonb_build_object('line_items',n,'components',n_components,'status',p_status);
+end $$;
+
+create or replace function public.set_rlc_map_location(p_rlc_id uuid,p_lat double precision,p_lng double precision)
+returns void language plpgsql security definer set search_path=''
+as $$
+begin
+ if not exists(select 1 from public.profiles p where p.id=auth.uid()
+   and p.active=true and p.role in ('admin','leader')) then
+  raise exception 'Nemate pravo da menjate lokacije prelaza.';
+ end if;
+ if not private.project_can_access(private.project_from_rlc(p_rlc_id)) then
+  raise exception 'Prvo otključaj projekat njegovom šifrom.';
+ end if;
+ if (p_lat is null) <> (p_lng is null) then
+  raise exception 'Unesite obe koordinate ili obe ostavite prazne.';
+ end if;
+ if p_lat is not null and (p_lat< -90 or p_lat>90 or p_lng< -180 or p_lng>180) then
+  raise exception 'Koordinate nisu ispravne.';
+ end if;
+ update public.rlcs set map_lat=p_lat,map_lng=p_lng,updated_at=now() where id=p_rlc_id;
+ if not found then raise exception 'Prelaz nije pronađen.';end if;
+end $$;
