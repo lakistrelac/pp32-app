@@ -1,25 +1,25 @@
 /* PP32 | Proracun ukljucnih tacaka po RLC.
- * Ulazi: 'Proračuni(1).xlsx' / Proracun (32 reda).
- * Metod: 'Word proracuni ss.docx', delovi A, B i C.
- * KS postoje samo ako su oznaceni na interaktivnoj linijskoj u bazi.
+ * Merodavne stacionaze, KS i raspored: projektne linijske situacije.
+ * Pomocni parametri d i V: 'Proračuni(1).xlsx', 32 prelaza.
+ * Metod proracuna: Word primer, delovi A, B i C.
  * Ovo je RADNI proracun, ne potvrda projektnog/normativnog resenja.
  */
 (function () {
 'use strict';
 
 const INPUTS=[
- [2,10.5,80,3285],[3,8,80,67660],[4,10,80,29048],[5,44,80,62425],
- [6,15,80,50317],[7,26,80,52471],[8,11.5,80,52714],[9,8.5,80,27774],
- [10,9,80,null],[11,20,100,49577],[12,9.3,80,19836],[13,16,100,58060],
- [14,8.5,100,127680],[15,12,100,128340],[16,9.5,100,128854],
- [18,18.5,80,155449],[19,15,80,33242],[20,10,80,30043],
- [21,41,80,40967],[22,8.5,80,41715],[23,9.5,100,74044],
- [24,11,80,29700],[25,16.5,80,68336],[26,17,80,39605],
- [28,22,100,null],[29,13,100,null],
- [31,20,120,null],[32,8.5,120,null],[33,10.5,120,null],
- [34,10,120,null],[35,8.4,120,null],[36,8.5,120,null]
+ [2,10.5,80],[3,8,80],[4,10,80],[5,44,80],
+ [6,15,80],[7,26,80],[8,11.5,80],[9,8.5,80],
+ [10,9,80],[11,20,100],[12,9.3,80],[13,16,100],
+ [14,8.5,100],[15,12,100],[16,9.5,100],
+ [18,18.5,80],[19,15,80],[20,10,80],
+ [21,41,80],[22,8.5,80],[23,9.5,100],
+ [24,11,80],[25,16.5,80],[26,17,80],
+ [28,22,100],[29,13,100],
+ [31,20,120],[32,8.5,120],[33,10.5,120],
+ [34,10,120],[35,8.4,120],[36,8.5,120]
 ];
-const BY_CODE=new Map(INPUTS.map(function(a){return ['RLC'+a[0],{d:a[1],v:a[2],excelKm:a[3]}]}));
+const BY_CODE=new Map(INPUTS.map(function(a){return ['RLC'+a[0],{d:a[1],v:a[2],source:'pomoćni proračunski podaci'}]}));
 const KS_RULES={80:{stop:700,switching:250},100:{stop:700,switching:300},120:{stop:1000,switching:350}};
 const ESC={ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' };
 const e=function(v){return String(v===undefined||v===null?'':v).replace(/[&<>"']/g,function(c){return ESC[c]})};
@@ -65,7 +65,7 @@ function formatSide(s,signame,outer,origin,rule){
  const signed=s.side===0?-1:1;
  const point=outer&&origin!=null?origin+signed*s.required:null;
  const ksPoint=s.ks&&outer&&origin!=null?origin+signed*rule.stop:null;
- const pointName=outer?outer.label:'Uključna tačka nije jednoznačno označena u planu';
+ const pointName=outer?outer.label:'Nije izdvojena jedna uključna tačka za ovaj smer';
  return '<section class="ic-direction">'+
   '<div class="ic-direction-head"><h3>'+e(sideName)+'</h3>'+
     tag(s.ks?'Sa '+signame:'Bez '+signame,s.ks?'ic-signal':'ic-nosignal')+'</div>'+
@@ -76,15 +76,15 @@ function formatSide(s,signame,outer,origin,rule){
   pair('Oznaka u projektnom planu',pointName)+
   pair('Teorijska stacionaža uključne tačke',km(point))+
   (s.ks?pair('Teorijska stacionaža '+signame,km(ksPoint)):'')+
-  (!outer?'<p class="ic-smallwarn">Za ovaj smer nije potvrđena JEDINSTVENA spoljna uključna tačka. Stacionaže se namerno ne prikazuju.</p>':origin==null?'<p class="ic-smallwarn">Izvori stacionaže nisu saglasni. Stacionaža se namerno ne prikazuje.</p>':'')+
+  (!outer?'<p class="ic-smallwarn">Na linijskoj situaciji za ovaj smer nije izdvojena jedna uključna tačka; prikazano je samo minimalno rastojanje.</p>':origin==null?'<p class="ic-smallwarn">Nema stacionaže prelaza u podacima sa linijske situacije.</p>':'')+
  '</section>';
 }
 function sectionA(c){
  return '<section class="ic-section"><h2>A. Vreme napuštanja zone ukrštanja</h2>'+
-  '<p>Dužina zone prelaza obuhvata zaustavni put drumskog vozila (3 m), maksimalnu dužinu vozila (25 m) i dužinu ukrštanja d iz Excel tabele.</p>'+
+  '<p>Dužina zone prelaza obuhvata zaustavni put drumskog vozila (3 m), maksimalnu dužinu vozila (25 m) i dužinu ukrštanja d iz pomoćnih proračunskih podataka.</p>'+
   '<div class="ic-equation">Lz = Lzp + Lpv + d = 3 + 25 + '+fmt(c.d,1)+' = <strong>'+fmt(c.lz,1)+' m</strong></div>'+
   '<div class="ic-equation">Tz = Lz / Vpv,min = '+fmt(c.lz,1)+' / 1,94 = <strong>'+fmt(c.tz)+' s</strong></div>'+
-  '<p class="ic-footnote">Izvor: Word, deo A; Vpv,min = 7 km/h, za račun korišćena vrednost 1,94 m/s, kao u dostavljenoj tabeli.</p></section>';
+  '<p class="ic-footnote">Prema Word obrascu, deo A: Vpv,min = 7 km/h (u računu 1,94 m/s).</p></section>';
 }
 function sectionB(c,sign){
  const withKs=sign.ks1||sign.ks2;
@@ -92,10 +92,10 @@ function sectionB(c,sign){
   '<div class="ic-equation">Tteh = tb + ts + tr = 15 + 12 + 5 = <strong>32 s</strong></div>'+
   '<div class="ic-equation">T = max(Tz, Tteh) = max('+fmt(c.tz)+', 32) = <strong>'+fmt(c.t)+' s</strong></div>'+
   '<div class="ic-equation">SU = T × Vž,max / 3,6 = '+fmt(c.t)+' × '+fmt(c.v,0)+' / 3,6 = <strong>'+fmt(c.su)+' m</strong></div>'+
-  (withKs?'<p>Za prilaz sa kontrolnim signalom dodatno se proverava uslov zaustavnog puta i uočavanja signala, prema vrednostima iz Excel tabele.</p>'+
+  (withKs?'<p>Za prilaz sa kontrolnim signalom dodatno se proverava uslov zaustavnog puta i uočavanja signala, prema proračunskim parametrima za zadatu brzinu.</p>'+
    '<div class="ic-equation">SKS = Szp + Ss = '+whole(c.rule.stop)+' + '+whole(c.rule.switching)+' = <strong>'+whole(c.rule.stop+c.rule.switching)+' m</strong></div>':
-   '<p>Pošto kontrolni signali KS1 i KS2 nisu evidentirani na linijskoj, za oba prilaza primenjuje se vremenski uslov SU, bez automatskog preuzimanja KS minimuma iz Excela.</p>')+
-  '<p class="ic-footnote">Excel koristi KS vrednosti 700 + 250 (80 km/h), 700 + 300 (100 km/h) i 1.000 + 350 m (120 km/h). To su usvojene projektne vrednosti iz dostavljene tabele, ne nezavisno potvrđeni uslovi propisa.</p></section>';
+   '<p>Pošto kontrolni signali KS1 i KS2 nisu evidentirani na linijskoj, za oba prilaza primenjuje se vremenski uslov SU, bez uslova predviđenog za kontrolni signal.</p>')+
+  '<p class="ic-footnote">Proračunski parametri Szp + Ss: 700 + 250 m (80 km/h), 700 + 300 m (100 km/h), odnosno 1.000 + 350 m (120 km/h).</p></section>';
 }
 function sectionC(c){
  return '<section class="ic-section"><h2>C. Vreme vraćanja u osnovni položaj</h2>'+
@@ -117,21 +117,13 @@ function render(rlc,input,items){
               r:outerMatches.r.length===1?outerMatches.r[0]:null};
  const calculated=calculate(input,sig);
  const planKm=fromKm(rlc.chainage);
- const excelKm=input.excelKm;
- const origin=Number.isFinite(excelKm)?excelKm:planKm;
- const chainageConflict=Number.isFinite(excelKm)&&Number.isFinite(planKm)&&excelKm!==planKm;
- const stationOrigin=chainageConflict?null:origin;
- const originType=Number.isFinite(excelKm)?'Excel — kolona O':'Plan projekta — Excel nema stacionažu';
+ // Merodavna stacionaza je ona iz linijske situacije, a ne stariji Excel.
+ const stationOrigin=planKm;
  const alerts=[];
- if(!Number.isFinite(excelKm))alerts.push('Excel ne sadrži stacionažu prelaza. Teorijske stacionaže su izvedene iz stacionaže prikazane u aplikaciji, a ne iz Excel-a.');
- if(chainageConflict)
-  alerts.push('NEUSAGLAŠENA STACIONAŽA: Excel km '+km(excelKm)+', plan u aplikaciji km '+km(planKm)+' (razlika '+Math.abs(excelKm-planKm)+' m). Teorijske stacionaže uključnih tačaka se NE ISPISUJU dok se izvori ne usaglase.');
- if(!sig.ks1||!sig.ks2)
-  alerts.push('Excel koristi jedinstven KS minimum u oba smera; ovde je uslov KS primenjen samo na strani sa eksplicitno označenim KS1/KS2. Položaji iz Excel-a za drugu stranu nisu automatski prihvaćeni.');
  if(!outer.l||!outer.r)
-  alerts.push('Na linijskoj situaciji nedostaje jedinstvena oznaka K1/11 i/ili K2/12. Za neoznačen ili višestruko označen smer kilometraža se ne prikazuje.');
+  alerts.push('U prikazu nije izdvojena po jedna oznaka K1/11 i/ili K2/12. Za takav smer ostaje prikaz minimalnog rastojanja, bez automatske kilometraže.');
  if(outerMatches.l.length>1||outerMatches.r.length>1)
-  alerts.push('Postoji VIŠE potencijalnih uključnih tačaka: K1/11: '+outerMatches.l.length+', K2/12: '+outerMatches.r.length+'. Jedinstven proračun ne predstavlja dokaz ispravnog položaja svake tačke/koloseka.');
+  alerts.push('Linijska situacija prikazuje više uključnih tačaka: K1/11: '+outerMatches.l.length+', K2/12: '+outerMatches.r.length+'. Za svaki kolosek i smer važi raspored iz projektne linijske.');
  if(signalRows.some(function(x){return /^PKS/i.test(x)}))
   alerts.push('Na situaciji postoji pomoćni kontrolni signal (PKS). Njegov uticaj na pojedine smerove mora proveriti odgovorni projektant.');
  if(rlc.code==='RLC28')alerts.push('RLC 28 nalazi se u višekolosečnom staničnom području; jedinstven proračun minimuma ne zamenjuje analizu po svakom koloseku i smeru.');
@@ -143,19 +135,18 @@ function render(rlc,input,items){
  (profile?.role!=='guest_pp32'?'<button type="button" class="btn sec" id="icPrint">Štampaj / Sačuvaj kao PDF</button>':'')+'</div>'+
  '<header class="ic-report-head"><span>PP32 / NUMERIČKA DOKUMENTACIJA / RADNI PRORAČUN</span>'+
  '<h1>Proračun uključnih tačaka</h1><h2>'+e(rlc.code)+' · '+e(rlc.design_name||'Putni prelaz')+'</h2>'+
- '<p>Projektna stacionaža: '+e(rlc.chainage||'nije uneta')+' · Referentna stacionaža: km '+km(origin)+' ('+e(originType)+')</p>'+
- '<div class="ic-source-note">Proračun prema dostavljenom Word primeru i Excel tabeli. <strong>Nije verifikovan za izvođenje ili podešavanje SS uređaja.</strong> Brzina voza i dužina ukrštanja d preuzete su iz Excel-a, bez nezavisne potvrde terenskih uslova. Teorijske stacionaže nisu montažni podaci.</div></header>'+
- '<div class="ic-metrics">'+card('Dužina ukrštanja d',fmt(input.d,1),'metara · Excel')+
- card('Vž,max',fmt(input.v,0),'km/h · Excel')+
+ '<p>Stacionaža prema merodavnoj linijskoj situaciji: '+e(rlc.chainage||'nije uneta')+'</p>'+
+ '<div class="ic-source-note">Merodavna osnova za stacionažu, raspored uređaja i kontrolne signale jeste linijska situacija. Obrazac je iz Word primera; d i V su preuzeti iz pomoćnih proračunskih podataka. Teorijski izračunate tačke ne zamenjuju pozicije sa projektne linijske.</div></header>'+
+ '<div class="ic-metrics">'+card('Dužina ukrštanja d',fmt(input.d,1),'metara · proračunski ulaz')+
+ card('Vž,max',fmt(input.v,0),'km/h · proračunski ulaz')+
  card('T za proračun',fmt(calculated.t),'sekundi')+
  card('Vremenski minimum SU',fmt(calculated.su),'metara')+'</div>'+
  '<section class="ic-section"><h2>Projektna situacija i izvori</h2><div class="ic-pairs">'+
  pair('Kontrolni signal s leve strane',sig.ks1?'KS1 — postoji':'KS1 — nije evidentiran')+
  pair('Kontrolni signal s desne strane',sig.ks2?'KS2 — postoji':'KS2 — nije evidentiran')+
  pair('Pomoćni kontrolni signali',ksNames.filter(function(x){return /^PKS/i.test(x)}).join(', ')||'Nisu evidentirani')+
- pair('Stacionaža iz Excel-a',km(excelKm))+
- pair('Stacionaža sa linijske u aplikaciji',km(planKm))+
- pair('Izvor promenljive d i brzine','Proračuni(1).xlsx · list Proracun (prenos proveren)')+
+ pair('Merodavna stacionaža sa linijske situacije',km(planKm))+
+ pair('Parametri d i V','Pomoćni proračunski podaci')+
  '</div></section>'+
  sectionA(calculated)+sectionB(calculated,sig)+
  '<section class="ic-section"><h2>Minimalne udaljenosti po smerovima</h2>'+
@@ -163,16 +154,8 @@ function render(rlc,input,items){
  '<div class="ic-directions">'+formatSide(calculated.sides[0],'KS1',outer.l,stationOrigin,calculated.rule)+
  formatSide(calculated.sides[1],'KS2',outer.r,stationOrigin,calculated.rule)+'</div></section>'+
  sectionC(calculated)+
- '<section class="ic-section"><h2>Odnos prema dostavljenoj Excel tabeli</h2>'+
- '<table class="ic-table"><thead><tr><th>Podatak</th><th>Excel</th><th>Ovaj proračun</th></tr></thead><tbody>'+
- row('KS minimum (Excel, kolona M)',whole((calculated.rule.stop+calculated.rule.switching))+' m','Szp + Ss za '+input.v+' km/h')+
- row('Konačno S sa KS na oba prilaza (Excel, kolona N)',whole(Math.max(calculated.su,calculated.rule.stop+calculated.rule.switching))+' m','max(SU, KS minimum) — samo poređenje sa Excel metodom')+
- row('Leva uključna tačka','S = '+whole(calculated.rule.stop+calculated.rule.switching)+' m',whole(calculated.sides[0].required)+' m'+(sig.ks1?' · sa KS':' · bez KS'))+
- row('Desna uključna tačka','S = '+whole(calculated.rule.stop+calculated.rule.switching)+' m',whole(calculated.sides[1].required)+' m'+(sig.ks2?' · sa KS':' · bez KS'))+
- '</tbody></table>'+
- '<p class="ic-footnote">Excel sadrži jedinstven minimum i unapred popunjene KS kolone i za prelaze bez odgovarajućih signala. Ovaj proračun odvojeno računa smerove i ne prepisuje stacionaže kao potvrđeno stanje. Kada izvori nisu saglasni, kilometraže uključnih tačaka nisu prikazane.</p></section>'+
  (alerts.length?'<section class="ic-section ic-cautions"><h2>Stavke za obaveznu proveru</h2><ul>'+alerts.map(sourceAlert).join('')+'</ul></section>':'')+
- '<footer class="ic-footer">Izvori: Word proracuni ss.docx; Proračuni(1).xlsx; PP32 interaktivne linijske situacije. Proračun je radni prilog i zahteva kontrolu odgovornog projektanta.</footer>'+
+ '<footer class="ic-footer">Merodavni projektni podaci: linijska situacija. Metod: Word proračun. Pomoćni ulazi: d i V. Pozicije uključnih tačaka iz projektne linijske imaju prednost nad teorijski izračunatim stacionažama.</footer>'+
  '</main>';
  shell(html);
  const back=document.getElementById('icBack');
@@ -185,7 +168,7 @@ async function open(id){
  if(!currentProject||currentProject.code!=='pp32')throw new Error('Proračun je namenjen projektu 32 putna prelaza.');
  if(!currentRlc||String(currentRlc.id)!==String(id))throw new Error('Otvori odgovarajući RLC pre proračuna.');
  const input=BY_CODE.get(currentRlc.code);
- if(!input)throw new Error('Za '+currentRlc.code+' nema reda u dostavljenoj Excel tabeli.');
+ if(!input)throw new Error('Za '+currentRlc.code+' nedostaju ulazni proračunski parametri.');
  const q=encodeURIComponent(String(id));
  const rows=await api('/rest/v1/rlc_line_items?rlc_id=eq.'+q+'&select=item_key,item_type,label&order=sort_order.asc&limit=250');
  return render(currentRlc,input,rows);
