@@ -96,7 +96,7 @@ N.render=function(){
  'Kolona L i kolona broj ne množe se međusobno. Neusklađenosti treba proveriti na izvornom crtežu.</p>'+
  '<div class="r18-cable-table"><table><thead><tr><th>Tip kabla</th><th>Konstrukcija</th><th>L (m)</th><th>Br.</th></tr></thead>'+
  site.cables.map(([type,len,count])=>'<tr><td>'+E(/^(4x6mm2|3x1.5mm2)$/.test(type)?'PP41':/^(14x1x0.9|40x1x0.9)$/.test(type)?'A-2Y2YB2Y':'A-2Y(L)2YB2Y')+'</td>'+
- '<td>'+E(type)+'</td><td>'+fmt(len)+'</td><td>'+Number(count)+'</td></tr>').join('')+'</table></div>'+
+ '<td>'+E(type)+'</td><td>'+(len==null?'Na proveru':fmt(len))+'</td><td>'+(count==null?'Na proveru':Number(count))+'</td></tr>').join('')+'</table></div>'+
  (site.notes?'<p class="il-caution">'+E(site.notes)+'</p>':'')+'</section>'+
  '<div id="r18ModalRoot"></div></main>');
  document.getElementById('r18Back').onclick=()=>window.rlc(p.id).catch(e=>alert(e.message));
