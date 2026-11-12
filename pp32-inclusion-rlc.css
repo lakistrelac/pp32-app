@@ -69,7 +69,7 @@ body>*:not(#app){display:none!important}
   body:has(#icPrintReport) #app>.top {display:none!important;visibility:hidden!important}
   body:has(#icPrintReport) #app .ic-actions {display:none!important}
   body:has(#icPrintReport) #app {padding:0!important;margin:0!important;overflow:visible!important}
-  body:has(#icPrintReport) .ic-report .ic-section {break-inside:auto!important;page-break-inside:auto!important;overflow:visible!important}
+  body:has(#icPrintReport) .ic-report .ic-section {break-inside:avoid!important;page-break-inside:avoid!important;overflow:visible!important;padding:11px 14px!important;margin:8px 0!important}
   body:has(#icPrintReport) .ic-report .ic-directions {display:block!important}
   body:has(#icPrintReport) .ic-report .ic-direction {break-inside:avoid!important;page-break-inside:avoid!important;margin-bottom:8mm}
   body:has(#icPrintReport) .ic-report .ic-pair,.ic-report .ic-equation,.ic-report .ic-metric,.ic-report .ic-report-head {break-inside:avoid;page-break-inside:avoid}
@@ -79,4 +79,8 @@ body>*:not(#app){display:none!important}
   body:has(#icPrintReport) .ic-report .ic-cautions li {break-inside:avoid}
   body:has(#icPrintReport) .ic-report .ic-required {break-inside:avoid}
   body:has(#icPrintReport) .ic-report .ic-footer {break-inside:avoid}
+  body:has(#icPrintReport) .ic-report .ic-direction {padding:12px!important;margin-bottom:5mm!important}
+  body:has(#icPrintReport) .ic-report .ic-report-head {padding:12px!important}
+  body:has(#icPrintReport) .ic-report .ic-metric {padding:9px!important}
+  body:has(#icPrintReport) .ic-report {font-size:12px!important;line-height:1.35!important}
 }
