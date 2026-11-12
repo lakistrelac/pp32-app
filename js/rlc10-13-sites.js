@@ -27,7 +27,7 @@ Object.assign(window.PP32NewLineSites=window.PP32NewLineSites||{},
       "Energetski orman",
       "LOB"
     ],
-    "stationsDetails": {
+    "stationDetails": {
       "K3/13_1": "Levo: A-2Y(L)2YB2Y 1×4×0,9, 25 m.",
       "K3/13_2": "Desno: A-2Y(L)2YB2Y 1×4×0,9, 35 m."
     },
@@ -113,7 +113,7 @@ Object.assign(window.PP32NewLineSites=window.PP32NewLineSites||{},
       "Energetski orman",
       "LOB"
     ],
-    "stationsDetails": {
+    "stationDetails": {
       "K1/11": "Levo: A-2Y(L)2YDB2Y 3×4×0,9 (2 četv.), 1.080 m.",
       "K3/13_1": "Levo: A-2Y(L)2YB2Y 1×4×0,9, 35 m.",
       "K3/13_2": "Desno: A-2Y(L)2YB2Y 1×4×0,9, 35 m.",
@@ -198,7 +198,7 @@ Object.assign(window.PP32NewLineSites=window.PP32NewLineSites||{},
       "Energetski orman",
       "LOB"
     ],
-    "stationsDetails": {
+    "stationDetails": {
       "K1/11": "Levo: A-2Y(L)2YB2Y 3×4×0,9, 1.050 m.",
       "K3/13_1": "Levo: A-2Y(L)2YB2Y 1×4×0,9, 25 m.",
       "K3/13_2": "Desno: A-2Y(L)2YB2Y 1×4×0,9, 35 m.",
@@ -286,7 +286,7 @@ Object.assign(window.PP32NewLineSites=window.PP32NewLineSites||{},
       "Energetski orman",
       "LOB"
     ],
-    "stationsDetails": {
+    "stationDetails": {
       "K1/11": "Levo: A-2Y(L)2YB2Y 3×4×0,9, 1.080 m.",
       "K3/13_1": "Levo: A-2Y(L)2YB2Y 1×4×0,9, 60 m.",
       "K3/13_2": "Desno: A-2Y(L)2YB2Y 1×4×0,9, 30 m."
