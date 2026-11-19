@@ -145,8 +145,11 @@ function openFull(){
   '</div><div class="ppmap-full-canvas" id="ppmapFullCanvas"><div class="ppmap-fallback">Učitavanje mape…</div></div></section>'+
   '<aside class="ppmap-side"><div class="ppmap-side-title"><b>Svi prelazi</b><span data-map-side-count></span></div>'+
   '<div class="ppmap-filters"><input id="ppmapSearch" type="search" placeholder="Pretraži RLC, naziv ili km…" aria-label="Pretraži prelaze">'+
-  '<select id="ppmapFilter" aria-label="Filtriraj putne prelaze"><option value="all">Svi prelazi</option><option value="idle">Nije započeto</option>'+
-  '<option value="active">U toku</option><option value="done">Završeno</option><option value="missing">Bez lokacije</option></select></div>'+
+  '<select id="ppmapFilter" aria-label="Filtriraj putne prelaze">'+
+  (profile?.role==='guest_pp32'
+    ? '<option value="all">Svi prelazi</option><option value="missing">Bez lokacije</option>'
+    : '<option value="all">Svi statusi</option><option value="idle">Nije započeto</option><option value="active">U toku</option><option value="done">Završeno</option><option value="missing">Bez lokacije</option>')+
+  '</select></div>'+
   '<div id="ppmapEditor" class="ppmap-editor-slot"></div><div class="ppmap-items" id="ppmapItems">Učitavanje…</div></aside></div></div>');
  document.getElementById('ppmapBack').onclick=home;
  initFull().catch(e=>{
