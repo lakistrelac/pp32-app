@@ -76,7 +76,7 @@ T.openBook=async(r,book)=>{
   button.onclick=async()=>{
    const file=files[Number(button.dataset.swDelete)];
    if(!file||!current(r))return;
-   if(!confirm('Trajno obrisati PDF „'+file.file_name+'“ iz '+book+' za '+r.code+'?\\n\\nNakon brisanja dokument više neće biti dostupan gostima.'))return;
+   if(!confirm('Trajno obrisati PDF „'+file.file_name+'“ iz '+book+' za '+r.code+'?\n\nNakon brisanja dokument više neće biti dostupan gostima.'))return;
    button.disabled=true;
    const status=document.getElementById('swStatus');
    if(status)status.textContent='Brisanje PDF-a: '+file.file_name+'…';
