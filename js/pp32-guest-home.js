@@ -13,7 +13,7 @@ async function guestHome(){
  const out='<main class="wrap home-page gph-home">'+
  '<section class="gph-hero"><div class="gph-hero-copy">'+
  '<div class="gph-eyebrow"><i></i> SIGNALNO-SIGURNOSNI SISTEMI / PP32</div>'+
- '<h1>32 putna prelaza.<span> Sve na jednom mestu.</span></h1>'+
+ '<h1>32 putna prelaza.</h1>'+
  '<p>Lokacije prelaza, projektne sveske i proračuni uključnih tačaka — pristup dokumentaciji za svaki RLC.</p>'+
  '<div class="gph-hero-actions"><button type="button" id="gphGoProject" class="gph-primary">Otvori putne prelaze <b>↗</b></button>'+
  '<button type="button" id="gphGoMap" class="gph-secondary">Pogledaj mapu</button></div>'+
@@ -32,7 +32,8 @@ async function guestHome(){
  '<button type="button" class="gph-map-open" id="gphFullMap">Cela mapa ↗</button></div>'+
  '<div id="gphMap" class="gph-map"><div class="ppmap-fallback">Učitavanje mape…</div></div>'+
  '<div class="gph-map-details"><strong id="gphMapCount">Učitavanje lokacija…</strong>'+
- '<div id="gphQuick" class="gph-map-quick"></div></div></div>'+
+ '<div id="gphQuick" class="gph-map-quick"></div></div>'+
+ '<div id="gphRailLegend" class="ppmap-rail-legend ppmap-rail-legend-guest"></div></div>'+
  '<article class="gph-project-card"><div class="gph-project-top"><span>PP32 / JEDAN PROJEKAT</span><span>PROJEKAT</span></div>'+
  '<div class="gph-project-emblem">32<span>PP</span></div>'+
  '<h2>'+e(p.name)+'</h2>'+
@@ -56,7 +57,8 @@ async function guestHome(){
   await window.PP32GeoMap.mountGuestPreview(
    document.getElementById('gphMap'),
    document.getElementById('gphQuick'),
-   document.getElementById('gphMapCount'));
+   document.getElementById('gphMapCount'),
+   document.getElementById('gphRailLegend'));
  }catch(err){
   const el=document.getElementById('gphMap');
   if(el)el.innerHTML='<div class="ppmap-fallback">Mapa trenutno nije dostupna. '+e(err?.message||String(err))+'</div>';
