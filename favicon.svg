@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title">
+  <title id="title">PP32 – putni prelazi</title>
+  <rect width="64" height="64" rx="14" fill="#102b46"/>
+  <rect x="2" y="2" width="60" height="60" rx="12" fill="none" stroke="#62d5ce" stroke-opacity=".55" stroke-width="2"/>
+  <circle cx="19" cy="17" r="5" fill="#f85e68"/>
+  <circle cx="45" cy="17" r="5" fill="#f85e68"/>
+  <circle cx="19" cy="17" r="2" fill="#ffc5c6"/>
+  <circle cx="45" cy="17" r="2" fill="#ffc5c6"/>
+  <text x="32" y="44" text-anchor="middle" fill="#f5fcff" font-family="Arial,Helvetica,sans-serif" font-size="29" font-weight="800" letter-spacing="-2">32</text>
+  <path d="M12 51H52M16 57L24 49M29 57L37 49M42 57L50 49" stroke="#6be2d8" stroke-width="3" stroke-linecap="round"/>
+</svg>
