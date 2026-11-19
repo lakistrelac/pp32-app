@@ -86,8 +86,9 @@ T.openBook=async(r,book)=>{
     const msg=document.getElementById('swStatus');
     if(msg)msg.textContent='PDF „'+file.file_name+'“ je obrisan. Možeš dodati novu verziju dokumenta.';
    }catch(err){
-    if(status?.isConnected)status.textContent='Brisanje nije završeno: '+(err?.message||String(err));
-    else fail(err);
+    const reason=err?.message||String(err);
+    if(status?.isConnected)status.textContent='Brisanje nije završeno: '+reason;
+    alert('PDF nije obrisan. '+reason);
     if(button.isConnected)button.disabled=false;
    }
   };
