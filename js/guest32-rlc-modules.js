@@ -41,7 +41,7 @@ async function showGuestProject(id){
    '<span class="gf-symbol" aria-hidden="true">✎</span>'+
    '<div class="gf-copy"><span class="gf-eyebrow">VAŠE MIŠLJENJE JE VAŽNO</span>'+
     '<h2>Primedbe i komentari</h2>'+
-    '<p>Prijavi zapažanje, napiši komentar ili predlog i prati odgovor kroz status prijave.</p></div>'+
+    '<p>Prijavi zapažanje, napiši komentar ili predlog i prati status svoje prijave.</p></div>'+
    '<button type="button" class="gf-action" id="gfProjectRemarks">Pošalji komentar ili primedbu <b aria-hidden="true">↗</b></button>'+
   '</section>'+
   '<div class="rg-heading"><div><span class="rg-label">PP32 / PUTNI PRELAZI</span>'+
