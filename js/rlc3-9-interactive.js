@@ -210,7 +210,7 @@ if(typeof oldRlc==='function')window.rlc=async function(id){
  const tile=document.querySelector('[data-mod="line"]');
  if(tile){tile.classList.add('il-launch-tile');const caption=tile.querySelector('.sub');if(caption)caption.textContent='Interaktivno · pripremljeno 50%, urađeno 100%';tile.onclick=()=>A.open(id).catch(error)}
  try{
-  const rows=await window.PP32InteractiveLine.load(id),p=progress(rows);
+  const rows=await api('/rest/v1/rlc_line_items?rlc_id=eq.'+q(id)+'&select=rlc_id,item_key,status&limit=250'),p=progress(rows);
   const big=document.querySelector('.wrap > .hero .big');if(big)big.textContent=fmt(p.total)+'%';
   const h=document.querySelector('.wrap > .hero');
   if(h)h.insertAdjacentHTML('beforeend','<span class="il-rlc-progress-explain">Pripremljeno 50%, urađeno 100% · težine 60/40%</span>');

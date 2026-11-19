@@ -2,8 +2,8 @@
    Database policies provide the matching server-side data boundary. */
 (function(){
 'use strict';
-const allowedModules=new Set(['docs','inclusion']);
-const allowedCalculations=new Set(['ukljucne-tacke','pad-napona']);
+const allowedModules=new Set(['docs','inclusionCalc']);
+const allowedCalculations=new Set(['pad-napona']);
 function isGuest32(){
  return profile?.active===true&&profile?.role==='guest_pp32';
 }

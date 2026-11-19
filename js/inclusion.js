@@ -61,7 +61,7 @@
     }
   }
   function speed(v){const el=document.getElementById('ipSpeed');if(el){el.value=v;calc()}}
-  window.inclusionPointCalculator=function(backAction){
+  window.inclusionPointCalculator=function(){
     const h='<div class="wrap">'+
       '<button class="back" id="ipBack">← Uputstvo</button>'+
       '<div class="hero ip-hero"><div><div class="pill">PUTNI PRELAZ</div><h1>Proračun uključnih tačaka</h1><p class="sub">Proračun minimalne potrebne udaljenosti uključne tačke. Stacionaže su namerno izostavljene.</p></div><div class="ip-hero-icon">↔</div></div>'+
@@ -85,7 +85,7 @@
       '</div>'+ 
     '</div>';
     shell(h);
-    document.getElementById('ipBack').onclick=typeof backAction==='function'?backAction:guideHome;
+    document.getElementById('ipBack').onclick=guideHome;
     document.getElementById('ipModeYes').onclick=()=>setMode(true);
     document.getElementById('ipModeNo').onclick=()=>setMode(false);
     ['ipD','ipSpeed','ipPre','ipLower','ipReserve'].forEach(id=>document.getElementById(id).addEventListener('input',calc));
