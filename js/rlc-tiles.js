@@ -33,8 +33,8 @@ window.project=async function(id){
    '<div class="rg-route"><span class="rg-track-dot"></span>'+e(lineName(r.railway_line))+'</div>'+
    '<div class="rg-name">'+e(r.design_name||'Naziv prelaza nije unet')+'</div>'+
    '<div class="rg-km"><span aria-hidden="true">⌖</span> '+e(r.chainage||'Stacionaža nije uneta')+'</div>'+
-   '<div class="rg-progress-caption"><span>Realizacija radova</span><b>'+pc+'%</b></div>'+
-   '<div class="rg-progress"><i style="width:'+pc+'%"></i></div>'+
+   (profile?.role==='guest_pp32'?'':'<div class="rg-progress-caption"><span>Realizacija radova</span><b>'+pc+'%</b></div>'+
+   '<div class="rg-progress"><i style="width:'+pc+'%"></i></div>')+
    '<div class="rg-card-bottom"><span>Otvori putni prelaz <b aria-hidden="true">↗</b></span>'+
     (isAdmin()?'<button class="rg-edit" type="button" data-rgedit="'+e(r.id)+'" aria-label="Uredi podatke za '+e(r.code)+'">Uredi</button>':'')+
    '</div>';
