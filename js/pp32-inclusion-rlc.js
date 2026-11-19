@@ -154,7 +154,7 @@ function render(rlc,input,items){
  '<div class="ic-directions">'+formatSide(calculated.sides[0],'KS1',outer.l,stationOrigin,calculated.rule)+
  formatSide(calculated.sides[1],'KS2',outer.r,stationOrigin,calculated.rule)+'</div></section>'+
  sectionC(calculated)+
- (alerts.length?'<section class="ic-section ic-cautions"><h2>Stavke za obaveznu proveru</h2><ul>'+alerts.map(sourceAlert).join('')+'</ul></section>':'')+
+ (profile?.role!=='guest_pp32'&&alerts.length?'<section class="ic-section ic-cautions"><h2>Stavke za obaveznu proveru</h2><ul>'+alerts.map(sourceAlert).join('')+'</ul></section>':'')+
  '<footer class="ic-footer">Merodavni projektni podaci: linijska situacija. Metod: Word proračun. Pomoćni ulazi: d i V. Pozicije uključnih tačaka iz projektne linijske imaju prednost nad teorijski izračunatim stacionažama.</footer>'+
  '</main>';
  shell(html);
