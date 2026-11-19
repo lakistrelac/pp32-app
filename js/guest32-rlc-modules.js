@@ -30,7 +30,7 @@ async function showGuestProject(id){
  if(project?.code!=='pp32')throw new Error('Gost može da otvori samo projekat 32 putna prelaza.');
  const rows=await api('/rest/v1/rlcs?project_id=eq.'+q(project.id)+
   '&select=id,code,design_name,chainage,railway_line&order=code.asc&limit=100');
- const ordered=[...rows].sort((a,b)=>(Number(a.code.match(/\\d+/)?.[0]||0)-Number(b.code.match(/\\d+/)?.[0]||0)));
+ const ordered=[...rows].sort((a,b)=>(Number(a.code.match(/\d+/)?.[0]||0)-Number(b.code.match(/\d+/)?.[0]||0)));
  currentProject=project;
  currentRlc=null;
  let body='<main class="wrap pp32-guest-project">'+
