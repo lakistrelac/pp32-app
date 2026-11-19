@@ -1,0 +1,61 @@
+/* PP32 app identity. Appears in the actual blue navigation header and on login. */
+.top .pp32-brand{
+ display:flex;
+ align-items:center;
+ gap:10px;
+ min-width:0;
+ overflow:hidden;
+ flex:1 1 auto;
+ font-weight:900;
+}
+.top .pp32-brand-icon{
+ display:block;
+ width:38px;
+ height:38px;
+ flex:0 0 38px;
+ border-radius:9px;
+ box-shadow:0 2px 8px rgba(0,0,0,.13);
+}
+.top .pp32-brand-copy{
+ display:flex;
+ flex-direction:column;
+ align-items:flex-start;
+ min-width:0;
+ gap:2px;
+ line-height:1.02;
+ white-space:nowrap;
+}
+.top .pp32-brand-copy b{
+ font-size:18px;
+ font-weight:900;
+ letter-spacing:.055em;
+ color:#fff;
+}
+.top .pp32-brand-copy small{
+ font-size:10px;
+ font-weight:720;
+ letter-spacing:.045em;
+ color:rgba(255,255,255,.83);
+}
+.pp32-login-icon{
+ display:block;
+ width:70px;
+ height:70px;
+ border-radius:15px;
+ margin:0 auto 15px;
+ box-shadow:0 7px 20px rgba(16,43,70,.19);
+}
+.login .box>h1{text-align:center;font-size:clamp(22px,4vw,29px);line-height:1.18}
+.login .box>.sub{text-align:center;margin-top:5px;margin-bottom:18px}
+@media(max-width:650px){
+ .top .pp32-brand{gap:7px}
+ .top .pp32-brand-icon{width:30px;height:30px;flex-basis:30px}
+ .top .pp32-brand-copy b{font-size:16px}
+ .top .pp32-brand-copy small{font-size:9px}
+}
+@media(max-width:380px){
+ .top .pp32-brand{gap:5px}
+ .top .pp32-brand-icon{width:26px;height:26px;flex-basis:26px}
+ .top .pp32-brand-copy b{font-size:14px}
+ .top .pp32-brand-copy small{font-size:8px}
+}
