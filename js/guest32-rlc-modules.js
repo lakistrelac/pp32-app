@@ -37,6 +37,13 @@ async function showGuestProject(id){
   '<button type="button" class="back" id="guestProjectBack">← Početna</button>'+
   '<div class="hero"><div><h1>'+html(project.name)+'</h1>'+
   '<p class="sub">Izaberi putni prelaz za dokumentaciju ili proračun uključnih tačaka.</p></div></div>'+
+  '<section class="gf-feedback gf-project-feedback" aria-label="Primedbe i komentari">'+
+   '<span class="gf-symbol" aria-hidden="true">✎</span>'+
+   '<div class="gf-copy"><span class="gf-eyebrow">VAŠE MIŠLJENJE JE VAŽNO</span>'+
+    '<h2>Primedbe i komentari</h2>'+
+    '<p>Prijavi zapažanje, napiši komentar ili predlog i prati odgovor kroz status prijave.</p></div>'+
+   '<button type="button" class="gf-action" id="gfProjectRemarks">Pošalji komentar ili primedbu <b aria-hidden="true">↗</b></button>'+
+  '</section>'+
   '<div class="rg-heading"><div><span class="rg-label">PP32 / PUTNI PRELAZI</span>'+
   '<h2>Izaberi <em>RLC.</em></h2><p>Dokumentacija i proračun posebno za svaki prelaz.</p></div>'+
   '<span class="rg-count">'+ordered.length+' RLC-ova</span></div>'+
@@ -55,6 +62,11 @@ async function showGuestProject(id){
  shell(body);
  const back=document.getElementById('guestProjectBack');
  if(back)back.onclick=()=>window.home();
+ const remarks=document.getElementById('gfProjectRemarks');
+ if(remarks)remarks.onclick=()=>{
+  if(!window.PP32Remarks?.open)return alert('Primedbe i komentari trenutno nisu dostupni. Osveži stranicu.');
+  window.PP32Remarks.open(project.id);
+ };
  document.querySelectorAll('[data-guest-rlc]').forEach(card=>{
   card.onclick=()=>window.rlc(card.dataset.guestRlc).catch(err=>alert('Putni prelaz: '+err.message));
  });
