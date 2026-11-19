@@ -42,13 +42,14 @@ async function showGuestProject(id){
   '<span class="rg-count">'+ordered.length+' RLC-ova</span></div>'+
   '<div class="rlcgrid rg-grid pp32-guest-rlcgrid">';
  ordered.forEach((r,i)=>{
-  body+='<button type="button" class="tile rg-card" data-guest-rlc="'+html(r.id)+'" data-r="'+html(r.id)+'">'+
-   '<div class="rg-card-top"><span class="rg-code">'+html(r.code)+'</span>'+
-   '<span class="rg-number">'+String(i+1).padStart(2,'0')+' / '+String(ordered.length).padStart(2,'0')+'</span></div>'+
-   '<div class="rg-route"><span class="rg-track-dot"></span>'+html(r.railway_line||'Putni prelaz')+'</div>'+
-   '<div class="rg-name">'+html(r.design_name||r.code)+'</div>'+
-   '<div class="rg-km">'+html(r.chainage||'')+'</div>'+
-   '<div class="rg-card-bottom"><span>Dokumentacija i proračun</span><b aria-hidden="true">↗</b></div></button>';
+  body+='<button type="button" class="tile rg-card gc-rlc-card gc-variant-'+(i%4)+'" data-guest-rlc="'+html(r.id)+'" data-r="'+html(r.id)+'"'+
+   ' aria-label="Otvori '+html(r.code)+' · '+html(r.design_name||'Putni prelaz')+'">'+
+   '<div class="gc-card-head"><span class="gc-code">'+html(r.code)+'</span>'+
+   '<span class="gc-index">'+String(i+1).padStart(2,'0')+' / '+String(ordered.length).padStart(2,'0')+'</span></div>'+
+   '<strong class="gc-name">'+html(r.design_name||'Putni prelaz')+'</strong>'+
+   '<div class="gc-route" title="'+html(r.railway_line||'Putni prelaz')+'"><span class="gc-track" aria-hidden="true"></span>'+html(r.railway_line||'Putni prelaz')+'</div>'+
+   '<div class="gc-card-foot"><span class="gc-chainage">'+(r.chainage?'km '+html(r.chainage):'Lokacija na mapi')+'</span>'+
+   '<span class="gc-go" aria-hidden="true">↗</span></div></button>';
  });
  body+='</div></main>';
  shell(body);
