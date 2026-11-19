@@ -34,6 +34,26 @@ async function upload(r,book,f){
   await api('/rest/v1/documents',{method:'POST',headers:{Prefer:'return=representation'},body:JSON.stringify({rlc_id:r.id,category:book,file_name:f.name,storage_path:path,version:1,is_current:true,uploaded_by:session.user.id})});
  }catch(err){try{await api(url,{method:'DELETE'})}catch(_){}throw err}
 }
+/* Brisanje se radi samo po potvrdi i samo za dokument unutar iste sveske/RLC-a.
+   Najpre uklanjamo PDF iz privatnog skladista, zatim njegov DB zapis.
+   Ako skladiste odbije zahtev, zapis ostaje netaknut. */
+async function deletePdf(r,book,f){
+ if(!admin())throw Error('Samo ovlašćeni administrator može obrisati PDF.');
+ check(r);
+ if(!books.includes(book)||!f?.id||!f.storage_path)throw Error('Nepoznat dokument.');
+ const prefix='documents/'+r.id+'/'+book.toLowerCase().replace(' ','-')+'/';
+ if(!String(f.storage_path).startsWith(prefix))throw Error('Putanja dokumenta ne odgovara izabranom RLC-u i svesci.');
+ const rows=await api('/rest/v1/documents?id=eq.'+q(f.id)+'&rlc_id=eq.'+q(r.id)+
+  '&select=id,category,storage_path&limit=1');
+ if(rows?.length!==1||rows[0].category!==book||rows[0].storage_path!==f.storage_path)
+  throw Error('Dokument je u međuvremenu promenjen ili uklonjen. Osveži svesku.');
+ // Brisanje iz Storage-a radi preko postojece admin RLS dozvole.
+ await api('/storage/v1/object/pp32-documents/'+f.storage_path,{method:'DELETE'});
+ const removed=await api('/rest/v1/documents?id=eq.'+q(f.id)+'&rlc_id=eq.'+q(r.id)+
+  '&category=eq.'+q(book),{method:'DELETE',headers:{Prefer:'return=representation'}});
+ if(!Array.isArray(removed)||!removed.some(row=>row.id===f.id))
+  throw Error('PDF je uklonjen iz skladišta, ali zapis nije potvrđeno uklonjen iz evidencije. Osveži svesku i proveri stanje.');
+}
 function openPdf(f,b){
  const tab=window.open('about:blank','_blank');
  if(tab){try{tab.document.title=f.file_name;tab.document.body.textContent='Učitavanje PDF-a…'}catch(_){}}
@@ -48,10 +68,30 @@ T.openBook=async(r,book)=>{
  if(admin())html+='<div class="sw-upload"><b>Dodaj PDF u '+book+'</b><p>Samostalno izaberi jedan ili više PDF fajlova.</p><input id="swFiles" type="file" multiple accept=".pdf,application/pdf"><button class="btn" type="button" id="swAdd" disabled>Dodaj PDF</button><small>Najviše 25 MB po dokumentu.</small><p id="swStatus" role="status" aria-live="polite"></p></div>';
  html+='<div class="sw-documents">';
  if(!files.length)html+='<div class="sw-empty">Sveska je spremna za dodavanje PDF dokumenata.</div>';
- files.forEach((f,i)=>{html+='<div class="sw-document"><span class="sw-pdf">PDF</span><div class="sw-document-name"><b>'+e(f.file_name)+'</b><small>'+e(book)+(f.uploaded_at?' · '+e(new Date(f.uploaded_at).toLocaleDateString('sr-RS')):'')+'</small></div><button class="btn sec small" type="button" data-sw-open="'+i+'">Otvori PDF</button></div>'});
+ files.forEach((f,i)=>{html+='<div class="sw-document"><span class="sw-pdf">PDF</span><div class="sw-document-name"><b>'+e(f.file_name)+'</b><small>'+e(book)+(f.uploaded_at?' · '+e(new Date(f.uploaded_at).toLocaleDateString('sr-RS')):'')+'</small></div><div class="sw-document-actions"><button class="btn sec small" type="button" data-sw-open="'+i+'">Otvori PDF</button>'+(admin()?'<button class="btn sec small sw-delete-button" type="button" data-sw-delete="'+i+'" aria-label="Obriši PDF '+e(f.file_name)+'">Obriši</button>':'')+'</div></div>'});
  html+='</div></main>';shell(html);back(()=>T.open(r).catch(fail));
  document.querySelectorAll('[data-sw-open]').forEach(b=>{b.onclick=()=>openPdf(files[Number(b.dataset.swOpen)],b)});
  if(!admin())return;
+ document.querySelectorAll('[data-sw-delete]').forEach(button=>{
+  button.onclick=async()=>{
+   const file=files[Number(button.dataset.swDelete)];
+   if(!file||!current(r))return;
+   if(!confirm('Trajno obrisati PDF „'+file.file_name+'“ iz '+book+' za '+r.code+'?\n\nNakon brisanja dokument više neće biti dostupan gostima.'))return;
+   button.disabled=true;
+   const status=document.getElementById('swStatus');
+   if(status)status.textContent='Brisanje PDF-a: '+file.file_name+'…';
+   try{
+    await deletePdf(r,book,file);
+    await T.openBook(r,book);
+    const msg=document.getElementById('swStatus');
+    if(msg)msg.textContent='PDF „'+file.file_name+'“ je obrisan. Možeš dodati novu verziju dokumenta.';
+   }catch(err){
+    if(status?.isConnected)status.textContent='Brisanje nije završeno: '+(err?.message||String(err));
+    else fail(err);
+    if(button.isConnected)button.disabled=false;
+   }
+  };
+ });
  const input=document.getElementById('swFiles'),button=document.getElementById('swAdd'),status=document.getElementById('swStatus');
  input.onchange=()=>{button.disabled=!input.files?.length;status.textContent=''};
  button.onclick=async()=>{
