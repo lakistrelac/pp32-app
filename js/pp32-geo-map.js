@@ -2,6 +2,39 @@
 (function(){
 'use strict';
 const PROJECT_CODE='pp32';
+/* Boja je stalno vezana za naziv pruge, nezavisno od RLC-a i statusa. */
+const normalizeLine=s=>String(s||'').trim().toLocaleLowerCase('sr')
+ .replace(/\s*[-–—]\s*/g,'–').replace(/\s+/g,' ');
+const LINE_COLORS=new Map([
+ ['Ruma–Šabac–Donja Borina','#205fa9'],
+ ['Beograd centar–Resnik–Požega–Vrbnica–državna granica','#19754b'],
+ ['Stalać–Kraljevo–Požega','#a35b0d'],
+ ['Beograd centar–Pančevo glavna–Vršac–državna granica','#783ea9'],
+ ['Bogojevo–državna granica–Erdut','#af3c48'],
+ ['Lapovo–Kraljevo–Kosovo Polje','#087d84'],
+ ['Beograd centar–Rasputnica–Mladenovac–Lapovo–Niš–Preševo–državna granica','#a43284'],
+ ['Crveni Krst–Zaječar–Prahovo pristanište','#4651aa']
+].map(([name,color])=>[normalizeLine(name),color]));
+const EXTRA_COLORS=['#206fa0','#407936','#9b4e70','#87601b','#674ba0'];
+function lineColor(name){
+ const key=normalizeLine(name);
+ if(!key)return '#53677d';
+ if(LINE_COLORS.has(key))return LINE_COLORS.get(key);
+ let hash=0;
+ for(let i=0;i<key.length;i++)hash=(hash*31+key.charCodeAt(i))|0;
+ return EXTRA_COLORS[(hash>>>0)%EXTRA_COLORS.length];
+}
+function railwayLegend(ctx){
+ const groups=new Map();
+ for(const r of ctx.rows){
+  const line=String(r.railway_line||'').trim()||'Pruga nije navedena';
+  groups.set(line,(groups.get(line)||0)+1);
+ }
+ return '<div class="ppmap-rail-legend-label">BOJE PREMA PRUGAMA</div>'+
+  [...groups].map(([line,n])=>'<span class="ppmap-rail-chip" title="'+escHtml(line)+'">'+
+  '<i style="--ppmap-line-color:'+lineColor(line)+'" aria-hidden="true"></i>'+
+  '<span>'+escHtml(line)+'</span><b>'+n+'</b></span>').join('');
+}
 const escHtml=s=>esc(s==null?'':s);
 const fmt=n=>new Intl.NumberFormat('sr-RS',{maximumFractionDigits:1}).format(n);
 const isLocated=r=>Number.isFinite(Number(r.map_lat))&&Number.isFinite(Number(r.map_lng))&&r.map_lat!==null&&r.map_lng!==null;
@@ -34,7 +67,7 @@ async function load(){
  const projects=await api('/rest/v1/projects?code=eq.'+PROJECT_CODE+'&select=id,name,code');
  if(!projects.length)throw Error('Projekat PP32 nije pronađen ili nemate pristup.');
  const project=projects[0];
- const records=await api('/rest/v1/rlcs?project_id=eq.'+encodeURIComponent(project.id)+'&select=id,project_id,code,design_name,chainage,map_lat,map_lng&order=code.asc&limit=100');
+ const records=await api('/rest/v1/rlcs?project_id=eq.'+encodeURIComponent(project.id)+'&select=id,project_id,code,design_name,chainage,railway_line,map_lat,map_lng&order=code.asc&limit=100');
  const ids=records.map(r=>r.id);
  let lineItems=[];
  if(ids.length&&profile?.role!=='guest_pp32'){
@@ -53,11 +86,18 @@ function goToRlc(ctx,r){
 function popupHtml(r,editor){
  return '<div class="ppmap-popup"><strong>'+escHtml(r.code)+'</strong><span>'+escHtml(r.design_name||'Putni prelaz')+'</span>'+
   '<small>'+escHtml(r.chainage||'')+'</small>'+
+  '<span class="ppmap-popup-rail"><i style="--ppmap-line-color:'+lineColor(r.railway_line)+'"></i>'+escHtml(r.railway_line||'Pruga nije navedena')+'</span>'+
   '<div class="ppmap-popup-actions"><button type="button" data-open-rlc="'+escHtml(r.id)+'">Otvori prelaz ↗</button>'+
   (editor?'<button type="button" data-edit-rlc="'+escHtml(r.id)+'">Izmeni pin</button>':'')+'</div></div>';
 }
 function pinIcon(r){
- return L.divIcon({className:'ppmap-marker',html:'<div class="ppmap-pin"><b>'+escHtml(r.code)+'</b></div>',iconSize:[66,38],iconAnchor:[33,19]});
+ const color=lineColor(r.railway_line);
+ const contents='<div class="ppmap-pin" title="'+escHtml(r.railway_line||'Pruga nije navedena')+
+  '" style="--ppmap-line-color:'+color+'">'+
+  '<span class="ppmap-rail-symbol" aria-hidden="true"></span>'+
+  '<b>'+escHtml(r.code)+'</b></div>';
+ return L.divIcon({className:'ppmap-marker',html:contents,iconSize:[82,43],
+  iconAnchor:[41,43],popupAnchor:[0,-40]});
 }
 function addMap(element,ctx,options){
  if(!window.L){
@@ -112,7 +152,8 @@ function homeSection(){
   '<div class="ppmap-home-grid"><div class="ppmap-home-canvas" data-map-preview><div class="ppmap-fallback">Učitavanje lokacija…</div></div>'+
   '<div class="ppmap-home-aside"><div class="ppmap-home-stat"><strong data-map-count>—</strong><span>Unetih lokacija</span></div>'+
   '<p>Izaberi prelaz sa spiska da otvoriš njegov projekat.</p>'+
-  '<div class="ppmap-home-list" data-map-quick></div><button class="ppmap-secondary" data-full-map>Svi prelazi i uređivanje lokacija →</button></div></div></section>';
+  '<div class="ppmap-home-list" data-map-quick></div><button class="ppmap-secondary" data-full-map>Svi prelazi i uređivanje lokacija →</button></div></div>'+
+  '<div class="ppmap-rail-legend" data-map-rail-legend></div></section>';
 }
 const beforeHome=window.home;
 window.home=async function(){
@@ -128,6 +169,7 @@ window.home=async function(){
   const ctx=await load();if(!section.isConnected)return;
   section.querySelector('[data-map-count]').textContent=countText(ctx);
   const located=ctx.rows.filter(isLocated);
+  section.querySelector('[data-map-rail-legend]').innerHTML=railwayLegend(ctx);
   const quick=section.querySelector('[data-map-quick]');
   quick.innerHTML=located.slice(0,5).map(r=>'<button type="button" data-quick="'+escHtml(r.id)+'"><span><i class="ppmap-dot ppmap-dot-'+tone(r)+'"></i>'+escHtml(r.code)+'</span><b>'+pct(r)+'</b></button>').join('')||
    '<span class="ppmap-muted">Još nema unetih lokacija.</span>';
@@ -142,7 +184,8 @@ function openFull(){
  shell('<div class="wrap ppmap-page"><div class="ppmap-page-top"><button class="back" id="ppmapBack">← Početna</button>'+
   '<div><span class="ppmap-eyebrow">PP32 / LOKACIJE</span><h1>Mapa putnih prelaza</h1><p>Geografski položaj RLC-ova.</p></div></div>'+
   '<div class="ppmap-layout"><section class="ppmap-stage"><div class="ppmap-stage-header"><strong data-map-total>Učitavanje...</strong>'+
-  '</div><div class="ppmap-full-canvas" id="ppmapFullCanvas"><div class="ppmap-fallback">Učitavanje mape…</div></div></section>'+
+  '</div><div class="ppmap-full-canvas" id="ppmapFullCanvas"><div class="ppmap-fallback">Učitavanje mape…</div></div>'+
+  '<div class="ppmap-rail-legend ppmap-rail-legend-full" id="ppmapFullRailLegend"></div></section>'+
   '<aside class="ppmap-side"><div class="ppmap-side-title"><b>Svi prelazi</b><span data-map-side-count></span></div>'+
   '<div class="ppmap-filters"><input id="ppmapSearch" type="search" placeholder="Pretraži RLC, naziv ili km…" aria-label="Pretraži prelaze">'+
   '<select id="ppmapFilter" aria-label="Filtriraj putne prelaze">'+
@@ -162,6 +205,7 @@ async function initFull(){
  const editAllowed=isAdmin();
  const guest=profile?.role==='guest_pp32';
  parent.querySelector('[data-map-total]').textContent=countText(ctx);
+ parent.querySelector('#ppmapFullRailLegend').innerHTML=railwayLegend(ctx);
  const search=parent.querySelector('#ppmapSearch'),filter=parent.querySelector('#ppmapFilter');
  const list=parent.querySelector('#ppmapItems'),slot=parent.querySelector('#ppmapEditor');
  if(guest){
@@ -182,6 +226,7 @@ async function initFull(){
    '<span class="ppmap-item-top"><b>'+escHtml(r.code)+'</b>'+
    (guest?'':'<span class="ppmap-percent"><i class="ppmap-dot ppmap-dot-'+tone(r)+'"></i>'+pct(r)+'</span>')+'</span>'+
    '<span class="ppmap-item-name">'+escHtml(r.design_name||'Putni prelaz')+'</span>'+
+   '<span class="ppmap-item-rail"><i style="--ppmap-line-color:'+lineColor(r.railway_line)+'"></i>'+escHtml(r.railway_line||'Pruga nije navedena')+'</span>'+
    '<small>'+escHtml(r.chainage||'Bez stacionaže')+' · '+(isLocated(r)?'Lokacija uneta':'Bez lokacije')+'</small></button>'+
    (editAllowed?'<button class="ppmap-edit-link" data-edit-rlc="'+escHtml(r.id)+'">'+(isLocated(r)?'Izmeni pin':'＋ Postavi lokaciju')+'</button>':'')+
    '</div>').join(''):'<p class="ppmap-muted">Nema prelaza za izabrani filter.</p>';
@@ -266,14 +311,17 @@ async function initFull(){
  });
  refreshList();
 }
-async function mountGuestPreview(area,list,count){
+async function mountGuestPreview(area,list,count,legendElement){
  const ctx=await load();
  if(!area?.isConnected)return;
  if(count)count.textContent=countText(ctx);
+ if(legendElement)legendElement.innerHTML=railwayLegend(ctx);
  const located=ctx.rows.filter(isLocated);
  if(list){
   list.innerHTML=located.slice(0,4).map(r=>
-   '<button type="button" data-guestmap-rlc="'+escHtml(r.id)+'"><span>'+escHtml(r.code)+'</span>'+
+   '<button type="button" data-guestmap-rlc="'+escHtml(r.id)+'"><span>'+
+   '<i class="ppmap-line-dot" style="--ppmap-line-color:'+lineColor(r.railway_line)+'" aria-hidden="true"></i>'+
+   escHtml(r.code)+'</span>'+
    '<small>'+escHtml(r.design_name||'Putni prelaz')+'</small></button>').join('')||
    '<span class="ppmap-muted">Još nema unetih lokacija.</span>';
   list.querySelectorAll('[data-guestmap-rlc]').forEach(button=>{
