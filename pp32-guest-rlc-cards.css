@@ -1,0 +1,114 @@
+/* Gost32 · kompaktne RLC kartice. Ne dira kartice administratora i drugih uloga. */
+.pp32-guest-project .rlcgrid.rg-grid{
+ display:grid;
+ grid-template-columns:repeat(4,minmax(0,1fr));
+ gap:11px;
+ align-items:stretch;
+}
+.pp32-guest-project .rlcgrid.rg-grid .gc-rlc-card{
+ --gc-accent:#258d9b;
+ --gc-soft:rgba(51,157,170,.085);
+ min-width:0;
+ min-height:160px;
+ padding:13px 15px 12px;
+ gap:0;
+ border:1px solid var(--border,#d4e3e7);
+ border-radius:13px;
+ background:linear-gradient(145deg,var(--panel,var(--card,#fff)) 54%,var(--gc-soft));
+ color:var(--text,#193d50);
+ box-shadow:0 4px 13px rgba(15,54,72,.042);
+ transition:transform .17s ease,border-color .17s ease,box-shadow .17s ease;
+}
+.pp32-guest-project .rlcgrid.rg-grid .gc-variant-1{--gc-accent:#418a73;--gc-soft:rgba(64,153,115,.08)}
+.pp32-guest-project .rlcgrid.rg-grid .gc-variant-2{--gc-accent:#6285b6;--gc-soft:rgba(97,133,186,.09)}
+.pp32-guest-project .rlcgrid.rg-grid .gc-variant-3{--gc-accent:#a47b57;--gc-soft:rgba(179,128,77,.075)}
+.pp32-guest-project .rlcgrid.rg-grid .gc-rlc-card::before{
+ top:11px;left:0;bottom:11px;width:3px;height:auto;
+ background:var(--gc-accent);
+ border-radius:0 3px 3px 0;
+}
+.pp32-guest-project .rlcgrid.rg-grid .gc-rlc-card::after{
+ top:-44px;right:-62px;width:115px;height:115px;
+ border-color:var(--gc-soft);
+ opacity:.9;
+}
+.pp32-guest-project .rlcgrid.rg-grid .gc-rlc-card:hover{
+ transform:translateY(-2px);
+ border-color:var(--gc-accent);
+ box-shadow:0 10px 22px rgba(15,54,72,.105);
+}
+.pp32-guest-project .gc-card-head{
+ display:flex;align-items:center;justify-content:space-between;gap:7px;
+ margin-bottom:7px;
+}
+.pp32-guest-project .gc-code{
+ color:var(--gc-accent);
+ font-size:15px;font-weight:950;letter-spacing:-.015em;white-space:nowrap;
+}
+.pp32-guest-project .gc-index{
+ color:var(--muted,#9badb6);
+ font-size:9px;font-weight:800;letter-spacing:.075em;
+ white-space:nowrap;
+}
+.pp32-guest-project .gc-name{
+ display:block;
+ color:var(--text,#1b3f50);
+ font-size:14px;
+ font-weight:830;
+ letter-spacing:-.015em;
+ line-height:1.28;
+ overflow-wrap:anywhere;
+ min-height:0;
+ margin:0 0 8px;
+}
+.pp32-guest-project .gc-route{
+ display:flex;align-items:center;gap:7px;min-width:0;
+ overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+ font-size:10px;font-weight:700;
+ color:var(--muted,#698691);
+}
+.pp32-guest-project .gc-track{
+ width:12px;height:12px;flex:none;
+ background:
+  linear-gradient(90deg,transparent 3px,var(--gc-accent) 3px,var(--gc-accent) 4.5px,transparent 4.5px,transparent 7.5px,var(--gc-accent) 7.5px,var(--gc-accent) 9px,transparent 9px),
+  repeating-linear-gradient(0deg,transparent 0,transparent 2px,var(--gc-accent) 2px,var(--gc-accent) 3px,transparent 3px,transparent 5px);
+ opacity:.73;
+ transform:rotate(-35deg);
+}
+.pp32-guest-project .gc-card-foot{
+ display:flex;justify-content:space-between;align-items:center;gap:8px;
+ margin-top:auto;padding-top:10px;
+ border-top:1px solid var(--border,#e4edf0);
+}
+.pp32-guest-project .gc-chainage{
+ color:var(--muted,#657f8f);
+ font-size:11px;font-weight:700;min-width:0;
+}
+.pp32-guest-project .gc-go{
+ display:grid;place-items:center;flex:none;
+ width:25px;height:25px;
+ border:1px solid var(--border,#d9e8ea);
+ border-radius:7px;
+ color:var(--gc-accent);
+ background:var(--gc-soft);
+ font-size:15px;font-weight:900;
+}
+.pp32-guest-project .rg-heading{margin:22px 0 13px}
+.pp32-guest-project .rg-heading p{max-width:670px}
+@media(max-width:1180px){
+ .pp32-guest-project .rlcgrid.rg-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media(max-width:850px){
+ .pp32-guest-project .rlcgrid.rg-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:560px){
+ .pp32-guest-project .rlcgrid.rg-grid{grid-template-columns:1fr;gap:8px}
+ .pp32-guest-project .rlcgrid.rg-grid .gc-rlc-card{min-height:116px;padding:12px 15px 10px}
+ .pp32-guest-project .gc-name{font-size:14px;margin-bottom:5px}
+ .pp32-guest-project .gc-card-foot{padding-top:6px}
+ .pp32-guest-project .rg-heading{margin:17px 0 11px}
+}
+@media(prefers-reduced-motion:reduce){
+ .pp32-guest-project .rlcgrid.rg-grid .gc-rlc-card{transition:none!important}
+ .pp32-guest-project .rlcgrid.rg-grid .gc-rlc-card:hover{transform:none!important}
+}
