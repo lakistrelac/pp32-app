@@ -34,3 +34,11 @@
 .sw-empty{padding:28px 20px;border:1px dashed #adc6d0;background:rgba(60,143,150,.035);color:var(--muted,#5a7483);text-align:center;border-radius:13px;font-size:13px}
 @media(max-width:740px){.sw-grid{grid-template-columns:1fr}.sw-folder{min-height:168px}.sw-folder strong{margin-top:18px}.sw-folder .sw-count{margin-top:-46px}.sw-hero{padding:17px}.sw-heading{align-items:flex-start;flex-direction:column}.sw-upload{display:flex;flex-direction:column}.sw-document{flex-wrap:wrap}.sw-document button{margin-left:auto}}
 @media(prefers-reduced-motion:reduce){.sw-folder{transition:none}.sw-folder:hover{transform:none}}
+
+/* Admin-only action row for a document. Guests see just the PDF link. */
+.sw-document-actions{display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap;flex:none;margin-left:auto}
+.sw-document-actions .sw-delete-button{background:transparent;border:1px solid #e5a8ae;color:#aa313c;cursor:pointer}
+.sw-document-actions .sw-delete-button:hover{background:rgba(190,52,64,.08);border-color:#c65d66}
+.sw-document-actions .sw-delete-button:focus-visible{outline:3px solid rgba(197,75,86,.45);outline-offset:2px}
+.sw-document-actions .sw-delete-button:disabled{opacity:.5;cursor:wait}
+@media(max-width:570px){.sw-document-actions{width:100%;justify-content:flex-end}.sw-document-actions button{min-height:38px}}
