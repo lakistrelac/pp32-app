@@ -28,7 +28,7 @@ function pathway(html){
  if(remarks){steps.push({name:'Primedbe',icon:'✎'});return steps}
  const rlc=currentRlc;
  if(!rlc?.id||rlc.project_id!==projectId)return null;
- const isLanding=has(html,'data-mod=')&&has(html,'class="tiles');
+ const isLanding=(has(html,'data-mod=')&&has(html,'class="tiles'))||has(html,'class="tiles pp32-module-grid pp32-guest-tiles"');
  const isInteractive=has(html,'id="ilBack"')||has(html,'id="ilmBack"')||has(html,'id="r18Back"');
  const isPrint=has(html,'class="wrap rp-page"')||has(html,'id="rpReport"');
  const isRlcModule=isInteractive||isPrint||has(html,'class="wrap cw-page"')||
@@ -39,7 +39,9 @@ function pathway(html){
  steps.push({name:rlc.code,icon:'↔',navigate:()=>window.rlc(rlcId)});
  if(isLanding)return steps;
  let name=heading(html);
- if(isPrint)name='PRINT';
+ if(has(html,'pp32-guest-workspace')&&has(html,'<h2 class="sectionTitle">Dokumentacija</h2>'))name='Dokumentacija';
+ else if(has(html,'id="icPrintReport"'))name='Proračun uključnih tačaka';
+ else if(isPrint)name='PRINT';
  else if(isInteractive)name='Linijska situacija';
  else if(has(html,'class="wrap cw-page"'))name='Kablovi';
  else name=name.replace(new RegExp('\\s*[·–-]\\s*'+rlc.code+'\\s*$','i'),'').trim()||'Modul';

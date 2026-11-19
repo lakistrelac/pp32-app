@@ -170,7 +170,9 @@ async function open(id){
  const input=BY_CODE.get(currentRlc.code);
  if(!input)throw new Error('Za '+currentRlc.code+' nedostaju ulazni proračunski parametri.');
  const q=encodeURIComponent(String(id));
- const rows=await api('/rest/v1/rlc_line_items?rlc_id=eq.'+q+'&select=item_key,item_type,label&order=sort_order.asc&limit=250');
+ const rows=profile?.role==='guest_pp32'
+  ? await api('/rest/v1/rpc/get_guest_rlc_calculation_items',{method:'POST',body:JSON.stringify({p_rlc_id:id})})
+  : await api('/rest/v1/rlc_line_items?rlc_id=eq.'+q+'&select=item_key,item_type,label&order=sort_order.asc&limit=250');
  return render(currentRlc,input,rows);
 }
 window.PP32InclusionRlc={open:open,calculate:calculate,inputCount:INPUTS.length};
