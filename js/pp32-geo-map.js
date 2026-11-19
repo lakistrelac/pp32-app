@@ -52,12 +52,12 @@ function goToRlc(ctx,r){
 }
 function popupHtml(r,editor){
  return '<div class="ppmap-popup"><strong>'+escHtml(r.code)+'</strong><span>'+escHtml(r.design_name||'Putni prelaz')+'</span>'+
-  '<small>'+escHtml(r.chainage||'')+'</small><div class="ppmap-popup-status"><i class="ppmap-dot ppmap-dot-'+tone(r)+'"></i>'+escHtml(statusLabel(r))+' · <b>'+pct(r)+'</b></div>'+
+  '<small>'+escHtml(r.chainage||'')+'</small>'+
   '<div class="ppmap-popup-actions"><button type="button" data-open-rlc="'+escHtml(r.id)+'">Otvori prelaz ↗</button>'+
   (editor?'<button type="button" data-edit-rlc="'+escHtml(r.id)+'">Izmeni pin</button>':'')+'</div></div>';
 }
 function pinIcon(r){
- return L.divIcon({className:'ppmap-marker',html:'<div class="ppmap-pin ppmap-pin-'+tone(r)+'"><b>'+escHtml(r.code)+'</b><small>'+pct(r)+'</small></div>',iconSize:[66,38],iconAnchor:[33,19]});
+ return L.divIcon({className:'ppmap-marker',html:'<div class="ppmap-pin"><b>'+escHtml(r.code)+'</b></div>',iconSize:[66,38],iconAnchor:[33,19]});
 }
 function addMap(element,ctx,options){
  if(!window.L){
@@ -107,12 +107,12 @@ function countText(ctx){
 }
 function homeSection(){
  return '<section class="ppmap-home" aria-label="Mapa putnih prelaza">'+
-  '<div class="ppmap-head"><div><span class="ppmap-eyebrow">TERENSKI PREGLED / PP32</span><h2>Geografska mapa prelaza</h2><p>Lokacije, stacionaže i napredak radova na jednom mestu.</p></div>'+
+  '<div class="ppmap-head"><div><span class="ppmap-eyebrow">TERENSKI PREGLED / PP32</span><h2>Geografska mapa prelaza</h2><p>Geografske lokacije putnih prelaza.</p></div>'+
   '<button type="button" class="ppmap-main-button" data-full-map>Otvori celu mapu <span>↗</span></button></div>'+
   '<div class="ppmap-home-grid"><div class="ppmap-home-canvas" data-map-preview><div class="ppmap-fallback">Učitavanje lokacija…</div></div>'+
   '<div class="ppmap-home-aside"><div class="ppmap-home-stat"><strong data-map-count>—</strong><span>Unetih lokacija</span></div>'+
-  '<p>Pinovi su povezani sa postojećim prelazima. Njihova boja prati procenat realizacije.</p>'+
-  '<div class="ppmap-home-list" data-map-quick></div><button class="ppmap-secondary" data-full-map>Svi prelazi i uređivanje lokacija →</button></div></div>'+legend()+'</section>';
+  '<p>Izaberi prelaz sa spiska da otvoriš njegov projekat.</p>'+
+  '<div class="ppmap-home-list" data-map-quick></div><button class="ppmap-secondary" data-full-map>Svi prelazi i uređivanje lokacija →</button></div></div></section>';
 }
 const beforeHome=window.home;
 window.home=async function(){
@@ -134,15 +134,15 @@ window.home=async function(){
   const preview=addMap(section.querySelector('[data-map-preview]'),ctx,{editable:false});
   quick.querySelectorAll('[data-quick]').forEach(b=>b.onclick=()=>{
    const r=ctx.rows.find(x=>x.id===b.dataset.quick);
-   if(!r||!preview)return;preview.map.setView([Number(r.map_lat),Number(r.map_lng)],13);preview.markers.get(r.id)?.openPopup();
+   if(r)goToRlc(ctx,r);
   });
  }catch(e){if(section.isConnected)section.querySelector('[data-map-preview]').innerHTML='<div class="ppmap-fallback">'+escHtml(e.message)+'</div>'}
 };
 function openFull(){
  shell('<div class="wrap ppmap-page"><div class="ppmap-page-top"><button class="back" id="ppmapBack">← Početna</button>'+
-  '<div><span class="ppmap-eyebrow">PP32 / LOKACIJE</span><h1>Mapa putnih prelaza</h1><p>Pregled realizacije i geografski položaj RLC-ova.</p></div></div>'+
+  '<div><span class="ppmap-eyebrow">PP32 / LOKACIJE</span><h1>Mapa putnih prelaza</h1><p>Geografski položaj RLC-ova.</p></div></div>'+
   '<div class="ppmap-layout"><section class="ppmap-stage"><div class="ppmap-stage-header"><strong data-map-total>Učitavanje...</strong>'+
-  legend()+'</div><div class="ppmap-full-canvas" id="ppmapFullCanvas"><div class="ppmap-fallback">Učitavanje mape…</div></div></section>'+
+  '</div><div class="ppmap-full-canvas" id="ppmapFullCanvas"><div class="ppmap-fallback">Učitavanje mape…</div></div></section>'+
   '<aside class="ppmap-side"><div class="ppmap-side-title"><b>Svi prelazi</b><span data-map-side-count></span></div>'+
   '<div class="ppmap-filters"><input id="ppmapSearch" type="search" placeholder="Pretraži RLC, naziv ili km…" aria-label="Pretraži prelaze">'+
   '<select id="ppmapFilter" aria-label="Filtriraj po napretku"><option value="all">Svi statusi</option><option value="idle">Nije započeto</option>'+
@@ -254,9 +254,7 @@ async function initFull(){
   if(!selected)return;
   const r=ctx.rows.find(x=>x.id===selected.dataset.select);
   if(!r)return;
-  if(!isLocated(r)){if(editAllowed)startEdit(r);return}
-  controller?.map.flyTo([Number(r.map_lat),Number(r.map_lng)],14);
-  controller?.markers.get(r.id)?.openPopup();
+  goToRlc(ctx,r);
  });
  refreshList();
 }

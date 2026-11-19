@@ -2,7 +2,7 @@
    Database policies provide the matching server-side data boundary. */
 (function(){
 'use strict';
-const allowedModules=new Set(['line','docs']);
+const allowedModules=new Set(['docs','inclusion']);
 const allowedCalculations=new Set(['ukljucne-tacke','pad-napona']);
 function isGuest32(){
  return profile?.active===true&&profile?.role==='guest_pp32';
@@ -17,7 +17,7 @@ function removeRestrictedModules(){
   if(!allowedModules.has(key))node.remove();
  });
  const count=document.querySelector('.pp32-module-count');
- if(count)count.textContent='Dokumentacija';
+ if(count)count.textContent='Dokumentacija i proračun';
 }
 const previousRlc=window.rlc;
 if(typeof previousRlc==='function')window.rlc=async function(id){

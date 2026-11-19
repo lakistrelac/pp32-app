@@ -10,6 +10,11 @@ const moduleInfo={
     description:'Pregled originalne projektne linijske situacije.',
     tags:['Projektni plan','Pregled'],action:'Otvori plan',icon:'line'
   },
+  inclusion:{
+    title:'Proračun uključnih tačaka',kicker:'TEHNIČKI PRORAČUN',badge:'KALKULATOR',
+    description:'Izračun minimalne udaljenosti uključnih tačaka za izabrani prelaz.',
+    tags:['Vreme predzvonjenja','Udaljenost (m)'],action:'Pokreni proračun',icon:'inclusion'
+  },
   components:{
     title:'Komponente',kicker:'OPREMA NA TERENU',badge:'EVIDENCIJA',
     description:'Pojedinačni elementi, aktivnosti i realizacija radova.',
@@ -48,6 +53,7 @@ const moduleInfo={
 };
 const drawings={
   line:'<path d="M3 9h18M3 15h18M6 6v12M11 6v12M16 6v12M20 6v12"/>',
+  inclusion:'<path d="M4 12h16M12 4v16M7 7l10 10M17 7 7 17"/>',
   components:'<rect x="2" y="9" width="5" height="5" rx="1"/><rect x="17" y="3" width="5" height="5" rx="1"/><rect x="17" y="17" width="5" height="5" rx="1"/><path d="M7 11.5h5v-6h5M12 11.5v8h5"/>',
   docs:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6M8 13h8M8 17h8"/>',
   diary:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 10h18M8 15h3M8 18h8"/>',
