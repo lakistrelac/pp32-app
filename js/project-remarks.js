@@ -108,26 +108,26 @@ function addProjectLink(id){
  if(target){
   if(document.getElementById('prProjectLink'))return;
   const btn=document.createElement('button');btn.type='button';btn.id='prProjectLink';btn.className='pr-project-link';
-  btn.innerHTML='<span class="pr-link-icon">✎</span><span><b>Primedbe</b><small>Objavi zapažanje ili pregledaj primedbe ovog projekta</small></span><strong>Otvori ↗</strong>';
+  btn.innerHTML='<span class="pr-link-icon">✎</span><span><b>Primedbe i komentari</b><small>Pošalji komentar, predlog ili primedbu za ovaj projekat</small></span><strong>Otvori ↗</strong>';
   target.parentElement.insertBefore(btn,target);btn.onclick=()=>R.open(id);return;
  }
  if(work){
   if(document.getElementById('prProjectLink'))return;
   const btn=document.createElement('button');btn.type='button';btn.id='prProjectLink';btn.className='pw-module pr-pw-module';
-  btn.innerHTML='<span class="pw-symbol">✎</span><span class="pw-module-label"><b>Primedbe</b><small>Zapažanja i prijave vezane za projekat</small></span><b class="pw-arrow">↗</b>';
+  btn.innerHTML='<span class="pw-symbol">✎</span><span class="pw-module-label"><b>Primedbe i komentari</b><small>Zapažanja, komentari i predlozi</small></span><b class="pw-arrow">↗</b>';
   work.append(btn);btn.onclick=()=>R.open(id);return;
  }
  if(modules){
   if(document.getElementById('prProjectLink'))return;
   const btn=document.createElement('button');btn.type='button';btn.id='prProjectLink';btn.className='tile pr-corridor-tile';
-  btn.innerHTML='<span class="pr-link-icon">✎</span><b>Primedbe</b><span class="sub">Objavi primedbu · Pregled</span>';
+  btn.innerHTML='<span class="pr-link-icon">✎</span><b>Primedbe i komentari</b><span class="sub">Pošalji poruku · Pregled</span>';
   modules.parentElement.append(btn);btn.onclick=()=>R.open(id);return;
  }
  // Other project pages: add a clearly visible shortcut to the project header.
  const wrap=document.querySelector('.wrap');
  if(wrap&&!document.getElementById('prProjectLink')){
   const btn=document.createElement('button');btn.type='button';btn.id='prProjectLink';btn.className='pr-project-link';
-  btn.innerHTML='<span class="pr-link-icon">✎</span><b>Primedbe projekta</b><strong>Otvori ↗</strong>';
+  btn.innerHTML='<span class="pr-link-icon">✎</span><b>Primedbe i komentari</b><strong>Otvori ↗</strong>';
   wrap.append(btn);btn.onclick=()=>R.open(id);
  }
 }
@@ -143,7 +143,7 @@ if(typeof previousHome==='function')window.home=async function(){
  const parent=document.querySelector('.home-admin-actions,.adminbar .btnrow');
  if(parent&&!document.getElementById('prAllRemarks')){
   const btn=document.createElement('button');btn.type='button';btn.id='prAllRemarks';btn.className='btn sec small pr-all-button';
-  btn.textContent='✎ Primedbe · svi projekti';parent.append(btn);
+  btn.textContent='✎ Primedbe i komentari · svi projekti';parent.append(btn);
   btn.onclick=()=>R.open();
  }
 };
