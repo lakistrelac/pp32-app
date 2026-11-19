@@ -10,7 +10,7 @@ const q=value=>encodeURIComponent(String(value));
 const active=()=>!!profile?.active&&!!session?.user?.id;
 const manager=()=>isAdmin();
 const statusNames={open:'Novo',in_progress:'U obradi',resolved:'Rešeno'};
-const areas=['Radovi na terenu','Projektna dokumentacija','Linijska situacija','Oprema i materijal','Bezbednost','Rokovi i organizacija','Ostalo'];
+const areas=['Komentar / predlog','Radovi na terenu','Projektna dokumentacija','Linijska situacija','Oprema i materijal','Bezbednost','Rokovi i organizacija','Ostalo'];
 const fmtDate=value=>{try{return new Intl.DateTimeFormat('sr-RS',{dateStyle:'medium',timeStyle:'short'}).format(new Date(value))}catch(_){return '—'}};
 R.open=async function(projectId=null){
  if(!active())return alert('Prijavi se da bi pristupio primedbama.');
@@ -24,26 +24,26 @@ R.open=async function(projectId=null){
   const open=entries.filter(x=>x.status==='open').length;
   const working=entries.filter(x=>x.status==='in_progress').length;
   const done=entries.filter(x=>x.status==='resolved').length;
-  const title=isGlobal?'Primedbe · svi projekti':'Primedbe · '+project.name;
+  const title=isGlobal?'Primedbe i komentari · svi projekti':'Primedbe i komentari · '+project.name;
   let html='<main class="wrap pr-page"><button type="button" class="back" id="prBack">← '+(isGlobal?'Početna':e(project.name))+'</button>'+
-   '<header class="pr-hero"><div><span class="pr-kicker">EVIDENCIJA ZAPAŽANJA / TEHNIČKE PRIMEDBE</span><h1>'+e(title)+'</h1>'+
-   '<p>'+(manager()?'Pregledaj autora, projekat, predmet i status svake objavljene primedbe.':'Pošalji primedbu vezanu za projekat i prati svoje objave.')+'</p></div>'+
+   '<header class="pr-hero"><div><span class="pr-kicker">EVIDENCIJA PRIMEDBI / KOMENTARA / PREDLOGA</span><h1>'+e(title)+'</h1>'+
+   '<p>'+(manager()?'Pregledaj autora, projekat, predmet i status svake objavljene primedbe.':'Pošalji primedbu, komentar ili predlog i prati status svojih poruka.')+'</p></div>'+
    '<div class="pr-stats"><span><b>'+entries.length+'</b> ukupno</span><span><b>'+open+'</b> novih</span><span><b>'+working+'</b> u obradi</span><span><b>'+done+'</b> rešenih</span></div></header>';
   if(project){
-   html+='<section class="pr-compose"><div class="pr-section-head"><div><b>Nova primedba</b><p>Primedba se beleži uz tvoj nalog, datum i izabrani projekat.</p></div></div>'+
+   html+='<section class="pr-compose"><div class="pr-section-head"><div><b>Nova primedba ili komentar</b><p>Poruka se beleži uz tvoj nalog i datum. Za komentar izaberi oblast „Komentar / predlog“.</p></div></div>'+
     '<form id="prForm" class="pr-form"><div class="pr-fields">'+
      '<label>Projekat<input value="'+e(project.name)+'" disabled></label>'+
      '<label>Ime podnosioca<input value="'+e((profile?.full_name||'').trim()||profile?.email||'')+'" disabled></label>'+
      '<label>Oblast<select id="prArea">'+areas.map(x=>'<option>'+e(x)+'</option>').join('')+'</select></label>'+
      '<label>RLC / stacionaža / oznaka (opciono)<input id="prRef" maxlength="160" placeholder="npr. RLC 3 · km 67+690"></label>'+
-     '<label class="pr-full">Na šta se primedba odnosi?<input id="prSubject" minlength="3" maxlength="180" required placeholder="npr. Nije obeležena pozicija senzora"></label>'+
-     '<label class="pr-full">Opis primedbe<textarea id="prDetails" rows="4" minlength="5" maxlength="10000" required placeholder="Opiši uočeni problem ili predlog što preciznije…"></textarea></label>'+
-    '</div><div class="pr-form-foot"><span id="prMessage" role="status"></span><button class="btn" id="prSubmit" type="submit">Objavi primedbu</button></div></form></section>';
+     '<label class="pr-full">Naslov primedbe ili komentara<input id="prSubject" minlength="3" maxlength="180" required placeholder="npr. Predlog za prikaz dokumentacije"></label>'+
+     '<label class="pr-full">Tekst poruke<textarea id="prDetails" rows="4" minlength="5" maxlength="10000" required placeholder="Napiši primedbu, komentar ili predlog…"></textarea></label>'+
+    '</div><div class="pr-form-foot"><span id="prMessage" role="status"></span><button class="btn" id="prSubmit" type="submit">Pošalji poruku</button></div></form></section>';
   }
-  html+='<section class="pr-feed"><div class="pr-section-head"><div><b>'+(manager()?'Objavljene primedbe':'Moje objavljene primedbe')+'</b>'+
+  html+='<section class="pr-feed"><div class="pr-section-head"><div><b>'+(manager()?'Sve primedbe i komentari':'Moje primedbe i komentari')+'</b>'+
    '<p>'+(isGlobal?'Sve primedbe iz dostupnih projekata.':e(project.name))+'</p></div>'+
    '<label class="pr-filter-label">Status<select id="prFilter"><option value="all">Svi statusi</option><option value="open">Nove</option><option value="in_progress">U obradi</option><option value="resolved">Rešene</option></select></label></div>'+
-   '<div id="prEntries" class="pr-entries">'+(entries.length?entries.map(x=>card(x)).join(''):'<div class="pr-empty">Još nema objavljenih primedbi.</div>')+'</div></section></main>';
+   '<div id="prEntries" class="pr-entries">'+(entries.length?entries.map(x=>card(x)).join(''):'<div class="pr-empty">Još nema primedbi ni komentara.</div>')+'</div></section></main>';
   shell(html);
   document.getElementById('prBack').onclick=()=>isGlobal?home():window.project(project.id);
   const filter=document.getElementById('prFilter');
@@ -73,7 +73,7 @@ R.open=async function(projectId=null){
    const subject=document.getElementById('prSubject').value.trim(),details=document.getElementById('prDetails').value.trim(),
     area=document.getElementById('prArea').value,reference=document.getElementById('prRef').value.trim();
    const msg=document.getElementById('prMessage'),btn=document.getElementById('prSubmit');
-   if(subject.length<3||details.length<5){msg.textContent='Unesi predmet i opis primedbe.';return}
+   if(subject.length<3||details.length<5){msg.textContent='Unesi naslov i tekst poruke.';return}
    btn.disabled=true;msg.textContent='Objavljivanje…';
    try{
     await api('/rest/v1/project_remarks',{method:'POST',headers:{Prefer:'return=minimal'},
@@ -83,10 +83,10 @@ R.open=async function(projectId=null){
     });
     await R.open(project.id);
     const flash=document.getElementById('prMessage');
-    if(flash)flash.textContent='Primedba je objavljena i sačuvana u evidenciji.';
+    if(flash)flash.textContent='Poruka je uspešno poslata i sačuvana u evidenciji.';
    }catch(error){msg.textContent='Neuspešno objavljivanje: '+(error?.message||String(error));btn.disabled=false}
   };
- }catch(error){alert('Primedbe nije moguće učitati: '+(error?.message||String(error)))}
+ }catch(error){alert('Primedbe i komentari nisu dostupni: '+(error?.message||String(error)))}
 };
 function card(x){
  const status=statusNames[x.status]||statusNames.open;
