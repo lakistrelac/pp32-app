@@ -84,39 +84,14 @@ async function showGuestRlc(id){
     '<span class="ic-tile-bottom">Otvori proračun <b aria-hidden="true">↗</b></span></button>'+
   '</div></div>');
  attachBack(rlc,()=>window.project(rlc.project_id));
- document.getElementById('guestDocs').onclick=()=>showGuestDocs(rlc).catch(err=>alert('Dokumentacija: '+err.message));
+ document.getElementById('guestDocs').onclick=()=>{
+  if(!window.PP32Sveske?.open)return alert('Dokumentacija nije učitana. Osveži aplikaciju.');
+  window.PP32Sveske.open(rlc).catch(err=>alert('Dokumentacija: '+err.message));
+ };
  document.getElementById('guestCalculation').onclick=()=>{
   if(!window.PP32InclusionRlc?.open){alert('Proračun nije moguće otvoriti. Osveži aplikaciju.');return;}
   window.PP32InclusionRlc.open(rlc.id).catch(err=>alert('Proračun uključnih tačaka: '+err.message));
  };
-}
-async function showGuestDocs(rlc){
- if(!isGuest32())return;
- const documents=await api('/rest/v1/documents?rlc_id=eq.'+q(rlc.id)+
-   '&select=category,file_name,storage_path,version,uploaded_at&order=uploaded_at.desc');
- if(currentRlc?.id!==rlc.id)return;
- let body=guestHeader(rlc,rlc.code)+
-  '<h2 class="sectionTitle">Dokumentacija</h2>'+
-  '<div class="docs">';
- if(documents?.length){
-  body+=documents.map((doc,i)=>'<div class="doc"><b>'+html(doc.category||'Dokument')+'</b>'+
-   '<p class="sub">'+html(doc.file_name||'Dokument')+
-   (doc.version?' · v'+html(doc.version):'')+'</p>'+
-   '<button type="button" class="btn sec small" data-guest-doc="'+i+'">Otvori dokument</button></div>').join('');
- }
- body+='</div></div>';
- shell(body);
- attachBack(rlc);
- document.querySelectorAll('[data-guest-doc]').forEach(button=>{
-  button.onclick=async()=>{
-   const doc=documents[Number(button.dataset.guestDoc)];
-   if(!doc?.storage_path)return;
-   try{
-    const url=await signed(doc.storage_path);
-    window.open(url,'_blank','noopener,noreferrer');
-   }catch(err){alert('Dokument ne može da se otvori: '+err.message)}
-  };
- });
 }
 if(typeof previousProject==='function'){
  window.project=function(id){

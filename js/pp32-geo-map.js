@@ -37,7 +37,7 @@ async function load(){
  const records=await api('/rest/v1/rlcs?project_id=eq.'+encodeURIComponent(project.id)+'&select=id,project_id,code,design_name,chainage,map_lat,map_lng&order=code.asc&limit=100');
  const ids=records.map(r=>r.id);
  let lineItems=[];
- if(ids.length){
+ if(ids.length&&profile?.role!=='guest_pp32'){
   lineItems=await api('/rest/v1/rlc_line_items?rlc_id=in.('+ids.map(encodeURIComponent).join(',')+')&select=rlc_id,item_key,status&limit=2000');
  }
  const grouped=new Map();
@@ -145,8 +145,11 @@ function openFull(){
   '</div><div class="ppmap-full-canvas" id="ppmapFullCanvas"><div class="ppmap-fallback">Učitavanje mape…</div></div></section>'+
   '<aside class="ppmap-side"><div class="ppmap-side-title"><b>Svi prelazi</b><span data-map-side-count></span></div>'+
   '<div class="ppmap-filters"><input id="ppmapSearch" type="search" placeholder="Pretraži RLC, naziv ili km…" aria-label="Pretraži prelaze">'+
-  '<select id="ppmapFilter" aria-label="Filtriraj po napretku"><option value="all">Svi statusi</option><option value="idle">Nije započeto</option>'+
-  '<option value="active">U toku</option><option value="done">Završeno</option><option value="missing">Bez lokacije</option></select></div>'+
+  '<select id="ppmapFilter" aria-label="Filtriraj putne prelaze">'+
+  (profile?.role==='guest_pp32'
+    ? '<option value="all">Svi prelazi</option><option value="missing">Bez lokacije</option>'
+    : '<option value="all">Svi statusi</option><option value="idle">Nije započeto</option><option value="active">U toku</option><option value="done">Završeno</option><option value="missing">Bez lokacije</option>')+
+  '</select></div>'+
   '<div id="ppmapEditor" class="ppmap-editor-slot"></div><div class="ppmap-items" id="ppmapItems">Učitavanje…</div></aside></div></div>');
  document.getElementById('ppmapBack').onclick=home;
  initFull().catch(e=>{
@@ -157,9 +160,13 @@ async function initFull(){
  const parent=document.querySelector('.ppmap-page');if(!parent)return;
  const ctx=await load();if(!parent.isConnected)return;
  const editAllowed=isAdmin();
+ const guest=profile?.role==='guest_pp32';
  parent.querySelector('[data-map-total]').textContent=countText(ctx);
  const search=parent.querySelector('#ppmapSearch'),filter=parent.querySelector('#ppmapFilter');
  const list=parent.querySelector('#ppmapItems'),slot=parent.querySelector('#ppmapEditor');
+ if(guest){
+  filter.innerHTML='<option value="all">Svi prelazi</option><option value="missing">Bez lokacije</option>';
+ }
  let controller=null,editing=null;
  function filtered(r){
   const q=search.value.trim().toLowerCase();
@@ -172,7 +179,8 @@ async function initFull(){
   parent.querySelector('[data-map-side-count]').textContent=rows.length+' prikazano';
   list.innerHTML=rows.length?rows.map(r=>
    '<div class="ppmap-item"><button type="button" class="ppmap-item-open" data-select="'+escHtml(r.id)+'">'+
-   '<span class="ppmap-item-top"><b>'+escHtml(r.code)+'</b><span class="ppmap-percent"><i class="ppmap-dot ppmap-dot-'+tone(r)+'"></i>'+pct(r)+'</span></span>'+
+   '<span class="ppmap-item-top"><b>'+escHtml(r.code)+'</b>'+
+   (guest?'':'<span class="ppmap-percent"><i class="ppmap-dot ppmap-dot-'+tone(r)+'"></i>'+pct(r)+'</span>')+'</span>'+
    '<span class="ppmap-item-name">'+escHtml(r.design_name||'Putni prelaz')+'</span>'+
    '<small>'+escHtml(r.chainage||'Bez stacionaže')+' · '+(isLocated(r)?'Lokacija uneta':'Bez lokacije')+'</small></button>'+
    (editAllowed?'<button class="ppmap-edit-link" data-edit-rlc="'+escHtml(r.id)+'">'+(isLocated(r)?'Izmeni pin':'＋ Postavi lokaciju')+'</button>':'')+
@@ -258,5 +266,24 @@ async function initFull(){
  });
  refreshList();
 }
-window.PP32GeoMap={open:openFull,parseLocation};
+async function mountGuestPreview(area,list,count){
+ const ctx=await load();
+ if(!area?.isConnected)return;
+ if(count)count.textContent=countText(ctx);
+ const located=ctx.rows.filter(isLocated);
+ if(list){
+  list.innerHTML=located.slice(0,4).map(r=>
+   '<button type="button" data-guestmap-rlc="'+escHtml(r.id)+'"><span>'+escHtml(r.code)+'</span>'+
+   '<small>'+escHtml(r.design_name||'Putni prelaz')+'</small></button>').join('')||
+   '<span class="ppmap-muted">Još nema unetih lokacija.</span>';
+  list.querySelectorAll('[data-guestmap-rlc]').forEach(button=>{
+   button.onclick=()=>{
+    const r=ctx.rows.find(x=>x.id===button.dataset.guestmapRlc);
+    if(r)goToRlc(ctx,r);
+   };
+  });
+ }
+ addMap(area,ctx,{editable:false});
+}
+window.PP32GeoMap={open:openFull,parseLocation,mountGuestPreview};
 })();
