@@ -19,6 +19,13 @@ async function guestHome(){
  '<button type="button" id="gphGoMap" class="gph-secondary">Pogledaj mapu</button></div>'+
  '<div class="gph-hero-tags"><span>32 PUTNA PRELAZA</span><span>PROJEKTNA DOKUMENTACIJA</span></div></div>'+
  '<div class="gph-visual">'+scene+'</div></section>'+
+ '<section class="gf-feedback gf-home-feedback" aria-label="Primedbe i komentari">'+
+  '<span class="gf-symbol" aria-hidden="true">✎</span>'+
+  '<div class="gf-copy"><span class="gf-eyebrow">DIREKTNA KOMUNIKACIJA</span>'+
+   '<h2>Primedbe i komentari</h2>'+
+   '<p>Imaš komentar, predlog ili tehničko zapažanje za PP32? Pošalji poruku i prati njen status.</p></div>'+
+  '<button type="button" class="gf-action" id="gfHomeRemarks">Napiši primedbu ili komentar <b aria-hidden="true">↗</b></button>'+
+ '</section>'+
  '<section class="gph-workspace">'+
  '<div class="gph-map-card"><div class="gph-section-header"><div><span>TERENSKI PREGLED / LOKACIJE</span>'+
  '<h2>Mapa putnih prelaza</h2><p>Pregled lokacija i izbor odgovarajućeg prelaza.</p></div>'+
@@ -38,6 +45,10 @@ async function guestHome(){
  const project=()=>window.project(p.id);
  document.getElementById('gphGoProject').onclick=project;
  document.getElementById('gphProject').onclick=project;
+ document.getElementById('gfHomeRemarks').onclick=()=>{
+  if(!window.PP32Remarks?.open)return alert('Primedbe i komentari trenutno nisu dostupni. Osveži stranicu.');
+  window.PP32Remarks.open(p.id);
+ };
  const map=()=>window.PP32GeoMap?.open();
  document.getElementById('gphGoMap').onclick=map;
  document.getElementById('gphFullMap').onclick=map;
